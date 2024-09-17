@@ -3,37 +3,62 @@ import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LoginApi from '../../api/LoginApi';
 
-const background = require('../../assets/images/background.png')
+const background = require('../../assets/images/background.png');
 const logo_large = require('../../assets/images/child-care-logo-large.png');
 
 const Login = ({ navigation }) => {
-
     const [passwordVisibilty, setPasswordVisibility] = useState(true);
-    let [email, setEmail] = useState('');
-    let [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [errors, setErrors] = useState({
+        email: '',
+        password: ''
+    });
+
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = { ...errors };
+
+        if (!email || !/\S+@\S+\.\S+/.test(email)) {
+            newErrors.email = 'Valid email is required';
+            isValid = false;
+        } else {
+            newErrors.email = '';
+        }
+
+        if (!password) {
+            newErrors.password = 'Password is required';
+            isValid = false;
+        } else {
+            newErrors.password = '';
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
 
     const submitForm = () => {
-        if(email === 'dipankar@childcaresoftware.com'){
-            navigation.navigate('Dashboard')
-        }else{
-            console.warn('Oops! Incorrect credentials')
+        if (validateForm()) {
+            if (email === 'dipankar@childcaresoftware.com') {
+                navigation.navigate('Dashboard');
+            } else {
+                console.warn('Oops! Incorrect credentials');
+            }
+            // Uncomment this when API integration is ready
+            // LoginApi({
+            //     'email': email,
+            //     'password': password
+            // }).then((result) => {
+            //     console.log('Result--- ', result.data);
+            //     if (result && result.data) {
+            //         // Handle successful login
+            //     } else {
+            //         console.log('No data found');
+            //     }
+            // }).catch((err) => {
+            //     console.log(err);
+            // });
         }
-        // LoginApi({
-        //     'email':email,
-        //     'password': password
-        // }).then( (result) => {
-        //     console.log('Result--- ', result.data)
-        //     if(result && result.data ){
-        //         //
-        //     }else{
-        //         console.log('No data found')
-        //     }
-            
-        // }).catch( (err) => {
-        //     console.log(err)
-        // });
-
-        
     };
 
     return (
@@ -43,30 +68,30 @@ const Login = ({ navigation }) => {
                     <Image source={logo_large} style={styles.logo_large} />
                 </View>
                 <KeyboardAvoidingView behaviour={Platform.OS === 'ios' ? 'padding' : null} style={styles.form}>
-                    <Text style={styles.text_title}>Email</Text>
-
                     <View style={styles.email_area}>
-                        <View style={styles.input_container}>
+                        <Text style={styles.text_title}>Email</Text>
+                        <View style={[styles.input_container, { borderColor: errors.email ? 'red' : '#E1F3FB' }]}>
                             <TextInput
                                 style={styles.text_input}
                                 placeholder="e.g jhondoe@xyz.com"
                                 placeholderTextColor="#b9b9b9"
                                 value={email}
-                                onChangeText={ (text) => setEmail(text) }
+                                onChangeText={(text) => setEmail(text)}
                             />
-                            <Icon name="user" size={20} color="#888" style={styles.icon} />
+                            <Icon name="envelope" size={20} color="#888" style={styles.icon} />
                         </View>
+                        {errors.email ? <Text style={styles.error_text}>{errors.email}</Text> : null}
                     </View>
                     <View style={styles.password_area}>
                         <Text style={styles.text_title}>Password</Text>
-                        <View style={styles.input_container}>
+                        <View style={[styles.input_container, { borderColor: errors.password ? 'red' : '#E1F3FB' }]}>
                             <TextInput
                                 style={styles.text_input}
                                 placeholder='* * * * * * * * * * *'
                                 placeholderTextColor='#b9b9b9'
                                 secureTextEntry={passwordVisibilty}
                                 value={password}
-                                onChangeText={ (text) => setPassword(text) }
+                                onChangeText={(text) => setPassword(text)}
                             />
                             {
                                 passwordVisibilty ?
@@ -79,30 +104,26 @@ const Login = ({ navigation }) => {
                                     </TouchableOpacity>
                             }
                         </View>
-
+                        {errors.password ? <Text style={styles.error_text}>{errors.password}</Text> : null}
                     </View>
                 </KeyboardAvoidingView>
                 <View style={styles.form_btn_container}>
-                    <TouchableOpacity style={styles.login_btn} onPress={ () => submitForm() }>
+                    <TouchableOpacity style={styles.login_btn} onPress={submitForm}>
                         <Text style={styles.login_btn_text}>Login</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.signup_btn} onPress={() => navigation.navigate('SignUp')}>
-                        <Text style={styles.signup_btn_text}>Don't have an account? 
-                            <Text style={styles.signup_text}> Sign Up</Text>
-                        </Text>
+                        <Text style={styles.signup_btn_text}>Don't have an account? <Text style={styles.signup_text}>Sign Up</Text></Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.signup_btn} onPress={() => navigation.navigate('ForgotPassword')}>
                         <Text style={styles.forgot_password}>Forgot Password?</Text>
                     </TouchableOpacity>
-
                 </View>
             </ScrollView>
-
         </ImageBackground>
-    )
-}
+    );
+};
 
-export default Login
+export default Login;
 
 const styles = StyleSheet.create({
     container: {
@@ -115,7 +136,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 70,
         marginBottom: 20,
-
     },
     logo_large: {
         height: 80,
@@ -179,7 +199,6 @@ const styles = StyleSheet.create({
         color: '#000000',
         fontSize: 18,
         fontWeight: '700',
-
     },
     forgot_password: {
         color: '#E21C1C',
@@ -197,5 +216,10 @@ const styles = StyleSheet.create({
     signup_text: {
         color: '#2CABE2',
         fontWeight: '500',
+    },
+    error_text: {
+        color: 'red',
+        fontSize: 14,
+        marginTop: 5
     }
 });

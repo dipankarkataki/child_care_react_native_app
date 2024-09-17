@@ -6,7 +6,7 @@ const background = require('../../assets/images/background.png')
 const logo_large = require('../../assets/images/child-care-logo-large.png');
 
 const SignUp = ({ navigation }) => {
-    
+
     const [passwordVisibilty, setPasswordVisibility] = useState(true);
     const [confirmPasswordVisibilty, setConfirmPasswordVisibility] = useState(true);
 
@@ -17,15 +17,77 @@ const SignUp = ({ navigation }) => {
     let [password, setPassword] = useState('');
     let [confirmPassword, setConfirmPassword] = useState('');
 
-    const submitForm = () => {
-        console.log('firstName :', firstName)
-        console.log('lastName :', lastName)
-        console.log('email :', email)
-        console.log('phone :', phone)
-        console.log('password :', password)
-        console.log('confirmPassword :', confirmPassword)
+    const [errors, setErrors] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        password: '',
+        confirmPassword: ''
+    });
+
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = { ...errors };
+
+        if (!firstName) {
+            newErrors.firstName = 'First name is required';
+            isValid = false;
+        } else {
+            newErrors.firstName = '';
+        }
+
+        if (!lastName) {
+            newErrors.lastName = 'Last name is required';
+            isValid = false;
+        } else {
+            newErrors.lastName = '';
+        }
+
+        if (!email || !/\S+@\S+\.\S+/.test(email)) {
+            newErrors.email = 'Valid email is required';
+            isValid = false;
+        } else {
+            newErrors.email = '';
+        }
+
+        if (!phone || phone.length !== 4) {
+            newErrors.phone = 'Please enter the last 4 digits of your phone number';
+            isValid = false;
+        } else {
+            newErrors.phone = '';
+        }
+
+        if (!password) {
+            newErrors.password = 'Password is required';
+            isValid = false;
+        } else {
+            newErrors.password = '';
+        }
+
+        if (password !== confirmPassword) {
+            newErrors.confirmPassword = 'Passwords do not match';
+            isValid = false;
+        } else {
+            newErrors.confirmPassword = '';
+        }
+
+        setErrors(newErrors);
+        return isValid;
     }
-   
+
+    const submitForm = () => {
+        if (validateForm()) {
+            console.log('Form Submitted');
+            console.log('firstName :', firstName);
+            console.log('lastName :', lastName);
+            console.log('email :', email);
+            console.log('phone :', phone);
+            console.log('password :', password);
+            console.log('confirmPassword :', confirmPassword);
+        }
+    }
+
 
     return (
         <ImageBackground source={background} style={styles.container}>
@@ -38,111 +100,122 @@ const SignUp = ({ navigation }) => {
                         <View style={styles.name_area}>
                             <View style={styles.firstname}>
                                 <Text style={styles.text_title}>First Name</Text>
-                                <View style={styles.input_container}>
+                                <View style={[styles.input_container, { borderColor: errors.firstName ? 'red' : '#E1F3FB' }]}>
                                     <TextInput
                                         style={styles.text_input}
                                         placeholder="e.g Jhon"
                                         placeholderTextColor="#b9b9b9"
                                         value={firstName}
-                                        onChangeText={ (text) => setFirstName(text) }
+                                        onChangeText={(text) => setFirstName(text)}
                                     />
                                 </View>
+                                {errors.firstName ? <Text style={styles.error_text}>{errors.firstName}</Text> : null}
                             </View>
                             <View style={styles.lastname}>
                                 <Text style={styles.text_title}>Last Name</Text>
-                                <View style={styles.input_container}>
+                                <View style={[styles.input_container, { borderColor: errors.lastName ? 'red' : '#E1F3FB' }]}>
                                     <TextInput
                                         style={styles.text_input}
                                         placeholder="e.g Doe"
                                         placeholderTextColor="#b9b9b9"
                                         value={lastName}
-                                        onChangeText={ (text) => setLastName(text) }
+                                        onChangeText={(text) => setLastName(text)}
                                     />
                                 </View>
+                                {errors.lastName ? <Text style={styles.error_text}>{errors.lastName}</Text> : null}
                             </View>
                         </View>
 
                         <View style={styles.email_area}>
                             <Text style={styles.text_title}>Email</Text>
-                            <View style={styles.input_container}>
+                            <View style={[styles.input_container, { borderColor: errors.email ? 'red' : '#E1F3FB' }]}>
                                 <TextInput
                                     style={styles.text_input}
                                     placeholder="e.g jhondoe@xyz.com"
                                     placeholderTextColor="#b9b9b9"
                                     value={email}
-                                    onChangeText={ (text) => setEmail(text) }
+                                    onChangeText={(text) => setEmail(text)}
                                 />
                                 <Icon name="envelope" size={20} color="#888" style={styles.icon} />
                             </View>
+                            {errors.email ? <Text style={styles.error_text}>{errors.email}</Text> : null}
                         </View>
+
                         <View style={styles.email_area}>
                             <Text style={styles.text_title}>Last 4 digits of your phone number</Text>
-                            <View style={styles.input_container}>
+                            <View style={[styles.input_container, { borderColor: errors.phone ? 'red' : '#E1F3FB' }]}>
                                 <TextInput
                                     style={styles.text_input}
                                     placeholder="e.g 4567"
                                     placeholderTextColor="#b9b9b9"
                                     keyboardType="number-pad"
                                     value={phone}
-                                    onChangeText={ (text) => setPhone(text) }
+                                    onChangeText={(text) => setPhone(text)}
+                                    maxLength={4}
                                 />
                                 <TouchableOpacity style={styles.verify_phone_btn}>
                                     <Text style={styles.verify_phone_text}>Verify</Text>
                                 </TouchableOpacity>
                             </View>
+                            {errors.phone ? <Text style={styles.error_text}>{errors.phone}</Text> : null}
                         </View>
+
                         <View style={styles.password_area}>
                             <Text style={styles.text_title}>Password</Text>
-                            <View style={styles.input_container}>
+                            <View style={[styles.input_container, { borderColor: errors.password ? 'red' : '#E1F3FB' }]}>
                                 <TextInput
                                     style={styles.text_input}
                                     placeholder='* * * * * * * * * * *'
                                     placeholderTextColor='#b9b9b9'
                                     secureTextEntry={passwordVisibilty}
                                     value={password}
-                                    onChangeText={ (text) => setPassword(text) }
+                                    onChangeText={(text) => setPassword(text)}
                                 />
                                 {
                                     passwordVisibilty ?
                                         <TouchableOpacity onPress={() => setPasswordVisibility(false)}>
                                             <Icon name="eye-slash" size={20} color="#888" style={styles.icon} />
                                         </TouchableOpacity>
-                                    :
+                                        :
                                         <TouchableOpacity onPress={() => setPasswordVisibility(true)}>
                                             <Icon name="eye" size={20} color="#888" style={styles.icon} />
                                         </TouchableOpacity>
                                 }
                             </View>
+                            {errors.password ? <Text style={styles.error_text}>{errors.password}</Text> : null}
                         </View>
+
                         <View style={styles.password_area}>
                             <Text style={styles.text_title}>Confirm Password</Text>
-                            <View style={styles.input_container}>
+                            <View style={[styles.input_container, { borderColor: errors.confirmPassword ? 'red' : '#E1F3FB' }]}>
                                 <TextInput
                                     style={styles.text_input}
                                     placeholder='* * * * * * * * * * *'
                                     placeholderTextColor='#b9b9b9'
                                     secureTextEntry={confirmPasswordVisibilty}
                                     value={confirmPassword}
-                                    onChangeText={ (text) => setConfirmPassword(text) }
+                                    onChangeText={(text) => setConfirmPassword(text)}
                                 />
                                 {
                                     confirmPasswordVisibilty ?
                                         <TouchableOpacity onPress={() => setConfirmPasswordVisibility(false)}>
                                             <Icon name="eye-slash" size={20} color="#888" style={styles.icon} />
                                         </TouchableOpacity>
-                                    :
+                                        :
                                         <TouchableOpacity onPress={() => setConfirmPasswordVisibility(true)}>
                                             <Icon name="eye" size={20} color="#888" style={styles.icon} />
                                         </TouchableOpacity>
                                 }
                             </View>
+                            {errors.confirmPassword ? <Text style={styles.error_text}>{errors.confirmPassword}</Text> : null}
                         </View>
+
                     </View>
                     <View style={styles.form_btn_container}>
                         {/* <TouchableOpacity style={styles.register} onPress={() => navigation.navigate('Dashboard')}>
                             <Text style={styles.register_text}>Register</Text>
                         </TouchableOpacity> */}
-                        <TouchableOpacity style={styles.register} onPress={ () => submitForm() }>
+                        <TouchableOpacity style={styles.register} onPress={() => submitForm()}>
                             <Text style={styles.register_text}>Register</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.login_btn} onPress={() => navigation.navigate('Login')}>
@@ -162,7 +235,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     logo_area: {
-        flex:1,
+        flex: 1,
         marginTop: 50,
         alignItems: 'center'
     },
@@ -253,7 +326,7 @@ const styles = StyleSheet.create({
     },
     login_btn: {
         marginTop: 10,
-        marginBottom:50,
+        marginBottom: 50,
     },
     login_btn_text: {
         color: '#000000',
@@ -278,5 +351,10 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#fff',
         fontWeight: '500'
+    },
+    error_text: {
+        color: 'red',
+        fontSize: 14,
+        marginTop: 5,
     }
 })
