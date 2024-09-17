@@ -1,11 +1,11 @@
-import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, KeyboardAvoidingView, TextInput } from 'react-native'
+import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, KeyboardAvoidingView, TextInput, Platform } from 'react-native'
 import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const backgroundImage = require('../../assets/images/background.png')
 const logo_large = require('../../assets/images/child-care-logo-large.png');
 
-const VerifyOtp = () => {
+const VerifyOtp = ({navigation}) => {
 
     const [otp, setOtp] = useState('');
     const [errors, setErrors] = useState({
@@ -30,6 +30,7 @@ const VerifyOtp = () => {
     const submitForm = () =>{
         if (validateForm()) {
             console.log('otp :', otp);
+            navigation.navigate('ChangePassword')
         }
     }
 
@@ -39,7 +40,7 @@ const VerifyOtp = () => {
                 <Image source={logo_large} style={styles.logo_large} />
             </View>
             <View style={styles.verify_otp_container}>
-                <KeyboardAvoidingView style={styles.form}>
+                <KeyboardAvoidingView behaviour={Platform.OS === 'ios' ? 'padding' : null} style={styles.form} >
                     <View style={styles.otp_area}>
                         <Text style={styles.text_title}>Enter 6 Digit OTP</Text>
                         <View style={[styles.input_container, { borderColor: errors.otp ? 'red' : '#E1F3FB' }]}>
@@ -52,7 +53,7 @@ const VerifyOtp = () => {
                                 keyboardType="number-pad"
                                 onChangeText={(text) => setOtp(text.replace(/[^0-9]/g, ''))}
                             />
-                            <Icon name="envelope" size={20} color="#888" style={styles.icon} />
+                            <Icon name="mobile-phone" size={20} color="#888" style={styles.icon} />
                         </View>
                         {errors.otp ? <Text style={styles.error_text}>{errors.otp}</Text> : null}
                     </View>
