@@ -152,7 +152,7 @@ const SignUp = ({ navigation }) => {
                                     placeholderTextColor="#b9b9b9"
                                     keyboardType="number-pad"
                                     value={phone}
-                                    onChangeText={(text) => setPhone(text)}
+                                    onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ''))}
                                     maxLength={4}
                                 />
                                 <TouchableOpacity style={styles.verify_phone_btn}>

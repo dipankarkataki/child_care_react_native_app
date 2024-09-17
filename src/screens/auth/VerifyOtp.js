@@ -1,12 +1,13 @@
-import { ImageBackground, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native'
+import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, KeyboardAvoidingView, TextInput } from 'react-native'
 import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const background = require('../../assets/images/background.png')
+const backgroundImage = require('../../assets/images/background.png')
 const logo_large = require('../../assets/images/child-care-logo-large.png');
 
-const ForgotPassword = ({navigation}) => {
-    const [email, setEmail] = useState('');
+const VerifyOtp = () => {
+
+    const [otp, setOtp] = useState('');
     const [errors, setErrors] = useState({
         email: '',
     });
@@ -15,47 +16,48 @@ const ForgotPassword = ({navigation}) => {
         let isValid = true;
         const newErrors = { ...errors };
 
-        if (!email || !/\S+@\S+\.\S+/.test(email)) {
-            newErrors.email = 'Valid email is required';
+        if (!otp || !/^\d{6}$/.test(otp)) {
+            newErrors.otp = 'Please Enter 6 Digit OTP';
             isValid = false;
         } else {
-            newErrors.email = '';
+            newErrors.otp = '';
         }
 
         setErrors(newErrors);
         return isValid;
     };
 
-    const submitForm = () => {
+    const submitForm = () =>{
         if (validateForm()) {
-            console.log('email :', email);
-            navigation.navigate('VerifyOtp')
+            console.log('otp :', otp);
         }
     }
 
     return (
-        <ImageBackground source={background} style={styles.container}>
+        <ImageBackground source={backgroundImage} style={styles.container}>
             <View style={styles.logo_area}>
                 <Image source={logo_large} style={styles.logo_large} />
             </View>
-            <View style={styles.forgot_password_container}>
+            <View style={styles.verify_otp_container}>
                 <KeyboardAvoidingView style={styles.form}>
-                    <View style={styles.email_area}>
-                        <Text style={styles.text_title}>Enter Registered Email</Text>
-                        <View style={[styles.input_container, { borderColor: errors.email ? 'red' : '#E1F3FB' }]}>
+                    <View style={styles.otp_area}>
+                        <Text style={styles.text_title}>Enter 6 Digit OTP</Text>
+                        <View style={[styles.input_container, { borderColor: errors.otp ? 'red' : '#E1F3FB' }]}>
                             <TextInput
                                 style={styles.text_input}
-                                placeholder="e.g jhondoe@xyz.com"
+                                placeholder="e.g 012345"
                                 placeholderTextColor="#b9b9b9"
-                                value={email}
-                                onChangeText={(text) => setEmail(text)}
+                                value={otp}
+                                maxLength={6}
+                                keyboardType="number-pad"
+                                onChangeText={(text) => setOtp(text.replace(/[^0-9]/g, ''))}
                             />
                             <Icon name="envelope" size={20} color="#888" style={styles.icon} />
                         </View>
-                        {errors.email ? <Text style={styles.error_text}>{errors.email}</Text> : null}
+                        {errors.otp ? <Text style={styles.error_text}>{errors.otp}</Text> : null}
                     </View>
-                    <TouchableOpacity style={styles.forgot_password} onPress={() => submitForm() }>
-                        <Text style={styles.forgot_password_text}>Send Reset Link</Text>
+                    <TouchableOpacity style={styles.verify_otp} onPress={() => submitForm()}>
+                        <Text style={styles.verify_otp_text}>Verify OTP</Text>
                     </TouchableOpacity>
                 </KeyboardAvoidingView>
             </View>
@@ -63,7 +65,7 @@ const ForgotPassword = ({navigation}) => {
     )
 }
 
-export default ForgotPassword
+export default VerifyOtp
 
 const styles = StyleSheet.create({
     container: {
@@ -77,7 +79,7 @@ const styles = StyleSheet.create({
     logo_large: {
         height: 80,
     },
-    forgot_password_container: {
+    verify_otp_container: {
         flex: 3,
         marginTop: 30,
     },
@@ -86,7 +88,7 @@ const styles = StyleSheet.create({
         marginLeft: 20,
         marginRight: 20
     },
-    email_area: {
+    otp_area: {
         marginBottom: 15
     },
     text_title: {
@@ -115,7 +117,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
         color: 'black'
     },
-    forgot_password: {
+    verify_otp: {
         backgroundColor: '#FFB52E',
         borderRadius: 10,
         width: '100%',
@@ -123,7 +125,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    forgot_password_text: {
+    verify_otp_text: {
         color: '#000000',
         fontSize: 18,
         fontWeight: '700',

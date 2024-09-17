@@ -9,6 +9,7 @@ import Dashboard from '../screens/Dashboard';
 import SignUp from '../screens/auth/Signup';
 import ForgotPassword from '../screens/auth/ForgotPassword';
 import ProfileSettings from '../screens/ProfileSettings';
+import VerifyOtp from '../screens/auth/VerifyOtp';
 
 
 const Stack = createNativeStackNavigator();
@@ -60,6 +61,13 @@ const ScreenNavigation = () => {
                     }} />
                 <Stack.Screen  name="ProfileSettings" component={ProfileSettings} options={{
                         title: 'Profile Settings',
+                        headerStyle: {
+                            backgroundColor: '#2CABE2',
+                        },
+                        headerTintColor: '#fff',
+                    }}/>
+                <Stack.Screen  name="VerifyOtp" component={VerifyOtp} options={{
+                        title: 'Verify OTP',
                         headerStyle: {
                             backgroundColor: '#2CABE2',
                         },
