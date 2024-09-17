@@ -39,7 +39,7 @@ const Login = ({ navigation }) => {
 
     const submitForm = () => {
         if (validateForm()) {
-            if (email === 'dipankar@childcaresoftware.com') {
+            if (email === 'parent@gmail.com') {
                 navigation.navigate('Dashboard');
             } else {
                 console.warn('Oops! Incorrect credentials');
@@ -134,8 +134,8 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 70,
-        marginBottom: 20,
+        marginTop: 80,
+        marginBottom: 50,
     },
     logo_large: {
         height: 80,
