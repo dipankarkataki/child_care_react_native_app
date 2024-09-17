@@ -26,6 +26,8 @@ const SignUp = ({ navigation }) => {
         confirmPassword: ''
     });
 
+    
+
     const validateForm = () => {
         let isValid = true;
         const newErrors = { ...errors };

@@ -202,12 +202,12 @@ const styles = StyleSheet.create({
     },
     forgot_password: {
         color: '#E21C1C',
-        marginTop: 20,
+        marginTop: 0,
         fontSize: 18,
         fontWeight: '700',
     },
     signup_btn: {
-        marginTop: 10
+        marginTop: 15
     },
     signup_btn_text: {
         color: '#000000',
