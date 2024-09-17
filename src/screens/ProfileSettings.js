@@ -10,7 +10,7 @@ const ProfileSettings = ({ navigation }) => {
     };
 
     const handleLogout = () => {
-        navigation.replace('Login');
+        navigation.replace('UserOption');
     };
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>
