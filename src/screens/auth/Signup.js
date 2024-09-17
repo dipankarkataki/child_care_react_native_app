@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
+import { ImageBackground, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -9,6 +9,7 @@ const SignUp = ({ navigation }) => {
 
     const [passwordVisibilty, setPasswordVisibility] = useState(true);
     const [confirmPasswordVisibilty, setConfirmPasswordVisibility] = useState(true);
+    const [loader, setLoader] = useState(false);
 
     let [firstName, setFirstName] = useState('');
     let [lastName, setLastName] = useState('');
@@ -80,6 +81,11 @@ const SignUp = ({ navigation }) => {
 
     const submitForm = () => {
         if (validateForm()) {
+            setLoader(true);
+            setTimeout( () => {
+                setLoader(false);
+                console.warn('Signup Successfull!')
+            },2000);
             console.log('Form Submitted');
             console.log('firstName :', firstName);
             console.log('lastName :', lastName);
@@ -214,11 +220,9 @@ const SignUp = ({ navigation }) => {
 
                     </View>
                     <View style={styles.form_btn_container}>
-                        {/* <TouchableOpacity style={styles.register} onPress={() => navigation.navigate('Dashboard')}>
-                            <Text style={styles.register_text}>Register</Text>
-                        </TouchableOpacity> */}
-                        <TouchableOpacity style={styles.register} onPress={() => submitForm()}>
-                            <Text style={styles.register_text}>Register</Text>
+                        <TouchableOpacity style={styles.register} onPress={() => submitForm()} disabled={loader}>
+                            <Text style={styles.register_text}>{loader ? 'Please wait...' : 'Sign Up'}</Text>
+                            <ActivityIndicator size="large" color='#2E78FF' style={styles.activity_indicator} animating={loader}/>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.login_btn} onPress={() => navigation.navigate('Login')}>
                             <Text style={styles.login_btn_text}>Already have an account? <Text style={styles.login_text}>Login</Text></Text>
@@ -313,6 +317,7 @@ const styles = StyleSheet.create({
         marginTop: 30
     },
     register: {
+        flexDirection:'row',
         backgroundColor: '#FFB52E',
         borderRadius: 10,
         width: '100%',

@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
+import { ImageBackground, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -9,6 +9,7 @@ const ChangePassword = ({ navigation }) => {
 
     const [passwordVisibilty, setPasswordVisibility] = useState(true);
     const [confirmPasswordVisibilty, setConfirmPasswordVisibility] = useState(true);
+    const [loader, setLoader] = useState(false);
 
     let [password, setPassword] = useState('');
     let [confirmPassword, setConfirmPassword] = useState('');
@@ -44,9 +45,14 @@ const ChangePassword = ({ navigation }) => {
 
     const submitForm = () => {
         if (validateForm()) {
-            console.log('password :', password);
-            console.log('confirmPassword :', confirmPassword);
-            navigation.replace('Login')
+            setLoader(true);
+            setTimeout( () => {
+                setLoader(false);
+                console.log('password :', password);
+                console.log('confirmPassword :', confirmPassword);
+                navigation.replace('Login')
+            },2000);
+            
         }
     }
 
@@ -111,8 +117,9 @@ const ChangePassword = ({ navigation }) => {
 
                     </View>
                     <View style={styles.form_btn_container}>
-                        <TouchableOpacity style={styles.change_password} onPress={() => submitForm()}>
-                            <Text style={styles.change_password_text}>Submit</Text>
+                        <TouchableOpacity style={styles.change_password} onPress={() => submitForm()} disabled={loader}>
+                            <Text style={styles.change_password_text}>{loader ? 'Please wait...' : 'Change Password'}</Text>
+                            <ActivityIndicator size="large" color='#2E78FF' style={styles.activity_indicator} animating={loader}/>
                         </TouchableOpacity>
                     </View>
                 </KeyboardAvoidingView>
@@ -190,6 +197,7 @@ const styles = StyleSheet.create({
         marginTop: 30
     },
     change_password: {
+        flexDirection:'row',
         backgroundColor: '#FFB52E',
         borderRadius: 10,
         width: '100%',

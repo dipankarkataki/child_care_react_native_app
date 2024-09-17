@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native'
+import { ImageBackground, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, KeyboardAvoidingView, ActivityIndicator } from 'react-native'
 import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -7,6 +7,7 @@ const logo_large = require('../../assets/images/child-care-logo-large.png');
 
 const ForgotPassword = ({navigation}) => {
     const [email, setEmail] = useState('');
+    const [loader, setLoader] = useState(false);
     const [errors, setErrors] = useState({
         email: '',
     });
@@ -28,8 +29,12 @@ const ForgotPassword = ({navigation}) => {
 
     const submitForm = () => {
         if (validateForm()) {
-            console.log('email :', email);
-            navigation.navigate('VerifyOtp')
+            setLoader(true);
+            setTimeout( () => {
+                setLoader(false);
+                console.log('email :', email);
+                navigation.navigate('VerifyOtp')
+            },2000);
         }
     }
 
@@ -54,8 +59,9 @@ const ForgotPassword = ({navigation}) => {
                         </View>
                         {errors.email ? <Text style={styles.error_text}>{errors.email}</Text> : null}
                     </View>
-                    <TouchableOpacity style={styles.forgot_password} onPress={() => submitForm() }>
-                        <Text style={styles.forgot_password_text}>Send Reset Link</Text>
+                    <TouchableOpacity style={styles.forgot_password} onPress={() => submitForm() } disabled={loader} >
+                        <Text style={styles.forgot_password_text}>{loader ? 'Sending...' : 'Send Reset Link'}</Text>
+                        <ActivityIndicator size="large" color='#2E78FF' style={styles.activity_indicator} animating={loader}/>
                     </TouchableOpacity>
                 </KeyboardAvoidingView>
             </View>
@@ -116,6 +122,7 @@ const styles = StyleSheet.create({
         color: 'black'
     },
     forgot_password: {
+        flexDirection:'row',
         backgroundColor: '#FFB52E',
         borderRadius: 10,
         width: '100%',
@@ -134,4 +141,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginTop: 5
     },
+    activity_indicator:{
+        marginLeft:10, 
+    },  
 })

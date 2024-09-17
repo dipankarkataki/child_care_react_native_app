@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, KeyboardAvoidingView, TextInput, Platform } from 'react-native'
+import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, KeyboardAvoidingView, TextInput, Platform, ActivityIndicator } from 'react-native'
 import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -8,6 +8,7 @@ const logo_large = require('../../assets/images/child-care-logo-large.png');
 const VerifyOtp = ({navigation}) => {
 
     const [otp, setOtp] = useState('');
+    const [loader, setLoader] = useState(false);
     const [errors, setErrors] = useState({
         email: '',
     });
@@ -29,8 +30,13 @@ const VerifyOtp = ({navigation}) => {
 
     const submitForm = () =>{
         if (validateForm()) {
-            console.log('otp :', otp);
-            navigation.navigate('ChangePassword')
+            setLoader(true);
+            setTimeout( () => {
+                setLoader(false);
+                console.log('otp :', otp);
+                navigation.navigate('ChangePassword')
+            },2000);
+            
         }
     }
 
@@ -57,8 +63,9 @@ const VerifyOtp = ({navigation}) => {
                         </View>
                         {errors.otp ? <Text style={styles.error_text}>{errors.otp}</Text> : null}
                     </View>
-                    <TouchableOpacity style={styles.verify_otp} onPress={() => submitForm()}>
-                        <Text style={styles.verify_otp_text}>Verify OTP</Text>
+                    <TouchableOpacity style={styles.verify_otp} onPress={() => submitForm()} disabled={loader}>
+                        <Text style={styles.verify_otp_text}>{loader ? 'Verifying...' : 'Verify OTP'}</Text>
+                        <ActivityIndicator size="large" color='#2E78FF' style={styles.activity_indicator} animating={loader}/>
                     </TouchableOpacity>
                 </KeyboardAvoidingView>
             </View>
@@ -119,6 +126,7 @@ const styles = StyleSheet.create({
         color: 'black'
     },
     verify_otp: {
+        flexDirection:'row',
         backgroundColor: '#FFB52E',
         borderRadius: 10,
         width: '100%',

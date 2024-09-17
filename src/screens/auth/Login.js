@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LoginApi from '../../api/LoginApi';
@@ -10,6 +10,7 @@ const Login = ({ navigation }) => {
     const [passwordVisibilty, setPasswordVisibility] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loader, setLoader] = useState(false);
     const [errors, setErrors] = useState({
         email: '',
         password: ''
@@ -40,7 +41,11 @@ const Login = ({ navigation }) => {
     const submitForm = () => {
         if (validateForm()) {
             if (email === 'parent@gmail.com') {
-                navigation.navigate('Dashboard');
+                setLoader(true);
+                setTimeout( () => {
+                    setLoader(false);
+                    navigation.navigate('Dashboard')
+                },2000);
             } else {
                 console.warn('Oops! Incorrect credentials');
             }
@@ -108,8 +113,9 @@ const Login = ({ navigation }) => {
                     </View>
                 </KeyboardAvoidingView>
                 <View style={styles.form_btn_container}>
-                    <TouchableOpacity style={styles.login_btn} onPress={submitForm}>
-                        <Text style={styles.login_btn_text}>Login</Text>
+                    <TouchableOpacity style={styles.login_btn} onPress={submitForm} disabled={loader}>
+                        <Text style={styles.login_btn_text}>{loader ? 'Loging in...' : 'Login'}</Text>
+                        <ActivityIndicator size="large" color='#2E78FF' style={styles.activity_indicator} animating={loader}/>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.signup_btn} onPress={() => navigation.navigate('SignUp')}>
                         <Text style={styles.signup_btn_text}>Don't have an account? <Text style={styles.signup_text}>Sign Up</Text></Text>
@@ -134,7 +140,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 80,
+        marginTop: 50,
         marginBottom: 50,
     },
     logo_large: {
@@ -142,7 +148,7 @@ const styles = StyleSheet.create({
     },
     form: {
         flex: 1,
-        marginTop: 70,
+        marginTop: 50,
         marginLeft: 20,
         marginRight: 20,
         marginBottom: 50
@@ -188,6 +194,7 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     login_btn: {
+        flexDirection:'row',
         backgroundColor: '#FFB52E',
         borderRadius: 10,
         width: '100%',
@@ -221,5 +228,8 @@ const styles = StyleSheet.create({
         color: 'red',
         fontSize: 14,
         marginTop: 5
-    }
+    },
+    activity_indicator:{
+        marginLeft:10, 
+    },  
 });
