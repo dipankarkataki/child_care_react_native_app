@@ -1,6 +1,7 @@
 import { ImageBackground, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import ModalComponent from '../../components/ModalComponent';
 
 const background = require('../../assets/images/background.png')
 const logo_large = require('../../assets/images/child-care-logo-large.png');
@@ -10,6 +11,8 @@ const ChangePassword = ({ navigation }) => {
     const [passwordVisibilty, setPasswordVisibility] = useState(true);
     const [confirmPasswordVisibilty, setConfirmPasswordVisibility] = useState(true);
     const [loader, setLoader] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [shouldNavigate, setShouldNavigate] = useState(true);
 
     let [password, setPassword] = useState('');
     let [confirmPassword, setConfirmPassword] = useState('');
@@ -50,9 +53,15 @@ const ChangePassword = ({ navigation }) => {
                 setLoader(false);
                 console.log('password :', password);
                 console.log('confirmPassword :', confirmPassword);
-                navigation.replace('Login')
+                setModalVisible(true);
             },2000);
             
+        }
+    }
+
+    const handleOnClose = () => {
+        if(shouldNavigate){
+            navigation.replace('Login')
         }
     }
 
@@ -124,6 +133,14 @@ const ChangePassword = ({ navigation }) => {
                     </View>
                 </KeyboardAvoidingView>
             </ScrollView>
+            <ModalComponent 
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                message="Password changed successfully"
+                onClose={handleOnClose}
+                icon="success"
+            
+            />
         </ImageBackground>
     )
 }

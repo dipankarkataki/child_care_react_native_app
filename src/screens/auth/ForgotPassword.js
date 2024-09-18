@@ -1,6 +1,7 @@
 import { ImageBackground, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, KeyboardAvoidingView, ActivityIndicator } from 'react-native'
 import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import ModalComponent from '../../components/ModalComponent';
 
 const background = require('../../assets/images/background.png')
 const logo_large = require('../../assets/images/child-care-logo-large.png');
@@ -8,6 +9,9 @@ const logo_large = require('../../assets/images/child-care-logo-large.png');
 const ForgotPassword = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [loader, setLoader] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [shouldNavigate, setShouldNavigate] = useState(true);
+
     const [errors, setErrors] = useState({
         email: '',
     });
@@ -32,9 +36,15 @@ const ForgotPassword = ({navigation}) => {
             setLoader(true);
             setTimeout( () => {
                 setLoader(false);
+                setModalVisible(true);
                 console.log('email :', email);
-                navigation.navigate('VerifyOtp')
             },2000);
+        }
+    }
+
+    const handleOnClose = () => {
+        if(shouldNavigate){
+            navigation.navigate('VerifyOtp')
         }
     }
 
@@ -65,6 +75,13 @@ const ForgotPassword = ({navigation}) => {
                     </TouchableOpacity>
                 </KeyboardAvoidingView>
             </View>
+            <ModalComponent 
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                message="Reset password code has been sent to your registered email"
+                onClose={handleOnClose}
+                icon="success"
+            />
         </ImageBackground>
     )
 }

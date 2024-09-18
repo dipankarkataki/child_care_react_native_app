@@ -1,6 +1,7 @@
 import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, KeyboardAvoidingView, TextInput, Platform, ActivityIndicator } from 'react-native'
 import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import ModalComponent from '../../components/ModalComponent';
 
 const backgroundImage = require('../../assets/images/background.png')
 const logo_large = require('../../assets/images/child-care-logo-large.png');
@@ -9,6 +10,8 @@ const VerifyOtp = ({navigation}) => {
 
     const [otp, setOtp] = useState('');
     const [loader, setLoader] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [shouldNavigate, setShouldNavigate] = useState(true);
     const [errors, setErrors] = useState({
         email: '',
     });
@@ -34,9 +37,15 @@ const VerifyOtp = ({navigation}) => {
             setTimeout( () => {
                 setLoader(false);
                 console.log('otp :', otp);
-                navigation.navigate('ChangePassword')
+                setModalVisible(true);
             },2000);
             
+        }
+    }
+
+    const handleOnClose = () => {
+        if(shouldNavigate){
+            navigation.navigate('ChangePassword')
         }
     }
 
@@ -69,6 +78,13 @@ const VerifyOtp = ({navigation}) => {
                     </TouchableOpacity>
                 </KeyboardAvoidingView>
             </View>
+            <ModalComponent 
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                message="OTP verified successfully"
+                onClose={handleOnClose}
+                icon="success"
+            />
         </ImageBackground>
     )
 }

@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ImageBackgr
 import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LoginApi from '../../api/LoginApi';
+import ModalComponent from '../../components/ModalComponent';
 
 const background = require('../../assets/images/background.png');
 const logo_large = require('../../assets/images/child-care-logo-large.png');
@@ -11,6 +12,10 @@ const Login = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loader, setLoader] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [shouldNavigate, setShouldNavigate] = useState(true);
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalIcon, setModalIcon] = useState(null); 
     const [errors, setErrors] = useState({
         email: '',
         password: ''
@@ -47,7 +52,10 @@ const Login = ({ navigation }) => {
                     navigation.navigate('Dashboard')
                 },2000);
             } else {
-                console.warn('Oops! Incorrect credentials');
+                setModalVisible(true);
+                setModalIcon('error');
+                setModalMessage('Oops! Invalid Credentials');
+                setShouldNavigate(false)
             }
             // Uncomment this when API integration is ready
             // LoginApi({
@@ -65,6 +73,10 @@ const Login = ({ navigation }) => {
             // });
         }
     };
+
+    const handleOnClose = () => {
+        setModalVisible(false)
+    }
 
     return (
         <ImageBackground source={background} style={styles.container}>
@@ -125,6 +137,14 @@ const Login = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+            <ModalComponent 
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                message={modalMessage}
+                onClose={handleOnClose}
+                icon={modalIcon}
+            
+            />
         </ImageBackground>
     );
 };
