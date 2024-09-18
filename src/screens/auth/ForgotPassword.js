@@ -60,7 +60,7 @@ const ForgotPassword = ({navigation}) => {
                         {errors.email ? <Text style={styles.error_text}>{errors.email}</Text> : null}
                     </View>
                     <TouchableOpacity style={styles.forgot_password} onPress={() => submitForm() } disabled={loader} >
-                        <Text style={styles.forgot_password_text}>{loader ? 'Sending...' : 'Send Reset Link'}</Text>
+                        <Text style={styles.forgot_password_text}>{loader ? 'Sending...' : 'Send Reset Code'}</Text>
                         <ActivityIndicator size="large" color='#2E78FF' style={styles.activity_indicator} animating={loader}/>
                     </TouchableOpacity>
                 </KeyboardAvoidingView>
@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
         color: '#000000',
         fontSize: 18,
         fontWeight: '700',
+        marginLeft:43,
 
     },
     error_text: {

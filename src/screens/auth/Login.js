@@ -200,12 +200,14 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 60,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     login_btn_text: {
         color: '#000000',
         fontSize: 18,
         fontWeight: '700',
+        marginLeft:45,
+        
     },
     forgot_password: {
         color: '#E21C1C',

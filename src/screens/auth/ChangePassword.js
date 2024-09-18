@@ -209,6 +209,7 @@ const styles = StyleSheet.create({
         color: '#000000',
         fontSize: 18,
         fontWeight: '700',
+        marginLeft:30,
 
     },
     error_text: {
