@@ -14,7 +14,7 @@ import ChangePassword from '../screens/auth/ChangePassword';
 
 
 const Stack = createNativeStackNavigator();
-const userAvatar = require('../assets/images/user-avatar.png')
+const userAvatar = require('../assets/images/profile-image.png')
 
 const ScreenNavigation = () => {
     return (
@@ -60,13 +60,7 @@ const ScreenNavigation = () => {
                         },
                         headerTintColor: '#fff',
                     }} />
-                <Stack.Screen  name="ProfileSettings" component={ProfileSettings} options={{
-                        title: 'Profile Settings',
-                        headerStyle: {
-                            backgroundColor: '#2CABE2',
-                        },
-                        headerTintColor: '#fff',
-                    }}/>
+                <Stack.Screen  name="ProfileSettings" component={ProfileSettings} options={{ headerShown: false }}/>
                 <Stack.Screen  name="VerifyOtp" component={VerifyOtp} options={{
                         title: 'Verify OTP',
                         headerStyle: {
@@ -94,6 +88,9 @@ const styles = StyleSheet.create({
         height: 40,
         borderRadius: 20,
         marginRight: 10,
-        backgroundColor:'#fff'
+        backgroundColor:'#fff',
+        borderWidth:2,
+        borderStyle:'solid',
+        borderColor:'white'
     },  
 })
