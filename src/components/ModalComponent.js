@@ -14,18 +14,17 @@ const ModalComponent = ({ message, icon, modalVisible, setModalVisible, onClose 
     };
 
     const renderIcon = () => {
-        if(icon){
-            if (icon === 'success') {
-                return <Image source={successImage} style={styles.icon} />;
-            } else if (icon === 'error') {
-                return <Image source={errorImage} style={styles.icon} />;
-            } else if (icon === 'warning') {
-                return <Image source={warningImage} style={styles.icon} />;
-            } else {
-                return <Text>No Icon Available</Text>;
-            }
+        if (icon === 'success') {
+            return <Image source={successImage} style={styles.icon} />;
+        } else if (icon === 'error') {
+            return <Image source={errorImage} style={styles.icon} />;
+        } else if (icon === 'warning') {
+            return <Image source={warningImage} style={styles.icon} />;
+        } else if (icon === 'info') {
+            return <Image source={infoImage} style={styles.icon} />;
+        }else {
+            return <Text>No Icon Available</Text>;
         }
-        
     };
 
     return (

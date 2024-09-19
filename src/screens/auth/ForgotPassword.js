@@ -91,10 +91,12 @@ export default ForgotPassword
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        paddingLeft:20,
+        paddingRight:20
     },
     logo_area: {
         flex: 1,
-        marginTop: 60,
+        marginTop: 40,
         alignItems: 'center'
     },
     logo_large: {
@@ -102,28 +104,26 @@ const styles = StyleSheet.create({
     },
     forgot_password_container: {
         flex: 3,
-        marginTop: 30,
+        marginTop: 125,
     },
     form: {
         flex: 1,
-        marginLeft: 20,
-        marginRight: 20
     },
     email_area: {
-        marginBottom: 15
+        marginBottom: 34
     },
     text_title: {
         color: '#535353',
-        fontSize: 18,
-        fontWeight: '500',
-        marginBottom: 10
+        fontSize: 17,
+        marginBottom: 8,
+        fontFamily:'Poppins Medium'
     },
     text_input: {
         flex: 1,
-        fontSize: 18,
+        fontSize: 17,
         color: '#535353',
-        padding: 15,
-        height: 50
+        padding: 12,
+        fontFamily:'Poppins Regular'
     },
     input_container: {
         flexDirection: 'row',
@@ -150,9 +150,8 @@ const styles = StyleSheet.create({
     forgot_password_text: {
         color: '#000000',
         fontSize: 18,
-        fontWeight: '700',
-        marginLeft:43,
-
+        marginLeft:40,
+        fontFamily:'Poppins Medium',
     },
     error_text: {
         color: 'red',

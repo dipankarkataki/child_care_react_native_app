@@ -239,10 +239,12 @@ export default SignUp
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        paddingLeft:20,
+        paddingRight:20
     },
     logo_area: {
         flex: 1,
-        marginTop: 50,
+        marginTop: 40,
         alignItems: 'center'
     },
     logo_large: {
@@ -250,25 +252,15 @@ const styles = StyleSheet.create({
     },
     register_container: {
         flex: 1,
-        marginTop: 30,
-
-    },
-    heading: {
-        color: "#000000",
-        textAlign: 'center',
-        fontSize: 30,
-        marginBottom: 50,
-        fontWeight: '600',
+        marginTop: 70,
     },
     form: {
         flex: 1,
-        marginLeft: 20,
-        marginRight: 20,
-        marginTop: 40,
     },
     name_area: {
         flexDirection: 'row',
-        marginBottom: 15
+        flexWrap:'wrap',
+        marginBottom: 25
     },
     firstname: {
         flex: 1,
@@ -278,22 +270,23 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     email_area: {
-        marginBottom: 15
+        marginBottom: 25
     },
     password_area: {
-        marginBottom: 15
+        marginBottom: 25
     },
     text_title: {
         color: '#535353',
-        fontSize: 18,
-        fontWeight: '500',
-        marginBottom: 10
+        fontSize: 17,
+        marginBottom: 8,
+        fontFamily:'Poppins Medium'
     },
     text_input: {
         flex: 1,
-        fontSize: 18,
+        fontSize: 17,
         color: '#535353',
-        padding: 15,
+        padding: 12,
+        fontFamily:'Poppins Regular',
     },
     input_container: {
         flexDirection: 'row',
@@ -312,9 +305,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: 15,
-        marginRight: 20,
-        marginTop: 30
+        marginTop: 50
     },
     register: {
         flexDirection:'row',
@@ -328,8 +319,8 @@ const styles = StyleSheet.create({
     register_text: {
         color: '#000000',
         fontSize: 18,
-        fontWeight: '700',
-
+        fontFamily:'Poppins Medium',
+        marginLeft:40,
     },
     login_btn: {
         marginTop: 10,
@@ -337,11 +328,13 @@ const styles = StyleSheet.create({
     },
     login_btn_text: {
         color: '#000000',
-        fontWeight: '500',
+        fontSize:14,
+        fontFamily:'Poppins Regular',
     },
     login_text: {
         color: '#2CABE2',
-        fontWeight: '500',
+        fontSize:14,
+        fontFamily:'Poppins Regular',
     },
     verify_phone_btn: {
         justifyContent: 'center',
@@ -351,13 +344,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#1ab394',
         borderStyle: 'solid',
         width: 70,
-        padding: 5,
+        paddingTop: 5,
         borderRadius: 5,
     },
     verify_phone_text: {
-        fontSize: 18,
+        fontSize: 16,
         color: '#fff',
-        fontWeight: '500'
+        fontFamily:'Poppins Medium',
     },
     error_text: {
         color: 'red',

@@ -154,42 +154,40 @@ export default Login;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingBottom: 40
+        paddingLeft:20,
+        paddingRight:20
     },
     logo_area: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 50,
-        marginBottom: 50,
+        marginTop: 40,
     },
     logo_large: {
         height: 80,
     },
     form: {
-        flex: 1,
-        marginTop: 50,
-        marginLeft: 20,
-        marginRight: 20,
-        marginBottom: 50
+        flex: 2,
+        marginTop: 130,
     },
     email_area: {
-        marginBottom: 30
+        marginBottom: 34
     },
     password_area: {
-        marginBottom: 20
+        marginBottom: 34
     },
     text_title: {
         color: '#535353',
-        fontSize: 18,
-        fontWeight: '500',
-        marginBottom: 10
+        fontSize: 17,
+        marginBottom: 8,
+        fontFamily:'Poppins Medium'
     },
     text_input: {
         flex: 1,
-        fontSize: 18,
+        fontSize: 17,
         color: '#535353',
-        padding: 15
+        padding: 12,
+        fontFamily:'Poppins Regular'
     },
     input_container: {
         flexDirection: 'row',
@@ -209,9 +207,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: 15,
-        marginRight: 20,
-        marginTop: 20
+        marginTop: 100
     },
     login_btn: {
         flexDirection:'row',
@@ -225,26 +221,25 @@ const styles = StyleSheet.create({
     login_btn_text: {
         color: '#000000',
         fontSize: 18,
-        fontWeight: '700',
         marginLeft:45,
+        fontFamily:'Poppins Medium',
         
     },
     forgot_password: {
         color: '#E21C1C',
-        marginTop: 0,
-        fontSize: 18,
-        fontWeight: '700',
+        fontSize: 14,
+        fontFamily:'Poppins Medium'
     },
     signup_btn: {
-        marginTop: 15
+        marginTop: 12,
     },
     signup_btn_text: {
         color: '#000000',
-        fontWeight: '500',
+        fontFamily:'Poppins Medium'
     },
     signup_text: {
         color: '#2CABE2',
-        fontWeight: '500',
+        fontFamily:'Poppins Medium'
     },
     error_text: {
         color: 'red',

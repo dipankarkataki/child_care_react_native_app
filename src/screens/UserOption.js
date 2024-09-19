@@ -19,17 +19,17 @@ const LoginOption = ({ navigation }) => {
         <View style={styles.options}>
 
           <TouchableOpacity style={styles.owner}>
-            <Image source={owner_icon} style={styles.owner_icon}/>
+            <Image source={owner_icon} style={styles.icon_size}/>
             <Text style={styles.owner_text}>Owner</Text>
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.teacher}>
-            <Image source={teacher_icon} style={styles.teacher_icon}/>
+            <Image source={teacher_icon} style={styles.teicon_size}/>
             <Text style={styles.teacher_text}>Teacher</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.parent} onPress={() => navigation.navigate('Login')}>
-            <Image source={parent_icon} style={styles.parent_icon}/>
+            <Image source={parent_icon} style={styles.picon_size}/>
             <Text style={styles.parent_text}>Parent</Text>
           </TouchableOpacity>
           
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
   logo_area:{
     flex:1,
-    marginTop:80,
+    marginTop:40,
     alignItems:'center'
 
   },
@@ -56,17 +56,21 @@ const styles = StyleSheet.create({
   },
   option_container:{
     flex:2,
-    alignItems:'center'
-
+    alignItems:'center',
+    marginTop:70
   },
   heading_text:{
     color:'black',
     fontWeight:'500',
-    fontSize:28,
+    fontSize:22,
+    marginBottom:48,
+    fontFamily:'Poppins Medium'
   },
   options:{
     flexDirection:'row',
-    padding:30
+    flexWrap:'wrap',
+    paddingLeft:30,
+    paddingRight:30
   },
   owner:{
     flex:1,
@@ -74,61 +78,55 @@ const styles = StyleSheet.create({
     height:100,
     justifyContent:'center',
     alignItems:'center',
-    borderRadius:5,
+    borderRadius:7,
     borderWidth: 1,
     borderColor: '#E1F3FB',
     borderStyle: 'solid',
     marginRight:15
 
   },
-  owner_icon:{
-    height:30,
+  icon_size:{
+    width:40,
+    height:40,
   },
   owner_text:{
-    fontSize:20,
-    fontWeight:'400',
+    fontSize:14,
     color:'white',
-    marginTop:10
+    fontFamily:'Poppins Medium'
   },
   teacher:{
     flex:1,
     height:100,
     justifyContent:'center',
     alignItems:'center',
-    borderRadius:5,
+    borderRadius:7,
     borderWidth: 1,
     borderColor: '#E1F3FB',
     borderStyle: 'solid',
     marginRight:15,
     backgroundColor:'white'
   },
-  teacher_icon:{
-    height:30,
-  },
   teacher_text:{
-    fontSize:20,
-    fontWeight:'400',
+    fontSize:14,
+    fontFamily:'Poppins Medium',
     color:'black',
-    marginTop:10
+    marginTop:8
   },
   parent:{
     flex:1,
     height:100,
     justifyContent:'center',
     alignItems:'center',
-    borderRadius:5,
+    borderRadius:7,
     borderWidth: 1,
     borderColor: '#E1F3FB',
     borderStyle: 'solid',
     backgroundColor:'white'
   },
-  parent_icon:{
-    height:30,
-  },
   parent_text:{
-    fontSize:20,
-    fontWeight:'400',
+    fontSize:14,
+    fontFamily:'Poppins Medium',
     color:'black',
-    marginTop:10
+    marginTop:8
   },
 })

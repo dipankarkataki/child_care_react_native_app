@@ -150,10 +150,12 @@ export default ChangePassword
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        paddingLeft:20,
+        paddingRight:20
     },
     logo_area: {
         flex: 1,
-        marginTop: 50,
+        marginTop: 40,
         alignItems: 'center'
     },
     logo_large: {
@@ -161,36 +163,26 @@ const styles = StyleSheet.create({
     },
     change_password_container: {
         flex: 1,
-        marginTop: 30,
-
-    },
-    heading: {
-        color: "#000000",
-        textAlign: 'center',
-        fontSize: 30,
-        marginBottom: 50,
-        fontWeight: '600',
+        marginTop: 125,
     },
     form: {
         flex: 1,
-        marginLeft: 20,
-        marginRight: 20,
-        marginTop: 40,
     },
     password_area: {
-        marginBottom: 15
+        marginBottom: 25
     },
     text_title: {
         color: '#535353',
-        fontSize: 18,
-        fontWeight: '500',
-        marginBottom: 10
+        fontSize: 17,
+        marginBottom: 8,
+        fontFamily:'Poppins Medium'
     },
     text_input: {
         flex: 1,
-        fontSize: 18,
+        fontSize: 17,
         color: '#535353',
-        padding: 15,
+        padding: 12,
+        fontFamily:'Poppins Regular',
     },
     input_container: {
         flexDirection: 'row',
@@ -209,8 +201,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: 15,
-        marginRight: 20,
         marginTop: 30
     },
     change_password: {
@@ -225,8 +215,8 @@ const styles = StyleSheet.create({
     change_password_text: {
         color: '#000000',
         fontSize: 18,
-        fontWeight: '700',
-        marginLeft:30,
+        fontFamily:'Poppins Medium',
+        marginLeft:40,
 
     },
     error_text: {
