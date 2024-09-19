@@ -11,6 +11,8 @@ import ForgotPassword from '../screens/auth/ForgotPassword';
 import ProfileSettings from '../screens/ProfileSettings';
 import VerifyOtp from '../screens/auth/VerifyOtp';
 import ChangePassword from '../screens/auth/ChangePassword';
+import FamilyDetails from '../screens/family/FamilyDetails';
+import Billing from '../screens/billing/Billing';
 
 
 const Stack = createNativeStackNavigator();
@@ -20,7 +22,7 @@ const ScreenNavigation = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName='Splash' >
-                <Stack.Screen name="Splash" component={Splash}  options={{ headerShown: false }}/>
+                <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
                 <Stack.Screen name="UserOption" component={UserOption} options={{ headerShown: false }} />
                 <Stack.Screen name="Login" component={Login}
                     options={{
@@ -36,6 +38,8 @@ const ScreenNavigation = () => {
                         title: 'Dashboard',
                         headerStyle: {
                             backgroundColor: '#2CABE2',
+                            elevation: 0,
+                            shadowOpacity: 0,
                         },
                         headerTintColor: '#fff',
                         headerRight: () => (
@@ -49,6 +53,8 @@ const ScreenNavigation = () => {
                     title: 'Sign Up',
                     headerStyle: {
                         backgroundColor: '#2CABE2',
+                        elevation: 0,
+                        shadowOpacity: 0,
                     },
                     headerTintColor: '#fff',
                 }} />
@@ -57,24 +63,60 @@ const ScreenNavigation = () => {
                         title: 'Forgot Password',
                         headerStyle: {
                             backgroundColor: '#2CABE2',
+                            elevation: 0,
+                            shadowOpacity: 0,
                         },
                         headerTintColor: '#fff',
                     }} />
-                <Stack.Screen  name="ProfileSettings" component={ProfileSettings} options={{ headerShown: false }}/>
-                <Stack.Screen  name="VerifyOtp" component={VerifyOtp} options={{
-                        title: 'Verify OTP',
-                        headerStyle: {
-                            backgroundColor: '#2CABE2',
-                        },
-                        headerTintColor: '#fff',
-                    }}/>
-                <Stack.Screen  name="ChangePassword" component={ChangePassword} options={{
-                        title: 'Change Password',
-                        headerStyle: {
-                            backgroundColor: '#2CABE2',
-                        },
-                        headerTintColor: '#fff',
-                    }}/>
+                <Stack.Screen name="ProfileSettings" component={ProfileSettings} options={{ headerShown: false }} />
+                <Stack.Screen name="VerifyOtp" component={VerifyOtp} options={{
+                    title: 'Verify OTP',
+                    headerStyle: {
+                        backgroundColor: '#2CABE2',
+                        elevation: 0,
+                        shadowOpacity: 0,
+                    },
+                    headerTintColor: '#fff',
+                }} />
+                <Stack.Screen name="ChangePassword" component={ChangePassword} options={{
+                    title: 'Change Password',
+                    headerStyle: {
+                        backgroundColor: '#2CABE2',
+                    },
+                    headerTintColor: '#fff',
+                }} />
+                <Stack.Screen name="FamilyDetails" component={FamilyDetails} options={({ navigation }) => ({
+                    title: 'Family Details',
+                    headerStyle: {
+                        backgroundColor: '#2CABE2',
+                        elevation: 0,
+                        shadowOpacity: 0,
+                    },
+                    headerTitleAlign: 'center',
+                    headerTintColor: '#fff',
+                    headerRight: () => (
+                        <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
+                            <Image source={userAvatar} style={styles.user_avatar} />
+                        </TouchableOpacity>
+                    ),
+                })}
+                />
+                <Stack.Screen name="Billing" component={Billing} options={({ navigation }) => ({
+                    title: 'Billing',
+                    headerStyle: {
+                        backgroundColor: '#2CABE2',
+                        elevation: 0,
+                        shadowOpacity: 0,
+                    },
+                    headerTitleAlign: 'center',
+                    headerTintColor: '#fff',
+                    headerRight: () => (
+                        <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
+                            <Image source={userAvatar} style={styles.user_avatar} />
+                        </TouchableOpacity>
+                    ),
+                })}
+                />
             </Stack.Navigator>
         </NavigationContainer>
     )
@@ -88,9 +130,9 @@ const styles = StyleSheet.create({
         height: 40,
         borderRadius: 20,
         marginRight: 10,
-        backgroundColor:'#fff',
-        borderWidth:2,
-        borderStyle:'solid',
-        borderColor:'white'
-    },  
+        backgroundColor: '#fff',
+        borderWidth: 2,
+        borderStyle: 'solid',
+        borderColor: 'white'
+    },
 })

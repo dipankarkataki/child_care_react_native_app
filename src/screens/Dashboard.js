@@ -10,7 +10,7 @@ const messaging = require('../assets/images/message.png');
 const notice = require('../assets/images/notice.png');
 const invite = require('../assets/images/invite.png');
 
-const Dashboard = () => {
+const Dashboard = ({navigation}) => {
   return (
     <ImageBackground source={background} style={styles.container}>
         <View style={styles.welcome_container}>
@@ -24,7 +24,7 @@ const Dashboard = () => {
                     <Image source={attendance_user} style={styles.item_image}/>
                     <Text style={styles.item_text}>Attendance</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.item}>
+                <TouchableOpacity style={styles.item} onPress={ () => navigation.navigate('Billing')}>
                     <Image source={billing} style={styles.item_image}/>
                     <Text style={styles.item_text}>Billing</Text>
                 </TouchableOpacity>
