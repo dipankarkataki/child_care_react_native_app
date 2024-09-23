@@ -32,7 +32,7 @@ const Billing = ({ navigation }) => {
                     </TouchableOpacity>
                     <View style={styles.payment_method_container}>
                         <Icon name='credit-card' style={styles.icon_large} />
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('AutoPay')}>
                             <View>
                                 <Text style={styles.payment_method_title}>No Payment method saved</Text>
                                 <Text style={styles.payment_method_sub_title}>Tap here and add one</Text>

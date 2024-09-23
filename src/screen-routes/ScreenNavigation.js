@@ -13,6 +13,7 @@ import VerifyOtp from '../screens/auth/VerifyOtp';
 import ChangePassword from '../screens/auth/ChangePassword';
 import FamilyDetails from '../screens/family/FamilyDetails';
 import Billing from '../screens/billing/Billing';
+import AutoPay from '../screens/billing/AutoPay';
 
 
 const Stack = createNativeStackNavigator();
@@ -101,21 +102,25 @@ const ScreenNavigation = () => {
                     ),
                 })}
                 />
-                <Stack.Screen name="Billing" component={Billing} options={({ navigation }) => ({
-                    title: 'Billing',
-                    headerStyle: {
-                        backgroundColor: '#2CABE2',
-                        elevation: 0,
-                        shadowOpacity: 0,
-                    },
-                    headerTitleAlign: 'center',
-                    headerTintColor: '#fff',
-                    headerRight: () => (
-                        <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
-                            <Image source={userAvatar} style={styles.user_avatar} />
-                        </TouchableOpacity>
-                    ),
-                })}
+                <Stack.Screen name="Billing" component={Billing} 
+                    options={({ navigation }) => ({
+                        title: 'Billing',
+                        headerStyle: {
+                            backgroundColor: '#2CABE2',
+                            elevation: 0,
+                            shadowOpacity: 0,
+                        },
+                        headerTitleAlign: 'center',
+                        headerTintColor: '#fff',
+                        headerRight: () => (
+                            <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
+                                <Image source={userAvatar} style={styles.user_avatar} />
+                            </TouchableOpacity>
+                        ),
+                    })}
+                />
+                <Stack.Screen name="AutoPay" component={AutoPay} 
+                    options={{ headerShown: false }}
                 />
             </Stack.Navigator>
         </NavigationContainer>
