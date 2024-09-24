@@ -66,10 +66,9 @@ const styles = StyleSheet.create({
         alignItems:'center',
         height:'100',
         width:'100',
-        marginTop:50,
+        marginTop:16,
         marginLeft:20,
         marginRight:20,
-        paddingVertical:20,
         borderWidth:1,
         borderRadius:10,
         borderColor: '#BAF1EF',
@@ -77,20 +76,20 @@ const styles = StyleSheet.create({
         backgroundColor:'#fff'
     },
     welcome_image:{
-        height:50,
+        height:38,
         width:50,
-        borderRadius:10
+        borderRadius:5
     },
     welcome_text:{
         color:"#000000",
-        fontSize:20,
-        fontWeight:'500'
+        fontSize:18,
+        fontFamily:'Poppins Medium'
     },
     welcome_content:{
         color:"#535353",
         fontSize:14,
         fontWeight:'400',
-        paddingTop:10,
+        paddingTop:12,
         paddingLeft:30,
         paddingRight:30,
         textAlign:'center'
