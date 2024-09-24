@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
         paddingLeft:10,
         paddingRight:15,
         paddingTop:10,
-        marginBottom:20
+        marginBottom:80
     },
     card:{
         borderRadius:10,
@@ -236,5 +236,5 @@ const styles = StyleSheet.create({
         color:'#2CABE2',
         fontSize:17,
         fontFamily:'Poppins Medium',
-    }
+    },
 });

@@ -14,7 +14,7 @@ import ChangePassword from '../screens/auth/ChangePassword';
 import FamilyDetails from '../screens/family/FamilyDetails';
 import Billing from '../screens/billing/Billing';
 import AutoPay from '../screens/billing/AutoPay';
-
+import BottomTabNavigation from './BottomTabNavigation';
 
 const Stack = createNativeStackNavigator();
 const userAvatar = require('../assets/images/profile-image.png')
@@ -69,7 +69,7 @@ const ScreenNavigation = () => {
                         },
                         headerTintColor: '#fff',
                     }} />
-                <Stack.Screen name="ProfileSettings" component={ProfileSettings} options={{ headerShown: false }} />
+                <Stack.Screen name="ProfileSettings" component={BottomTabNavigation} options={{ headerShown: false }} />
                 <Stack.Screen name="VerifyOtp" component={VerifyOtp} options={{
                     title: 'Verify OTP',
                     headerStyle: {

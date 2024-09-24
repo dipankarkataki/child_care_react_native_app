@@ -283,5 +283,5 @@ const styles = StyleSheet.create({
         paddingRight: 15,
         paddingTop:10,
         marginBottom:20
-    }
+    },
 });
