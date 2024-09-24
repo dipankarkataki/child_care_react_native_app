@@ -104,8 +104,8 @@ const styles = StyleSheet.create({
         padding:15,
     },
     item:{
-        height:120,
-        width:120,
+        height:100,
+        width:100,
         justifyContent:'center',
         alignItems:'center',
         borderRadius:5,
@@ -116,14 +116,14 @@ const styles = StyleSheet.create({
         backgroundColor:'white'
     },
     item_image:{
-        height:35,
-        width:35
+        height:32,
+        width:32
     },
     item_text:{
-        marginTop:10,
-        color:"#000000",
-        fontSize:16,
-        fontWeight:'500',
-        textAlign:'center'
+        marginTop:13,
+        color:"#535353",
+        fontSize:12,
+        textAlign:'center',
+        fontFamily:'Poppins Medium'
     }
 })
