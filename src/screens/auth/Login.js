@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LoginApi from '../../api/LoginApi';
 import ModalComponent from '../../components/ModalComponent';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const background = require('../../assets/images/background.png');
 const logo_large = require('../../assets/images/child-care-logo-large.png');
@@ -45,32 +46,26 @@ const Login = ({ navigation }) => {
 
     const submitForm = () => {
         if (validateForm()) {
-            if (email === 'parent@gmail.com') {
-                setLoader(true);
-                setTimeout( () => {
+            setLoader(true);
+            LoginApi({
+                'email': email.toLocaleLowerCase(),
+                'password': password
+            }).then((result) => {
+                console.log('Result--- ', result.data);
+                
+                if(result.data.status == 200){
+                    AsyncStorage.setItem('AccessToken', result.data.token)
+                    navigation.replace('Dashboard')
+                }else{
                     setLoader(false);
-                    navigation.navigate('Dashboard')
-                },2000);
-            } else {
-                setModalVisible(true);
-                setModalIcon('error');
-                setModalMessage('Oops! Invalid Credentials');
-                setShouldNavigate(false)
-            }
-            // Uncomment this when API integration is ready
-            // LoginApi({
-            //     'email': email,
-            //     'password': password
-            // }).then((result) => {
-            //     console.log('Result--- ', result.data);
-            //     if (result && result.data) {
-            //         // Handle successful login
-            //     } else {
-            //         console.log('No data found');
-            //     }
-            // }).catch((err) => {
-            //     console.log(err);
-            // });
+                    setModalVisible(true);
+                    setModalIcon('error');
+                    setModalMessage(result.data.message);
+                    setShouldNavigate(false)
+                }
+            }).catch((err) => {
+                console.log('Error --> ',err);
+            });
         }
     };
 
