@@ -1,6 +1,7 @@
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView } from 'react-native'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import ProfileDetailsApi from '../api/ProfileDetailsApi';
 
 const backgroundImage = require('../assets/images/background.png');
 const profileImage = require('../assets/images/profile-image.png');
@@ -9,9 +10,29 @@ const ProfileSettings = ({ navigation }) => {
 
     let [firstName, setFirstName] = useState('');
     let [lastName, setLastName] = useState('');
+    let [email, setEmail] = useState('');
     let [kioskPin, setKioskPin] = useState('12345');
     let [phone, setPhone] = useState('');
     const [confirmPasswordVisibilty, setConfirmPasswordVisibility] = useState(true);
+
+
+    useEffect( () => {
+        ProfileDetailsApi()
+        .then( (result) => {
+            if(result.status == 200){
+                setFirstName(result.data.data.firstname);
+                setLastName(result.data.data.lastname);
+                setEmail(result.data.data.email);
+                setPhone(result.data.data.phone);
+            }
+            console.log('Result Data --', result.data)
+        })
+        .catch((err) => {
+            console.log('Error --> ',err);
+        });
+    },[])
+
+    
 
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>
@@ -27,8 +48,8 @@ const ProfileSettings = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
 
-                <Text style={styles.profile_header_name}>William J. Sartor</Text>
-                <Text style={styles.profile_header_email}>william.jSartor@daycare.com</Text>
+                <Text style={styles.profile_header_name}>{firstName} {lastName}</Text>
+                <Text style={styles.profile_header_email}>{email}</Text>
             </View>
             <ScrollView style={styles.profile_content_container}>
                 <View style={styles.card}>
