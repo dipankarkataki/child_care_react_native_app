@@ -1,35 +1,53 @@
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView } from 'react-native'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import FamilyDetailsApi from '../../api/FamilyDetailsApi';
 
 const backgroundImage = require('../../assets/images/background.png');
 const profileImage = require('../../assets/images/profile-image.png');
 
-const FamilyDetails = ({ navigation }) => {
+const FamilyDetails = ({ navigation, route }) => {
 
     let [firstName, setFirstName] = useState('');
     let [lastName, setLastName] = useState('');
     let [kioskPin, setKioskPin] = useState('12345');
     let [phone, setPhone] = useState('');
+    const [familyMembers, setFamilyMembers] = useState([]);
+    const {familyId} = route.params;
+
     const [confirmPasswordVisibilty, setConfirmPasswordVisibility] = useState(true);
+
+    useEffect( () => {
+        FamilyDetailsApi(familyId)
+        .then( (result) => {
+            if(result.status == 200){
+                setFamilyMembers(result.data.data);
+            }
+            console.log('Family Details Result --', result.data.data)
+        })
+        .catch( (err) => {
+            console.log('Error', err)
+        }) 
+    },[familyId]);
 
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>
             <ScrollView style={styles.family_content_container}>
                 <View style={styles.card}>
                     <Text style={styles.title_text}>CHILDREN</Text>
-                    <TouchableOpacity style={styles.family_details_card} onPress={() => navigation.navigate('FamilyDetails')}>
-                        <Text style={styles.family_details_text}>Genesis Rodriguez</Text>
-                        <Icon name="angle-right" style={styles.icon} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.family_details_card} onPress={() => navigation.navigate('FamilyDetails')}>
-                        <Text style={styles.family_details_text}>Jade Flores</Text>
-                        <Icon name="angle-right" style={styles.icon} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.family_details_card} onPress={() => navigation.navigate('FamilyDetails')}>
-                        <Text style={styles.family_details_text}>Jasi Flores</Text>
-                        <Icon name="angle-right" style={styles.icon} />
-                    </TouchableOpacity>
+                    {familyMembers.map((member) => (
+                        <TouchableOpacity
+                            key={member.id} // Use the unique ID for the key
+                            style={styles.family_details_card}
+                            onPress={() => navigation.navigate('FamilyDetails', { familyId: member.family_id })}
+                        >
+                            <Text style={styles.family_details_text}>
+                                {member.firstname} {member.lastname}
+                            </Text>
+                            <Icon name="angle-right" style={styles.icon} />
+                        </TouchableOpacity>
+                    ))}
+
                     <View style={styles.divider} />
                     <TouchableOpacity onPress={() => navigation.navigate('FamilyDetails')}>
                         <Text style={styles.primary_title_text}>Add New Student</Text>

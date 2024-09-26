@@ -13,12 +13,10 @@ ApiManager.interceptors.request.use(
     async (config) => {
         // Get the token from AsyncStorage (or any other storage method)
         const token = await AsyncStorage.getItem('AccessToken');
-        console.log('Retrieved Token:', token);
         
         if (token) {
             config.headers.Authorization = `Bearer ${token}`; // Add Bearer token to the headers
         }
-        console.log('Request Config:', config); 
         return config;
     },
     (error) => {
