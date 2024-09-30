@@ -159,6 +159,26 @@ const FamilyDetails = ({ navigation, route }) => {
                                     onChangeText={(text) => setLastName(text)}
                                 />
                             </View>
+                            <View style={styles.form_group}>
+                                <Text style={styles.input_label}>Admission Date</Text>
+                                <TextInput
+                                    style={styles.text_input}
+                                    placeholder="e.g mm/dd/YYYY"
+                                    placeholderTextColor="#b9b9b9"
+                                    value={lastName}
+                                    onChangeText={(text) => setLastName(text)}
+                                />
+                            </View>
+                            <View style={styles.form_group}>
+                                <Text style={styles.input_label}>Tution Plan<Text style={styles.asterics}>*</Text></Text>
+                                <TextInput
+                                    style={styles.text_input}
+                                    placeholder="e.g mm/dd/YYYY"
+                                    placeholderTextColor="#b9b9b9"
+                                    value={lastName}
+                                    onChangeText={(text) => setLastName(text)}
+                                />
+                            </View>
                         </View>
                         <View style={styles.modal_button_container}>
                             <TouchableOpacity

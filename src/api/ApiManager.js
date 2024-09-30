@@ -11,16 +11,14 @@ const ApiManager = axios.create({
 
 ApiManager.interceptors.request.use(
     async (config) => {
-        // Get the token from AsyncStorage (or any other storage method)
         const token = await AsyncStorage.getItem('AccessToken');
         
         if (token) {
-            config.headers.Authorization = `Bearer ${token}`; // Add Bearer token to the headers
+            config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     },
     (error) => {
-        // Handle any error during the request setup
         return Promise.reject(error);
     }
 );

@@ -34,7 +34,7 @@ const AutoPay = ({ navigation }) => {
                         <Icon name="currency-exchange" style={styles.currency_exchange_icon}/>
                     </View>
                     <View style={styles.auto_pay_switch}>
-                        <View>
+                        <View style={styles.auto_pay_title_container}>
                             <Text style={styles.input_title}>Auto Pay</Text>
                             <Text style={styles.payment_method_sub_title}>Turn auto pay on and we will take care of the rest.</Text>
                         </View>
@@ -49,7 +49,7 @@ const AutoPay = ({ navigation }) => {
                 </View>
             </View>
             <View style={[styles.card, styles.add_pay_mentod_container]}>
-                <View>
+                <View style={styles.add_pay_method_title_container}>
                     <Text style={styles.title_text}>Saved Payment Methods</Text>
                     <TouchableOpacity style={styles.auto_pay_details_card}>
                         <Text style={styles.payment_method_sub_title}>No payment method added</Text>
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
         right: 0,
         top:30,
         paddingLeft: 10,
-        paddingRight: 13,
+        paddingRight: 10,
         paddingTop: 10,
         marginBottom: 20,
         zIndex: 2,
@@ -252,12 +252,15 @@ const styles = StyleSheet.create({
     },
     auto_pay_switch:{
         flexDirection:'row',
-        justifyContent:'center',
+        justifyContent:'space-between',
         alignItems:'center',
     },
+    auto_pay_title_container:{
+        width:'80%',
+    },
     currency_exchange_icon_container:{
-        height:80,
-        width:80,
+        height:60,
+        width:60,
         borderRadius:50,
         backgroundColor:'#E8F2F4',
         justifyContent:'center',
@@ -265,17 +268,16 @@ const styles = StyleSheet.create({
         marginBottom:16
     },
     currency_exchange_icon:{
-        fontSize:50,
+        fontSize:40,
         color:'#2CABE2'
     },
     add_pay_mentod_container:{
-        marginTop:120,
+        marginTop:100,
         marginLeft:10,
-        marginRight:15,
+        marginRight:10,
         flexDirection:'row',
-        justifyContent:'center',
-        paddingLeft:30,
-        paddingRight:30
+        justifyContent:'space-between',
+        alignItems:'center',
     },
     add_new_pay_method:{
 
@@ -325,5 +327,8 @@ const styles = StyleSheet.create({
     },
     hideTab:{
         display:'none'
+    },
+    add_pay_method_title_container:{
+        width:'80%',
     }
 });

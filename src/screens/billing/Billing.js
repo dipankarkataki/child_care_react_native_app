@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
         right: 0,
         top:160,
         paddingLeft: 10,
-        paddingRight: 15,
+        paddingRight: 10,
         paddingTop: 10,
         marginBottom: 20,
         zIndex: 2,
@@ -278,10 +278,10 @@ const styles = StyleSheet.create({
     },
     statements_container:{
         flex:1,
-        marginTop:200,
+        marginTop:205,
         paddingLeft: 10,
-        paddingRight: 15,
+        paddingRight: 10,
         paddingTop:10,
-        marginBottom:20
+        marginBottom:10
     },
 });
