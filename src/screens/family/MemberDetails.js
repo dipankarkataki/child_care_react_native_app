@@ -7,6 +7,54 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 const MemberDetails = ({familyId, navigation}) => {
     const [member, setMember] = useState([]);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [contactType, setContactType] = useState('');
+    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
+    const [address, setAddress] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [zipCode, setZipCode] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const contactTypeItems = [
+        { label: 'Parent', value: 'Parent' },
+        { label: 'Guardian', value: 'Guardian' },
+        { label: 'Approve Pickup', value: 'Approve Pickup' },
+        { label: 'Emergency Contact', value: 'Emergency Contact' },
+    ];
+
+    const handleModalClose = () => {
+        setModalVisible(false);
+        // Optionally, reset form fields here
+        setFirstName('');
+        setLastName('');
+        setContactType(null);
+        setPhone(null);
+        setEmail('');
+        setAddress('');
+        setCity('');
+        setState('');
+        setZipCode('');
+        
+    };
+
+    const handleSaveDetails = () => {
+        console.log('Saving details:', {
+            firstName,
+            lastName,
+            contactType,
+            phone,
+            email,
+            address,
+            city,
+            state,
+            zipCode,
+
+        });
+        handleModalClose();
+    };
 
     useEffect(() => {
         MemberApi(familyId)
@@ -41,10 +89,159 @@ const MemberDetails = ({familyId, navigation}) => {
                     </TouchableOpacity>
                 ))}
                 <View style={styles.divider} />
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => setModalVisible(true)}>
                     <Text style={styles.primary_title_text}>Add New Family Member</Text>
                 </TouchableOpacity>
             </View>
+
+             {/* Modal for Adding New Student */}
+             <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={handleModalClose}
+            >
+                <View style={styles.backdrop}>
+                    <View style={styles.modal_view}>
+                        <Text style={styles.modal_text}>Add Member</Text>
+                        <ScrollView style={{ maxHeight: '80%' }}>
+                            <View style={styles.form}>
+                                {/* First Name */}
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        First Name<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder="e.g. John"
+                                        placeholderTextColor="#b9b9b9"
+                                        value={firstName}
+                                        onChangeText={setFirstName}
+                                    />
+                                </View>
+
+                                {/* Last Name */}
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        Last Name<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder="e.g. Doe"
+                                        placeholderTextColor="#b9b9b9"
+                                        value={lastName}
+                                        onChangeText={setLastName}
+                                    />
+                                </View>
+
+                                {/* Gender */}
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        Contact Type<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <CustomDropDownPicker
+                                        placeholder="Please Select Contact Type"
+                                        items={contactTypeItems}
+                                        value={contactType}
+                                        setValue={setContactType}
+                                        zIndex={3000}
+                                    />
+                                </View>
+
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        Phone Number<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder="e.g. 784xxxx785"
+                                        placeholderTextColor="#b9b9b9"
+                                        value={phone}
+                                        onChangeText={setPhone}
+                                    />
+                                </View>
+
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        Email<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder="e.g. jhondoe@xyz.com"
+                                        placeholderTextColor="#b9b9b9"
+                                        value={email}
+                                        onChangeText={setEmail}
+                                    />
+                                </View>
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        Address<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder="e.g. 123 example street"
+                                        placeholderTextColor="#b9b9b9"
+                                        value={address}
+                                        onChangeText={setAddress}
+                                    />
+                                </View>
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        City<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder="e.g. Wahington"
+                                        placeholderTextColor="#b9b9b9"
+                                        value={city}
+                                        onChangeText={setCity}
+                                    />
+                                </View>
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        Select State<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder="e.g. Alabama"
+                                        placeholderTextColor="#b9b9b9"
+                                        value={state}
+                                        onChangeText={setState}
+                                    />
+                                </View>
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        Zip Code<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder="e.g. 1234567"
+                                        placeholderTextColor="#b9b9b9"
+                                        value={zipCode}
+                                        onChangeText={setZipCode}
+                                    />
+                                </View>
+                            </View>
+                        </ScrollView>
+
+                        {/* Modal Buttons */}
+                        <View style={styles.modal_button_container}>
+                            <TouchableOpacity
+                                style={[styles.button, styles.button_save_details]}
+                                onPress={handleSaveDetails}
+                            >
+                                <Text style={styles.textStyle}>Save Details</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.button, styles.button_close]}
+                                onPress={handleModalClose}
+                            >
+                                <Text style={styles.textStyle}>Close</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </>
     )
 }

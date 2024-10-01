@@ -1,11 +1,12 @@
 import { StyleSheet, Text, View, TextInput, ScrollView, Modal, TouchableOpacity } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import StudentApi from '../../api/FamilyApi/StudentApi';
+import GetTuitionPlanApi from '../../api/TuitionPlanApi/GetTuitionPlanApi';
 import CustomDatePicker from '../../components/CustomDatePicker';
 import CustomDropDownPicker from '../../components/CustomDropDownPicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const StudentDetails = ({familyId, onFamilyNameFetched, navigation}) => {
+const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [gender, setGender] = useState(null);
@@ -15,9 +16,11 @@ const StudentDetails = ({familyId, onFamilyNameFetched, navigation}) => {
     const [dob, setDob] = useState('');
     const [admissionDate, setAdmissionDate] = useState('');
     const [familyName, setFamilyName] = useState('');
+    const [tuitionPlanItems, setTuitionPlanItems] = useState([]);
+    const [selectedTuitionPlan, setSelectedTuitionPlan] = useState('');
 
     useEffect(() => {
-        console.log('Family Id ', familyId)
+
         StudentApi(familyId)
         .then((result) => {
             if (result.status === 200) {
@@ -28,16 +31,32 @@ const StudentDetails = ({familyId, onFamilyNameFetched, navigation}) => {
                     onFamilyNameFetched(fetchedFamilyName);
                 }
             }
-            console.log('Student Details --', result.data.data);
         })
         .catch((err) => {
             console.log('Error', err);
         });
 
+
+        GetTuitionPlanApi(siteId)
+        .then((result) => {
+            if (result.status === 200) {
+                setTuitionPlanItems(result.data.data)
+            }
+            console.log('Tuition Plan Details --', result.data.data);
+        })
+        .catch((err) => {
+            console.log('Error', err);
+        });
+
+
+
     }, [familyId, onFamilyNameFetched]);
 
 
-    
+    const tuitionPlans= tuitionPlanItems.map(plan => ({
+        label: plan.plan_name,
+        value: plan.id 
+    }));
 
     const genderItems = [
         { label: 'Male', value: '1' },
@@ -108,7 +127,7 @@ const StudentDetails = ({familyId, onFamilyNameFetched, navigation}) => {
                 <View style={styles.backdrop}>
                     <View style={styles.modal_view}>
                         <Text style={styles.modal_text}>Add Student</Text>
-                        <ScrollView style={{ maxHeight: '90%' }}>
+                        <ScrollView style={{ maxHeight: '80%' }}>
                             <View style={styles.form}>
                                 {/* First Name */}
                                 <View style={styles.form_group}>
@@ -148,7 +167,7 @@ const StudentDetails = ({familyId, onFamilyNameFetched, navigation}) => {
                                         items={genderItems}
                                         value={gender}
                                         setValue={setGender}
-                                        zIndex={3000} // Higher zIndex
+                                        zIndex={3000}
                                     />
                                 </View>
 
@@ -162,7 +181,7 @@ const StudentDetails = ({familyId, onFamilyNameFetched, navigation}) => {
                                         items={statusItems}
                                         value={status}
                                         setValue={setStatus}
-                                        zIndex={2000} // Lower zIndex than Gender if necessary
+                                        zIndex={2000}
                                     />
                                 </View>
 
@@ -174,13 +193,22 @@ const StudentDetails = ({familyId, onFamilyNameFetched, navigation}) => {
                                     <CustomDatePicker label="mm/dd/YYYY" value={dob} onChange={setDob} />
                                 </View>
 
-                                {/* Admission Date */}
                                 <View style={styles.form_group}>
                                     <Text style={styles.input_label}>Admission Date</Text>
                                     <CustomDatePicker
                                         label="mm/dd/YYYY"
                                         value={admissionDate}
                                         onChange={setAdmissionDate}
+                                    />
+                                </View>
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>Tution Plan</Text>
+                                    <CustomDropDownPicker
+                                        placeholder="Please Select Tuition Plan"
+                                        items={tuitionPlans}
+                                        value={selectedTuitionPlan}
+                                        setValue={setSelectedTuitionPlan}
+                                        zIndex={2000}
                                     />
                                 </View>
                             </View>

@@ -8,7 +8,7 @@ const backgroundImage = require('../../assets/images/background.png');
 
 const FamilyDetails = ({ navigation, route }) => {
 
-    const { familyId } = route.params;
+    const { familyId, siteId } = route.params;
     const [familyName, setFamilyName] = useState('');
     const handleFamilyNameFetched = useCallback((name) => {
         setFamilyName(name);
@@ -16,13 +16,13 @@ const FamilyDetails = ({ navigation, route }) => {
 
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>
-            <ScrollView style={styles.family_content_container}>
+            <View style={styles.family_content_container}>
                 <View style={styles.family_name_container}>
                     <Text style={styles.family_name_text}>Family Name: {familyName}</Text>
                 </View>
-                <StudentDetails familyId={familyId} onFamilyNameFetched={handleFamilyNameFetched} navigation={navigation} />
+                <StudentDetails familyId={familyId} siteId={siteId} onFamilyNameFetched={handleFamilyNameFetched} navigation={navigation} />
                 <MemberDetails familyId={familyId} navigation={navigation} />
-            </ScrollView>
+            </View>
         </ImageBackground>
     );
 };

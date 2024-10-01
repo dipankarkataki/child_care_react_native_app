@@ -26,7 +26,7 @@ const CustomDropDownPicker = ({
         items={items}
         setOpen={setOpen}
         setValue={setValue}
-        setItems={() => {}} // Required prop, but items are static
+        setItems={() => {}}
         style={{
           borderColor: '#E1F3FB',
           borderRadius: 10,
@@ -42,18 +42,21 @@ const CustomDropDownPicker = ({
         }}
         autoScroll
         dropDownDirection={dropDownDirection}
-        // Add this to prevent the dropdown from being constrained by parent ScrollView
-        listMode="SCROLLVIEW" // Alternatively, "MODAL" or "FLATLIST"
+        listMode="MODAL" // Alternatively, "MODAL" or "FLATLIST"
+        modalContentContainerStyle={[
+          styles.modal_view,
+        ]}
       />
     </View>
   );
 };
 
+export default CustomDropDownPicker;
+
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-    // zIndex is dynamically set via props
+  modal_view: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 8,
   },
 });
-
-export default CustomDropDownPicker;

@@ -14,6 +14,7 @@ const ProfileSettings = ({ navigation }) => {
     let [kioskPin, setKioskPin] = useState('12345');
     let [phone, setPhone] = useState('');
     let [familyId, setFamilyId] = useState('');
+    let [siteId, setSiteId] = useState('');
     const [confirmPasswordVisibilty, setConfirmPasswordVisibility] = useState(true);
 
 
@@ -26,6 +27,7 @@ const ProfileSettings = ({ navigation }) => {
                 setEmail(result.data.data.email);
                 setPhone(result.data.data.phone);
                 setFamilyId(result.data.data.family_id);
+                setSiteId(result.data.data.site_id);
             }
             console.log('Result Data --', result.data)
         })
@@ -88,7 +90,7 @@ const ProfileSettings = ({ navigation }) => {
                     </View>
                 </View>
                 <View style={styles.card}>
-                    <TouchableOpacity style={styles.family_details_card} onPress={() => navigation.navigate('FamilyDetails', {familyId} )}>
+                    <TouchableOpacity style={styles.family_details_card} onPress={() => navigation.navigate('FamilyDetails', {familyId, siteId} )}>
                         <Text style={styles.family_details_text}>Family Details</Text>
                         <Icon name="angle-right" style={styles.icon} />
                     </TouchableOpacity>
