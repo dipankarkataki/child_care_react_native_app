@@ -2,9 +2,11 @@ import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextI
 import React, {useEffect, useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ProfileDetailsApi from '../api/ProfileDetailsApi';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const backgroundImage = require('../assets/images/background.png');
-const profileImage = require('../assets/images/profile-image.png');
+const defaultProfileImage = require('../assets/images/profile-image.png'); 
+
 
 const ProfileSettings = ({ navigation }) => {
 
@@ -16,7 +18,32 @@ const ProfileSettings = ({ navigation }) => {
     let [familyId, setFamilyId] = useState('');
     let [siteId, setSiteId] = useState('');
     const [confirmPasswordVisibilty, setConfirmPasswordVisibility] = useState(true);
+    const [profileImage, setProfileImage] = useState(defaultProfileImage);
 
+
+    const selectProfileImage = () => {
+        const options = {
+            mediaType: 'photo',
+            maxWidth: 300,
+            maxHeight: 300,
+            quality: 0.7,
+            includeBase64: false,
+        };
+
+        launchImageLibrary(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.errorCode) {
+                console.log('ImagePicker Error: ', response.errorMessage);
+                Alert.alert('Error', response.errorMessage || 'Something went wrong while selecting the image.');
+            } else if (response.assets && response.assets.length > 0) {
+                const selectedImage = response.assets[0];
+                setProfileImage({ uri: selectedImage.uri }); // Update the profile image state
+                // TODO: Upload the selected image to your server if needed
+                console.log('Selected Image -->', selectedImage.uri)
+            }
+        });
+    };
 
     useEffect( () => {
         ProfileDetailsApi()
@@ -47,7 +74,7 @@ const ProfileSettings = ({ navigation }) => {
 
                 <View style={styles.profile_image_container}>
                     <Image source={profileImage} style={styles.profile_header_image} />
-                    <TouchableOpacity style={styles.edit_image_btn}>
+                    <TouchableOpacity style={styles.edit_image_btn} onPress={selectProfileImage}> 
                         <Icon name="pencil" style={styles.icon} />
                     </TouchableOpacity>
                 </View>
