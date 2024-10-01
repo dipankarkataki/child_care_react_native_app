@@ -1,38 +1,57 @@
-// FamilyDetails.js
-import {ImageBackground, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView, Modal,} from 'react-native';
-import React, { useEffect, useState, useCallback } from 'react';
-import StudentDetails from './StudentDetails';
-import MemberDetails from './MemberDetails';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Modal} from 'react-native'
+import React,  { useEffect, useState } from 'react'
+import MemberApi from '../../api/FamilyApi/MemberApi'
+import CustomDropDownPicker from '../../components/CustomDropDownPicker'
+import CustomDatePicker from '../../components/CustomDatePicker'
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-const backgroundImage = require('../../assets/images/background.png');
+const MemberDetails = ({familyId, navigation}) => {
+    const [member, setMember] = useState([]);
 
-const FamilyDetails = ({ navigation, route }) => {
+    useEffect(() => {
+        MemberApi(familyId)
+        .then((result) => {
+            if (result.status === 200) {
+                setMember(result.data.data);
+            }
+            console.log('Member Details --', result.data.data);
+        })
+        .catch((err) => {
+            console.log('Error', err);
+        });
 
-    const { familyId } = route.params;
-    const [familyName, setFamilyName] = useState('');
-    const handleFamilyNameFetched = useCallback((name) => {
-        setFamilyName(name);
-    }, []);
+    }, [familyId]);
 
     return (
-        <ImageBackground source={backgroundImage} style={styles.container}>
-            <ScrollView style={styles.family_content_container}>
-                <View style={styles.family_name_container}>
-                    <Text style={styles.family_name_text}>Family Name: {familyName}</Text>
-                </View>
-                <StudentDetails familyId={familyId} onFamilyNameFetched={handleFamilyNameFetched} navigation={navigation} />
-                <MemberDetails familyId={familyId} navigation={navigation} />
-            </ScrollView>
-        </ImageBackground>
-    );
-};
+        <>
+            <View style={styles.card}>
+                <Text style={styles.title_text}>FAMILY MEMBERS</Text>
+                {member.map((member) => (
+                    <TouchableOpacity
+                        key={member.id}
+                        style={styles.family_details_card}
+                        onPress={() =>
+                            navigation.navigate('FamilyDetails', { familyId: member.family_id })
+                        }
+                    >
+                        <Text style={styles.family_details_text}>
+                            {member.firstname} {member.lastname}
+                        </Text>
+                        <Icon name="angle-right" style={styles.icon} />
+                    </TouchableOpacity>
+                ))}
+                <View style={styles.divider} />
+                <TouchableOpacity>
+                    <Text style={styles.primary_title_text}>Add New Family Member</Text>
+                </TouchableOpacity>
+            </View>
+        </>
+    )
+}
 
-export default FamilyDetails;
+export default MemberDetails
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
     icon: {
         fontSize: 20,
         fontWeight: 'bold',
@@ -152,13 +171,4 @@ const styles = StyleSheet.create({
         fontSize: 17,
         fontFamily: 'Poppins Medium',
     },
-    family_name_container: {
-        marginBottom: 16,
-        marginTop: 10,
-    },
-    family_name_text: {
-        color: '#000',
-        fontFamily: 'Poppins Medium',
-        fontSize: 20,
-    },
-});
+})
