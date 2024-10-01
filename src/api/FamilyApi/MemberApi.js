@@ -1,9 +1,8 @@
-import ApiManager from "./ApiManager";
+import ApiManager from "../ApiManager";
 
-export default FamilyDetailsApi = async (familyId) => {
-
+const MemberApi = async (familyId) => {
     try{
-        const result = await ApiManager(`/profile/family/${familyId}`);
+        const result = await ApiManager(`/profile/family/member/${familyId}`);
         return result;
     }catch(error){
         if (error.response) {
@@ -16,5 +15,6 @@ export default FamilyDetailsApi = async (familyId) => {
             return { error: error.message };
         }
     }
-    
 }
+
+export default MemberApi

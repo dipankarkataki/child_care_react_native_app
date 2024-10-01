@@ -1,55 +1,96 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Modal } from 'react-native'
-import React, {useEffect, useState} from 'react'
+// FamilyDetails.js
+import {ImageBackground, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView, Modal,} from 'react-native';
+import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import FamilyDetailsApi from '../../api/FamilyDetailsApi';
-import DropDownPicker from 'react-native-dropdown-picker';
+import CustomDatePicker from '../../components/CustomDatePicker';
+import CustomDropDownPicker from '../../components/CustomDropDownPicker';
+import StudentApi from '../../api/FamilyApi/StudentApi';
+import MemberApi from '../../api/FamilyApi/MemberApi';
 
 const backgroundImage = require('../../assets/images/background.png');
-const profileImage = require('../../assets/images/profile-image.png');
 
 const FamilyDetails = ({ navigation, route }) => {
-    
-    let [familyName, setFamilyName] = useState('');
-    let [firstName, setFirstName] = useState('');
-    let [lastName, setLastName] = useState('');
-    let [gender, setGender] = useState('');
-    let [status, setStatus] = useState('');
-    let [phone, setPhone] = useState('');
+    // State variables
+    const [familyName, setFamilyName] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [gender, setGender] = useState(null);
+    const [status, setStatus] = useState(null);
+    const [phone, setPhone] = useState('');
 
-    const [familyMembers, setFamilyMembers] = useState([]);
+    const [student, setStudent] = useState([]);
+    const [member, setMember] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
-    const [dropdownGenderVisible, setDropdownGenderVisible] = useState(false);
-    const [dropdownStatusVisible, setDropdownStatusVisible] = useState(false);
 
+    const { familyId } = route.params;
+
+    // State for DatePickers
+    const [dob, setDob] = useState('');
+    const [admissionDate, setAdmissionDate] = useState('');
+
+    // DropDownPicker items
     const genderItems = [
-        {label: 'Male' , value: 'Male'},
-        {label: 'FeMale' , value: 'FeMale'},
-        {label: 'Other' , value: 'Other'},
+        { label: 'Male', value: '1' },
+        { label: 'Female', value: '2' },
     ];
+
     const statusItems = [
-        {label: 'Active' , value: 1},
-        {label: 'Inactive' , value: 0},
+        { label: 'Active', value: 1 },
+        { label: 'Inactive', value: 0 },
     ];
 
-    const {familyId} = route.params;
-
-    useEffect( () => {
-        FamilyDetailsApi(familyId)
-        .then( (result) => {
-            if(result.status == 200){
-                setFamilyMembers(result.data.data);
-                setFamilyName(result.data.data[0].name)
+    // Fetch family details
+    useEffect(() => {
+        StudentApi(familyId)
+        .then((result) => {
+            if (result.status === 200) {
+                setStudent(result.data.data);
+                setFamilyName(result.data.data[0]?.name || '');
             }
-            console.log('Family Details Result --', result.data.data)
+            console.log('Student Details --', result.data.data);
         })
-        .catch( (err) => {
-            console.log('Error', err)
-        }) 
-    },[familyId]);
+        .catch((err) => {
+            console.log('Error', err);
+        });
 
+
+        MemberApi(familyId)
+        .then((result) => {
+            if (result.status === 200) {
+                setMember(result.data.data);
+            }
+            console.log('Member Details --', result.data.data);
+        })
+        .catch((err) => {
+            console.log('Error', err);
+        });
+
+    }, [familyId]);
 
     const handleModalClose = () => {
         setModalVisible(false);
+        // Optionally, reset form fields here
+        setFirstName('');
+        setLastName('');
+        setGender(null);
+        setStatus(null);
+        setDob('');
+        setAdmissionDate('');
+    };
+
+    const handleSaveDetails = () => {
+        // Implement your save logic here
+        // For example, validate inputs and make an API call
+        console.log('Saving details:', {
+            firstName,
+            lastName,
+            gender,
+            status,
+            dob,
+            admissionDate,
+        });
+        // After saving, close the modal
+        handleModalClose();
     };
 
     return (
@@ -60,14 +101,16 @@ const FamilyDetails = ({ navigation, route }) => {
                 </View>
                 <View style={styles.card}>
                     <Text style={styles.title_text}>CHILDREN</Text>
-                    {familyMembers.map((member) => (
+                    {student.map((student) => (
                         <TouchableOpacity
-                            key={member.id}
+                            key={student.id}
                             style={styles.family_details_card}
-                            onPress={() => navigation.navigate('FamilyDetails', { familyId: member.family_id })}
+                            onPress={() =>
+                                navigation.navigate('FamilyDetails', { familyId: student.family_id })
+                            }
                         >
                             <Text style={styles.family_details_text}>
-                                {member.firstname} {member.lastname}
+                                {student.firstname} {student.lastname}
                             </Text>
                             <Icon name="angle-right" style={styles.icon} />
                         </TouchableOpacity>
@@ -80,16 +123,28 @@ const FamilyDetails = ({ navigation, route }) => {
                 </View>
                 <View style={styles.card}>
                     <Text style={styles.title_text}>FAMILY MEMBERS</Text>
-                    <TouchableOpacity style={styles.family_details_card} onPress={() => navigation.navigate('FamilyDetails')}>
-                        <Text style={styles.family_details_text}>William J. Sartor</Text>
-                        <Icon name="angle-right" style={styles.icon} />
-                    </TouchableOpacity>
+                    {member.map((member) => (
+                        <TouchableOpacity
+                            key={member.id}
+                            style={styles.family_details_card}
+                            onPress={() =>
+                                navigation.navigate('FamilyDetails', { familyId: member.family_id })
+                            }
+                        >
+                            <Text style={styles.family_details_text}>
+                                {member.firstname} {member.lastname}
+                            </Text>
+                            <Icon name="angle-right" style={styles.icon} />
+                        </TouchableOpacity>
+                    ))}
                     <View style={styles.divider} />
                     <TouchableOpacity>
                         <Text style={styles.primary_title_text}>Add New Family Member</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+
+            {/* Modal for Adding New Student */}
             <Modal
                 animationType="fade"
                 transparent={true}
@@ -99,91 +154,89 @@ const FamilyDetails = ({ navigation, route }) => {
                 <View style={styles.backdrop}>
                     <View style={styles.modal_view}>
                         <Text style={styles.modal_text}>Add Student</Text>
-                        <View style={styles.form}>
-                            <View style={styles.form_group}>
-                                <Text style={styles.input_label}>First Name<Text style={styles.asterics}>*</Text></Text>
-                                <TextInput
-                                    style={styles.text_input}
-                                    placeholder="e.g Jhon"
-                                    placeholderTextColor="#b9b9b9"
-                                    value={firstName}
-                                    onChangeText={(text) => setFirstName(text)}
-                                />
+                        <ScrollView style={{ maxHeight: '90%' }}>
+                            <View style={styles.form}>
+                                {/* First Name */}
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        First Name<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder="e.g. John"
+                                        placeholderTextColor="#b9b9b9"
+                                        value={firstName}
+                                        onChangeText={setFirstName}
+                                    />
+                                </View>
+
+                                {/* Last Name */}
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        Last Name<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder="e.g. Doe"
+                                        placeholderTextColor="#b9b9b9"
+                                        value={lastName}
+                                        onChangeText={setLastName}
+                                    />
+                                </View>
+
+                                {/* Gender */}
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        Gender<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <CustomDropDownPicker
+                                        placeholder="Please Select Gender"
+                                        items={genderItems}
+                                        value={gender}
+                                        setValue={setGender}
+                                        zIndex={3000} // Higher zIndex
+                                    />
+                                </View>
+
+                                {/* Status */}
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        Status<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <CustomDropDownPicker
+                                        placeholder="Please Select Status"
+                                        items={statusItems}
+                                        value={status}
+                                        setValue={setStatus}
+                                        zIndex={2000} // Lower zIndex than Gender if necessary
+                                    />
+                                </View>
+
+                                {/* Date of Birth */}
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        Date of Birth<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <CustomDatePicker label="mm/dd/YYYY" value={dob} onChange={setDob} />
+                                </View>
+
+                                {/* Admission Date */}
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>Admission Date</Text>
+                                    <CustomDatePicker
+                                        label="mm/dd/YYYY"
+                                        value={admissionDate}
+                                        onChange={setAdmissionDate}
+                                    />
+                                </View>
                             </View>
-                            <View style={styles.form_group}>
-                                <Text style={styles.input_label}>Last Name<Text style={styles.asterics}>*</Text></Text>
-                                <TextInput
-                                    style={styles.text_input}
-                                    placeholder="e.g Doe"
-                                    placeholderTextColor="#b9b9b9"
-                                    value={lastName}
-                                    onChangeText={(text) => setLastName(text)}
-                                />
-                            </View>
-                            <View style={styles.form_group}>
-                                <Text style={styles.input_label}>Gender<Text style={styles.asterics}>*</Text></Text>
-                                <DropDownPicker 
-                                    style={styles.text_input}
-                                    items={genderItems}
-                                    open={dropdownGenderVisible}
-                                    value={gender}
-                                    setOpen={ () => setDropdownGenderVisible(!dropdownGenderVisible)}
-                                    setValue={(val) => setGender(val)}
-                                    placeholder="Please Select Gender"
-                                    placeholderStyle={{color:'#b9b9b9'}}
-                                    autoScroll
-                                    dropDownDirection='TOP'
-                                />
-                            </View>
-                            <View style={styles.form_group}>
-                                <Text style={styles.input_label}>Status<Text style={styles.asterics}>*</Text></Text>
-                                <DropDownPicker 
-                                    style={styles.text_input}
-                                    items={statusItems}
-                                    open={dropdownStatusVisible}
-                                    value={status}
-                                    setOpen={ () => setDropdownStatusVisible(!dropdownStatusVisible)}
-                                    setValue={(val) => setStatus(val)}
-                                    placeholder="Please Select Status"
-                                    placeholderStyle={{color:'#b9b9b9'}}
-                                    autoScroll
-                                />
-                            </View>
-                            <View style={styles.form_group}>
-                                <Text style={styles.input_label}>Date of Birth<Text style={styles.asterics}>*</Text></Text>
-                                <TextInput
-                                    style={styles.text_input}
-                                    placeholder="e.g mm/dd/YYYY"
-                                    placeholderTextColor="#b9b9b9"
-                                    value={lastName}
-                                    onChangeText={(text) => setLastName(text)}
-                                />
-                            </View>
-                            <View style={styles.form_group}>
-                                <Text style={styles.input_label}>Admission Date</Text>
-                                <TextInput
-                                    style={styles.text_input}
-                                    placeholder="e.g mm/dd/YYYY"
-                                    placeholderTextColor="#b9b9b9"
-                                    value={lastName}
-                                    onChangeText={(text) => setLastName(text)}
-                                />
-                            </View>
-                            <View style={styles.form_group}>
-                                <Text style={styles.input_label}>Tution Plan<Text style={styles.asterics}>*</Text></Text>
-                                <TextInput
-                                    style={styles.text_input}
-                                    placeholder="e.g mm/dd/YYYY"
-                                    placeholderTextColor="#b9b9b9"
-                                    value={lastName}
-                                    onChangeText={(text) => setLastName(text)}
-                                />
-                            </View>
-                        </View>
+                        </ScrollView>
+
+                        {/* Modal Buttons */}
                         <View style={styles.modal_button_container}>
                             <TouchableOpacity
                                 style={[styles.button, styles.button_save_details]}
-                                onPress={handleModalClose}
+                                onPress={handleSaveDetails}
                             >
                                 <Text style={styles.textStyle}>Save Details</Text>
                             </TouchableOpacity>
@@ -199,7 +252,7 @@ const FamilyDetails = ({ navigation, route }) => {
             </Modal>
         </ImageBackground>
     );
-}
+};
 
 export default FamilyDetails;
 
@@ -209,33 +262,32 @@ const styles = StyleSheet.create({
     },
     icon: {
         fontSize: 20,
-        fontWeight:'bold',
+        fontWeight: 'bold',
         color: 'black',
     },
-    family_content_container:{
-        paddingLeft:10,
-        paddingRight:15,
-        paddingTop:10,
-        marginBottom:20
+    family_content_container: {
+        paddingLeft: 10,
+        paddingRight: 15,
+        paddingTop: 10,
+        marginBottom: 20,
     },
-    card:{
-        borderRadius:10,
-        backgroundColor:'#fff',
-        padding:15,
-        elevation:2,
-        marginBottom:20
+    card: {
+        borderRadius: 10,
+        backgroundColor: '#fff',
+        padding: 15,
+        elevation: 2,
+        marginBottom: 20,
     },
-    form_group:{
-        marginBottom:16
+    form_group: {
+        marginBottom: 16,
     },
-    input_label:{
-        marginBottom:8,
-        color:'#797979',
-        fontSize:17,
-        fontFamily:'Poppins Medium',
+    input_label: {
+        marginBottom: 8,
+        color: '#797979',
+        fontSize: 17,
+        fontFamily: 'Poppins Medium',
     },
-    text_input:{
-        alignItems: 'center',
+    text_input: {
         borderWidth: 1,
         borderColor: '#E1F3FB',
         borderRadius: 10,
@@ -243,27 +295,27 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         fontSize: 17,
         color: '#535353',
-        fontFamily:'Poppins Regular',
+        fontFamily: 'Poppins Regular',
     },
-    asterics:{
-        color:'crimson'
+    asterics: {
+        color: 'crimson',
     },
-    family_details_card:{
-        flexDirection:'row',
-        justifyContent:'space-between',
-        alignItems:'center',
-        marginBottom:10 ,
+    family_details_card: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
     },
-    family_details_text:{
-        color:'black',
-        fontSize:17,
-        fontFamily:'Poppins Medium',
+    family_details_text: {
+        color: 'black',
+        fontSize: 17,
+        fontFamily: 'Poppins Medium',
     },
-    title_text:{
-        color:'#797979',
-        fontSize:17,
-        fontFamily:'Poppins Medium',
-        marginBottom:16
+    title_text: {
+        color: '#797979',
+        fontSize: 17,
+        fontFamily: 'Poppins Medium',
+        marginBottom: 16,
     },
     divider: {
         height: 1,
@@ -271,16 +323,12 @@ const styles = StyleSheet.create({
         width: '100%',
         marginVertical: 10,
     },
-    primary_title_text:{
-        color:'#2CABE2',
-        fontSize:18,
-        fontFamily:'Poppins Medium',
-        marginBottom:16
+    primary_title_text: {
+        color: '#2CABE2',
+        fontSize: 18,
+        fontFamily: 'Poppins Medium',
+        marginBottom: 16,
     },
-    add_new_btn:{
-       
-    },
-
     backdrop: {
         flex: 1,
         justifyContent: 'center',
@@ -301,13 +349,12 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
     },
-    modal_button_container:{
-        flexDirection:'row',
-        justifyContent:'flex-end',
-        alignItems:'center',
-        
-
-    },  
+    modal_button_container: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        marginTop: 10,
+    },
     button: {
         borderRadius: 5,
         padding: 10,
@@ -316,29 +363,29 @@ const styles = StyleSheet.create({
     button_close: {
         backgroundColor: '#cdcdcd',
     },
-    button_save_details:{
+    button_save_details: {
         backgroundColor: '#FFB52E',
-        marginRight:10,
+        marginRight: 10,
     },
     textStyle: {
         color: '#000',
         textAlign: 'center',
-        fontSize:14,
-        fontFamily:'Poppins Regular'
+        fontSize: 14,
+        fontFamily: 'Poppins Regular',
     },
     modal_text: {
         marginBottom: 30,
-        color:"#000",
-        fontSize:17,
-        fontFamily:'Poppins Medium'
+        color: '#000',
+        fontSize: 17,
+        fontFamily: 'Poppins Medium',
     },
-    family_name_container:{
-        marginBottom:16,
-        marginTop:10
+    family_name_container: {
+        marginBottom: 16,
+        marginTop: 10,
     },
-    family_name_text:{
-        color:'#000',
-        fontFamily:'Poppins Medium',
-        fontSize:20
+    family_name_text: {
+        color: '#000',
+        fontFamily: 'Poppins Medium',
+        fontSize: 20,
     },
 });
