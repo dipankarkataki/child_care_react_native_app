@@ -21,7 +21,7 @@ const FamilyDetails = ({ navigation, route }) => {
                     <Text style={styles.family_name_text}>Family Name: {familyName}</Text>
                 </View>
                 <StudentDetails familyId={familyId} siteId={siteId} onFamilyNameFetched={handleFamilyNameFetched} navigation={navigation} />
-                <MemberDetails familyId={familyId} navigation={navigation} />
+                <MemberDetails familyId={familyId} siteId={siteId} navigation={navigation} />
             </View>
         </ImageBackground>
     );

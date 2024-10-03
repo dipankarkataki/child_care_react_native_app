@@ -54,7 +54,13 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
 
 
     const tuitionPlans= tuitionPlanItems.map(plan => ({
-        label: plan.plan_name,
+        label: ( 
+            <View style={[{ flexDirection: 'row', alignItems: 'center', justifyContent:'space-between' }]}>
+                <Text style={[styles.dropdown_list_item,{marginTop:0, marginRight:5}]}>{plan.plan_name} - Amount :</Text>
+                <Text><Icon name="dollar" style={[styles.currencyIcon]} /></Text>
+                <Text style={[styles.dropdown_list_item, {marginTop:3, marginLeft:2}]}>{plan.plan_amount}</Text>
+            </View>
+        ),
         value: plan.id 
     }));
 
@@ -245,6 +251,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'black',
     },
+    currencyIcon: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: 'green',
+    },
     card: {
         borderRadius: 10,
         backgroundColor: '#fff',
@@ -351,6 +362,12 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         color: '#000',
         fontSize: 17,
+        fontFamily: 'Poppins Medium',
+    },
+    dropdown_list_item:{
+        marginBottom: 0,
+        color: '#535353',
+        fontSize: 13,
         fontFamily: 'Poppins Medium',
     },
 })

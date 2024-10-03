@@ -1,8 +1,14 @@
-import ApiManager from "../ApiManager";
+import ApiManager from "../../ApiManager"
 
-const MemberApi = async (familyId) => {
+const AddMemberApi = async (data) => {
     try{
-        const result = await ApiManager(`/profile/family/member/${familyId}`);
+        const result = await ApiManager(`/profile/family/member/add-member`,{
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: data,
+        });
         return result;
     }catch(error){
         if (error.response) {
@@ -17,4 +23,4 @@ const MemberApi = async (familyId) => {
     }
 }
 
-export default MemberApi
+export default AddMemberApi
