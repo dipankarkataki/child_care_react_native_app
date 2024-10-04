@@ -34,7 +34,7 @@ const Dashboard = ({navigation}) => {
                     <Image source={reports} style={styles.item_image}/>
                     <Text style={styles.item_text}>Daily Reports</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.item}>
+                <TouchableOpacity style={styles.item} onPress={ () => navigation.navigate('MessagingDashboard')}>
                     <Image source={messaging} style={styles.item_image}/>
                     <Text style={styles.item_text}>Messaging</Text>
                 </TouchableOpacity>

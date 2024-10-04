@@ -15,6 +15,7 @@ import FamilyDetails from '../screens/family/FamilyDetails';
 import Billing from '../screens/billing/Billing';
 import AutoPay from '../screens/billing/AutoPay';
 import BottomTabNavigation from './BottomTabNavigation';
+import MessagingDashboard from '../screens/messaging/MessagingDashboard';
 
 const Stack = createNativeStackNavigator();
 const userAvatar = require('../assets/images/profile-image.png')
@@ -122,7 +123,28 @@ const ScreenNavigation = () => {
                 <Stack.Screen name="AutoPay" component={AutoPay} 
                     options={{ headerShown: false }}
                 />
+                <Stack.Screen name="MessagingDashboard" component={MessagingDashboard} options={({ navigation }) => ({
+                    title: 'ChildCareSoftware - Chat System',
+                    headerStyle: {
+                        backgroundColor: '#2CABE2',
+                        elevation: 0,
+                        shadowOpacity: 0,
+                    },
+                    headerTitleAlign: 'center',
+                    headerTintColor: '#fff',
+                    headerTitleStyle:{
+                        fontSize:17,
+                        fontFamily:"Poppins Medium"
+                    },
+                    headerRight: () => (
+                        <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
+                            <Image source={userAvatar} style={styles.user_avatar} />
+                        </TouchableOpacity>
+                    ),
+                })}
+                />
             </Stack.Navigator>
+
         </NavigationContainer>
     )
 }
