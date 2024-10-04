@@ -16,6 +16,7 @@ import Billing from '../screens/billing/Billing';
 import AutoPay from '../screens/billing/AutoPay';
 import BottomTabNavigation from './BottomTabNavigation';
 import MessagingDashboard from '../screens/messaging/MessagingDashboard';
+import SendMessageArea from '../screens/messaging/SendMessageArea';
 
 const Stack = createNativeStackNavigator();
 const userAvatar = require('../assets/images/profile-image.png')
@@ -143,6 +144,8 @@ const ScreenNavigation = () => {
                     ),
                 })}
                 />
+
+                <Stack.Screen name="SendMessageArea" component={SendMessageArea} options={{ headerShown: false }}/>
             </Stack.Navigator>
 
         </NavigationContainer>

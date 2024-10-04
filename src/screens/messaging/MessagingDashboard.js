@@ -1,16 +1,16 @@
-import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
+import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 const profileImage = require('../../assets/images/pro-image.jpg')
 const background = require('../../assets/images/background.png');
 
-const MessagingDashboard = () => {
+const MessagingDashboard = ({navigation}) => {
   return (
     <ImageBackground source={background} style={styles.container}>
         <View style={styles.chat_container}>
             <View style={styles.card}>
-                <View style={styles.card_content}>
+                <TouchableOpacity style={styles.card_content} onPress={ () => navigation.navigate('SendMessageArea') }>
                     <Image source={profileImage} style={styles.chat_profile_image}/>
                     <View style={styles.chat_user_area}>
                         <Text style={styles.chat_user_title_text}>Shining Star Day Care School</Text>
@@ -25,7 +25,7 @@ const MessagingDashboard = () => {
                             <Icon name="bell" style={styles.notification_icon}/>
                         </View>
                     </View>
-                </View>
+                </TouchableOpacity>
             </View>
         </View>
     </ImageBackground>
