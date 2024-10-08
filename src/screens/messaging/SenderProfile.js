@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
+import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native'
 import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -32,24 +32,49 @@ const SenderProfile = ({navigation}) => {
                     <Text style={styles.sub_title}>This account uses ChildCareSoftware Account Type : Owner</Text>
                 </View>
             </View>
-            <View style={styles.chat_media}>
-                <TouchableOpacity style={styles.chat_media_header}>
-                    <View style={styles.media_info_container}>
-                        <Icon name="photo-video" style={styles.icon}/>
-                        <Text style={[styles.main_title, {marginLeft:10}]}>Chat Media</Text>
+            <ScrollView>
+                <View style={styles.chat_media}>
+                    <TouchableOpacity style={styles.chat_media_header}>
+                        <View style={styles.media_info_container}>
+                            <Icon name="photo-video" style={styles.icon}/>
+                            <Text style={[styles.main_title, {marginLeft:10}]}>Chat Media</Text>
+                        </View>
+                        <Icon name="angle-right" style={styles.icon}/>
+                    </TouchableOpacity>
+                    <View style={styles.chat_media_content}>
+                        <Image source={placeholder_img} style={styles.chat_media_items}/>
+                        <Image source={placeholder_img} style={styles.chat_media_items}/>
+                        <Image source={placeholder_img} style={styles.chat_media_items}/>
+                        <Image source={placeholder_img} style={styles.chat_media_items}/>
+                        <Image source={placeholder_img} style={styles.chat_media_items}/>
+                        <Image source={placeholder_img} style={styles.chat_media_items}/>
+                        <Image source={placeholder_img} style={styles.chat_media_items}/>
                     </View>
-                    <Icon name="angle-right" style={styles.icon}/>
-                </TouchableOpacity>
-                <View style={styles.chat_media_content}>
-                    <Image source={placeholder_img} style={styles.chat_media_items}/>
-                    <Image source={placeholder_img} style={styles.chat_media_items}/>
-                    <Image source={placeholder_img} style={styles.chat_media_items}/>
-                    <Image source={placeholder_img} style={styles.chat_media_items}/>
-                    <Image source={placeholder_img} style={styles.chat_media_items}/>
-                    <Image source={placeholder_img} style={styles.chat_media_items}/>
-                    <Image source={placeholder_img} style={styles.chat_media_items}/>
                 </View>
-            </View>
+                <View style={styles.account_creator_details}>
+                    <View style={styles.account_details_header}>
+                        <Icon name="address-card"style={styles.icon}/>
+                        <Text style={[styles.main_title, {marginLeft:10}]}>Account Details</Text>
+                    </View>
+                    <View style={styles.form_group}>
+                        <Text style={styles.main_title2}>Account Created By:</Text>
+                        <Text style={styles.sub_title2}>Dipankar Kataki</Text>
+                    </View>
+                    <View style={styles.form_group}>
+                        <Text style={styles.main_title2}>Email:</Text>
+                        <Text style={styles.sub_title2}>dipankar@childcaresoftware.com</Text>
+                    </View>
+                    <View style={styles.form_group}>
+                        <Text style={styles.main_title2}>Phone Number:</Text>
+                        <Text style={styles.sub_title2}>+1 8569874521</Text>
+                    </View>
+                    <View style={styles.form_group}>
+                        <Text style={styles.main_title2}>Owner:</Text>
+                        <Text style={styles.sub_title2}>The Shining Star Day Care School</Text>
+                    </View>
+                </View>
+            </ScrollView>
+            
         </ImageBackground>
     )
 }
@@ -108,6 +133,11 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
         color: '#36454F',
     },
+    main_title2:{
+        color: '#36454F',
+        fontSize: 15,
+        fontFamily:'Poppins Regular',
+    },
     main_title:{
         color: '#36454F',
         fontSize: 17,
@@ -119,6 +149,13 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginBottom: 8,
         fontFamily:'Poppins Medium'
+    },
+    sub_title2:{
+        color: '#36454F',
+        fontSize: 12,
+        marginBottom: 8,
+        fontFamily:'Poppins Medium',
+        fontWeight:'bold'
     },
     account_type:{
         flexDirection:'row',
@@ -171,4 +208,26 @@ const styles = StyleSheet.create({
         marginRight:10,
         marginBottom:10
     },
+    account_creator_details:{
+        marginTop:20,
+        paddingHorizontal:20,
+        paddingVertical:20,
+        backgroundColor:'#fff',
+        marginLeft:10,
+        marginRight:10,
+        borderRadius:10,
+        borderColor:'#343434',
+        borderStyle:'solid',
+        elevation:2,
+        marginBottom:20
+    },
+    account_details_header:{
+        flexDirection:'row',
+        justifyContent:'flex-start',
+        alignItems:'center',
+        marginBottom:20
+    },
+    form_group:{
+        marginBottom:2
+    }
 })
