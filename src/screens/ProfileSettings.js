@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView } from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Modal } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ProfileDetailsApi from '../api/ProfileDetailsApi';
@@ -17,8 +17,15 @@ const ProfileSettings = ({ navigation }) => {
     let [phone, setPhone] = useState('');
     let [familyId, setFamilyId] = useState('');
     let [siteId, setSiteId] = useState('');
-    const [confirmPasswordVisibilty, setConfirmPasswordVisibility] = useState(true);
+    let [oldPassword, setOldPassword] = useState('');
+    let [newPassword, setNewPassword] = useState('');
+    let [confirmPassword, setConfirmPassword] = useState('');
+    const [kioskVisibilty, setKioskVisibility] = useState(true);
+    const [oldPassVisibilty, setOldPassVisibility] = useState(true);
+    const [newPassVisibilty, setNewPassVisibility] = useState(true);
+    const [confirmPassVisibilty, setConfirmPassVisibility] = useState(true);
     const [profileImage, setProfileImage] = useState(defaultProfileImage);
+    const [modalVisible, setModalVisible] = useState(false);
 
 
     const selectProfileImage = () => {
@@ -62,6 +69,14 @@ const ProfileSettings = ({ navigation }) => {
             console.log('Error --> ',err);
         });
     },[])
+
+    const handleModalClose = () => {
+        setModalVisible(false);
+    };
+
+    const handleSaveDetails = () => {
+        handleModalClose();
+    };
 
     
 
@@ -124,7 +139,7 @@ const ProfileSettings = ({ navigation }) => {
                 </View>
                 <View style={styles.card}>
                     <Text style={styles.title_text}>Security</Text>
-                    <TouchableOpacity style={styles.family_details_card}>
+                    <TouchableOpacity style={styles.family_details_card} onPress={ () => setModalVisible(true)}>
                         <Text style={styles.change_password_text}>Change Password</Text>
                         <Icon name="angle-right" style={styles.icon} />
                     </TouchableOpacity>
@@ -136,18 +151,124 @@ const ProfileSettings = ({ navigation }) => {
                             placeholder='* * * *' 
                             placeholderTextColor='#b9b9b9'
                             value={kioskPin}
-                            secureTextEntry={confirmPasswordVisibilty}
+                            secureTextEntry={kioskVisibilty}
                             onChangeText={(text) => setKioskPin(text.replace(/[^0-9]/g, ''))}
                             readOnly
                         />
                         <TouchableOpacity 
-                            onPress={ () => setConfirmPasswordVisibility(!confirmPasswordVisibilty) } 
+                            onPress={ () => setKioskVisibility(!kioskVisibilty) } 
                             style={styles.show_kiosk_pin_text}>
-                            <Text style={styles.show_kiosk_pin_text}>{ !confirmPasswordVisibilty ? 'Hide PIN' : 'Show PIN'}</Text>
+                            <Text style={styles.show_kiosk_pin_text}>{ !kioskVisibilty ? 'Hide PIN' : 'Show PIN'}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </ScrollView>
+
+
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={handleModalClose}
+            >
+                <View style={styles.backdrop}>
+                    <View style={styles.modal_view}>
+                        <Text style={styles.modal_text}>Change Password</Text>
+                        <ScrollView style={{ maxHeight: '80%' }}>
+                            <View style={styles.form}>
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        Old Password<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <View style={[styles.horizontal_container]}>
+                                        <TextInput
+                                            style={[styles.text_input, {backgroundColor:'#fff'}]}
+                                            placeholder="e.g. * * * * *"
+                                            placeholderTextColor="#b9b9b9"
+                                            value={oldPassword}
+                                            onChangeText={setOldPassword}
+                                            secureTextEntry={oldPassVisibilty}
+                                        />
+                                        {
+                                            oldPassVisibilty ?
+                                            <TouchableOpacity onPress={() => setOldPassVisibility(false)}>
+                                                <Icon name="eye-slash" size={20} style={[styles.icon, {color:'#797979'}]} />
+                                            </TouchableOpacity>
+                                            :
+                                            <TouchableOpacity onPress={() => setOldPassVisibility(true)}>
+                                                <Icon name="eye" size={20} style={[styles.icon, {color:'#797979'}]} />
+                                            </TouchableOpacity>
+                                        }
+                                    </View>
+                                </View>
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        New Password<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <View style={[styles.horizontal_container]}>
+                                        <TextInput
+                                            style={[styles.text_input, {backgroundColor:'#fff'}]}
+                                            placeholder="e.g. * * * * *"
+                                            placeholderTextColor="#b9b9b9"
+                                            value={newPassword}
+                                            onChangeText={setNewPassword}
+                                            secureTextEntry={newPassVisibilty}
+                                        />
+                                        {
+                                            newPassVisibilty ?
+                                            <TouchableOpacity onPress={() => setNewPassVisibility(false)}>
+                                                <Icon name="eye-slash" size={20}  style={[styles.icon, {color:'#797979'}]} />
+                                            </TouchableOpacity>
+                                            :
+                                            <TouchableOpacity onPress={() => setNewPassVisibility(true)}>
+                                                <Icon name="eye" size={20}  style={[styles.icon, {color:'#797979'}]} />
+                                            </TouchableOpacity>
+                                        }
+                                    </View>
+                                </View>
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        Confirm Password<Text style={styles.asterics}>*</Text>
+                                    </Text>
+                                    <View style={[styles.horizontal_container]}>
+                                        <TextInput
+                                            style={[styles.text_input, {backgroundColor:'#fff'}]}
+                                            placeholder="e.g. * * * * *"
+                                            placeholderTextColor="#b9b9b9"
+                                            value={confirmPassword}
+                                            onChangeText={setConfirmPassword}
+                                            secureTextEntry={confirmPassVisibilty}
+                                        />
+                                        {
+                                            confirmPassVisibilty ?
+                                            <TouchableOpacity onPress={() => setConfirmPassVisibility(false)}>
+                                                <Icon name="eye-slash" size={20} style={[styles.icon, {color:'#797979'}]} />
+                                            </TouchableOpacity>
+                                            :
+                                            <TouchableOpacity onPress={() => setConfirmPassVisibility(true)}>
+                                                <Icon name="eye" size={20} style={[styles.icon, {color:'#797979'}]} />
+                                            </TouchableOpacity>
+                                        }
+                                    </View>
+                                </View>
+                            </View>
+                        </ScrollView>
+
+                        {/* Modal Buttons */}
+                        <View style={styles.modal_button_container}>
+                            <TouchableOpacity style={[styles.button, styles.button_save_details]} onPress={handleSaveDetails}>
+                                <Text style={styles.textStyle}>Save Details</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.button, styles.button_close]}
+                                onPress={handleModalClose}
+                            >
+                                <Text style={styles.textStyle}>Close</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </ImageBackground>
     );
 }
@@ -229,10 +350,15 @@ const styles = StyleSheet.create({
         padding:15,
         elevation:2,
         marginBottom:20
-    },text_input_container:{
+    },
+    text_input_container:{
         marginBottom:20
-    }
-    ,text_input:{
+    },
+    form_group: {
+        marginBottom: 16,
+    },
+    text_input:{
+        flex:1,
         backgroundColor:'#F1F6F6',
         fontSize:17,
         fontFamily:'Poppins Regular',
@@ -245,6 +371,12 @@ const styles = StyleSheet.create({
         fontSize:17,
         fontFamily:'Poppins Medium',
         marginBottom:8
+    },
+    input_label: {
+        marginBottom: 8,
+        color: '#797979',
+        fontSize: 17,
+        fontFamily: 'Poppins Medium',
     },
     family_details_card:{
         flexDirection:'row',
@@ -288,5 +420,61 @@ const styles = StyleSheet.create({
         color:'#2CABE2',
         fontSize:17,
         fontFamily:'Poppins Medium',
+    },
+    asterics: {
+        color: 'crimson',
+    },
+    backdrop: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modal_view: {
+        width: '90%',
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 18,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modal_text: {
+        marginBottom: 30,
+        color: '#000',
+        fontSize: 17,
+        fontFamily: 'Poppins Medium',
+    },
+    modal_button_container: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    button_save_details: {
+        backgroundColor: '#FFB52E',
+        marginRight: 10,
+    },
+    button: {
+        borderRadius: 5,
+        padding: 10,
+        elevation: 2,
+    },
+    button_close: {
+        backgroundColor: '#cdcdcd',
+    },
+    horizontal_container: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#E1F3FB',
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        backgroundColor: '#fff'
     },
 });

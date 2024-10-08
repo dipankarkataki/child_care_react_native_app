@@ -152,8 +152,8 @@ const styles = StyleSheet.create({
     chat_time_badge_container:{
         flexDirection:'row',
         justifyContent:'center',
-        marginTop:50,
-        marginBottom:50
+        marginTop:20,
+        marginBottom:20
     },
     chat_time_badge_text:{
         backgroundColor:'#F2F7FB',

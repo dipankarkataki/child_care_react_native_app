@@ -64,6 +64,13 @@ const Login = ({ navigation }) => {
                     setShouldNavigate(false)
                 }
             }).catch((err) => {
+                if(err){
+                    setLoader(false);
+                    setModalVisible(true);
+                    setModalIcon('error');
+                    setModalMessage('Oops! Something went wrong. Please try after sometime.');
+                    setShouldNavigate(false)
+                }
                 console.log('Error --> ',err);
             });
         }
