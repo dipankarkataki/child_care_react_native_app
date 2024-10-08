@@ -12,7 +12,7 @@ const SendMessageArea = ({navigation}) => {
 
     return (
         <ImageBackground source={background} style={styles.container}>
-            <View style={styles.chat_header}>
+            <TouchableOpacity style={styles.chat_header} onPress={ () => navigation.navigate('SenderProfile')}>
                 <TouchableOpacity onPress={ () => navigation.navigate('MessagingDashboard')}>
                     <Icon name="long-arrow-left" style={styles.back_button} />
                 </TouchableOpacity>
@@ -23,7 +23,7 @@ const SendMessageArea = ({navigation}) => {
                         <Text style={[styles.chat_user_status]}>Active Now</Text>
                     </View>
                 </View>
-            </View>
+            </TouchableOpacity>
             <View style={styles.chat_body}>
                 <View style={styles.chat_time_badge_container}>
                     <Text style={styles.chat_time_badge_text}>Today</Text>
@@ -33,7 +33,6 @@ const SendMessageArea = ({navigation}) => {
                         <Image source={profileImage} style={styles.inner_chat_profile_image}/>
                         <View style={styles.chat_title_area}>
                             <Text style={styles.inner_chat_user_title_text}>The Shining Star Day Care School</Text>
-                            
                         </View>
                     </View>
                     <View style={styles.sender_message_area}>
@@ -82,13 +81,13 @@ const styles = StyleSheet.create({
         flex:1
     },
     chat_header:{
-        backgroundColor:'#fff',
-        padding:20,
+        backgroundColor: '#E8F2F4',
+        padding:10,
         flexDirection:'row',
         alignItems:'center',
         borderWidth:1,
         borderStyle:'solid',
-        borderColor:'#f2f2f2',
+        borderColor:'#E8F2F4',
     },
     back_button:{
         fontSize:20,

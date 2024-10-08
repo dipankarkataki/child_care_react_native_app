@@ -17,6 +17,7 @@ import AutoPay from '../screens/billing/AutoPay';
 import BottomTabNavigation from './BottomTabNavigation';
 import MessagingDashboard from '../screens/messaging/MessagingDashboard';
 import SendMessageArea from '../screens/messaging/SendMessageArea';
+import SenderProfile from '../screens/messaging/SenderProfile';
 
 const Stack = createNativeStackNavigator();
 const userAvatar = require('../assets/images/profile-image.png')
@@ -125,27 +126,28 @@ const ScreenNavigation = () => {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen name="MessagingDashboard" component={MessagingDashboard} options={({ navigation }) => ({
-                    title: 'ChildCareSoftware - Chat System',
-                    headerStyle: {
-                        backgroundColor: '#2CABE2',
-                        elevation: 0,
-                        shadowOpacity: 0,
-                    },
-                    headerTitleAlign: 'center',
-                    headerTintColor: '#fff',
-                    headerTitleStyle:{
-                        fontSize:17,
-                        fontFamily:"Poppins Medium"
-                    },
-                    headerRight: () => (
-                        <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
-                            <Image source={userAvatar} style={styles.user_avatar} />
-                        </TouchableOpacity>
-                    ),
-                })}
+                        title: 'ChildCareSoftware - Chat System',
+                        headerStyle: {
+                            backgroundColor: '#2CABE2',
+                            elevation: 0,
+                            shadowOpacity: 0,
+                        },
+                        headerTitleAlign: 'center',
+                        headerTintColor: '#fff',
+                        headerTitleStyle:{
+                            fontSize:17,
+                            fontFamily:"Poppins Medium"
+                        },
+                        headerRight: () => (
+                            <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
+                                <Image source={userAvatar} style={styles.user_avatar} />
+                            </TouchableOpacity>
+                        ),
+                    })}
                 />
 
                 <Stack.Screen name="SendMessageArea" component={SendMessageArea} options={{ headerShown: false }}/>
+                <Stack.Screen name="SenderProfile" component={SenderProfile} options={{ headerShown: false }} />
             </Stack.Navigator>
 
         </NavigationContainer>

@@ -72,6 +72,9 @@ const ProfileSettings = ({ navigation }) => {
 
     const handleModalClose = () => {
         setModalVisible(false);
+        setOldPassVisibility(true)
+        setNewPassVisibility(true)
+        setConfirmPassVisibility(true)
     };
 
     const handleSaveDetails = () => {
