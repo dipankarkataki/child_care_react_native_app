@@ -41,16 +41,17 @@ const styles = StyleSheet.create({
         padding:5
     },
     chat_container:{
-        padding:10,
+        padding:8,
     },
     card:{
         borderWidth:1,
-        borderStyle:'dashed',
-        borderColor:'#BAF1EF',
+        borderStyle:'solid',
+        borderColor:'#fff',
         borderRadius:10,
         backgroundColor:'#fff',
         paddingVertical:15,
-        paddingHorizontal:5
+        paddingHorizontal:5,
+        elevation:2
     },
     card_content:{
         flexDirection:'row',
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
         height:25,
         width:25,
         borderWidth:1,
-        borderStyle:'dotted',
+        borderStyle:'solid',
         borderColor:'#f2f2f2',
         borderRadius:40,
         backgroundColor:'#797979',
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
     },
     notification_icon:{
         fontSize:17,
-        color:'crimson',
+        color:'#FFBF00',
         elevation:2
     }
 })
