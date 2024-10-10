@@ -1,6 +1,6 @@
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, View, Image, TextInput, ScrollView } from 'react-native'
 import React, {useState} from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
 
 const profileImage = require('../../assets/images/pro-image.jpg')
@@ -10,12 +10,17 @@ const placeholder_img = require('../../assets/images/placeholder-img.png');
 const SendMessageArea = ({navigation}) => {
 
     const [message, setMessage] = useState('');
+    const [bottomSheet, setBottomSheet] = useState(false)
+
+    const toggleBottomSheet = () =>{
+        setBottomSheet(!bottomSheet);
+    }
 
     return (
         <ImageBackground source={background} style={styles.container}>
             <TouchableOpacity style={styles.chat_header} onPress={ () => navigation.navigate('SenderProfile')}>
                 <TouchableOpacity onPress={ () => navigation.navigate('MessagingDashboard')}>
-                    <Icon name="long-arrow-left" style={styles.back_button} />
+                    <Icon name="arrow-left" style={styles.back_button} />
                 </TouchableOpacity>
                 <View style={styles.chat_user_area}>
                     <Image source={profileImage} style={styles.chat_profile_image}/>
@@ -41,7 +46,7 @@ const SendMessageArea = ({navigation}) => {
                             <View style={styles.sender_message_area}>
                                 <View style={styles.sender_tail} />
                                 <Text style={styles.sender_text}>Hello Mr William.</Text>
-                                <Text style={styles.sender_message_time}> <Icon name="clock-o" /> 09:30 AM</Text>
+                                <Text style={styles.sender_message_time}> <Icon name="clock" /> 09:30 AM</Text>
                             </View>
                             <View style={styles.sender_message_area}>
                                 <View style={styles.sender_tail} />
@@ -50,14 +55,14 @@ const SendMessageArea = ({navigation}) => {
                                     like in your useEffect in the main app component or your authentication logic. This ensures that even 
                                     in development mode, the app behaves consistently.
                                 </Text>
-                                <Text style={styles.sender_message_time}> <Icon name="clock-o" /> 10:30 AM</Text>
+                                <Text style={styles.sender_message_time}> <Icon name="clock" /> 10:30 AM</Text>
                             </View>
                             <View style={styles.sender_message_area}>
                                 <View style={styles.sender_tail} />
                                 <Text style={styles.sender_text}>
                                 Hope this will help!
                                 </Text>
-                                <Text style={styles.sender_message_time}> <Icon name="clock-o" /> 11:20 AM</Text>
+                                <Text style={styles.sender_message_time}> <Icon name="clock" /> 11:20 AM</Text>
                             </View>
                         </View>
                         <View style={styles.receiver_container}>
@@ -68,12 +73,12 @@ const SendMessageArea = ({navigation}) => {
                                     like in your useEffect in the main app component or your authentication logic. This ensures that even 
                                     in development mode, the app behaves consistently.
                                 </Text>
-                                <Text style={styles.receiver_message_time}> <Icon name="clock-o" /> 10:30 AM</Text>
+                                <Text style={styles.receiver_message_time}> <Icon name="clock" /> 10:30 AM</Text>
                             </View>
                             <View style={styles.receiver_message_area}>
                                 <View style={styles.receiver_tail} />
                                 <Image source={placeholder_img} style={styles.chat_media_items}/>
-                                <Text style={styles.receiver_message_time}> <Icon name="clock-o" /> 11:20 AM</Text>
+                                <Text style={styles.receiver_message_time}> <Icon name="clock" /> 11:20 AM</Text>
                             </View>
                         </View>
                     </View>
@@ -81,7 +86,9 @@ const SendMessageArea = ({navigation}) => {
                 
             </View>
             <View style={styles.send_message_btn_container}>
-                <IonicIcon name="camera-outline" style={styles.camera_icon}/>
+                <TouchableOpacity onPress={toggleBottomSheet}>
+                    <Icon name="paperclip" style={styles.attachment_icon}/>
+                </TouchableOpacity>
                 <View style={styles.input_container}>
                     <TextInput 
                         style={styles.text_input}
@@ -95,6 +102,32 @@ const SendMessageArea = ({navigation}) => {
                     <IonicIcon name="send" style={styles.send_message_icon}/>
                 </TouchableOpacity>
             </View>
+            
+            {bottomSheet && (
+                <View style={styles.bottom_sheet_container}>
+                    <View style={styles.bottom_sheet_items}>
+                        <View style={{marginRight:20}}>
+                            <TouchableOpacity style={styles.item_outline}>
+                                <Icon name="camera" style={styles.item_icon} />
+                            </TouchableOpacity>
+                            <Text style={styles.title_text}>Camera</Text>
+                        </View>
+                        <View style={{marginRight:20}}>
+                            <TouchableOpacity style={styles.item_outline}>
+                                <Icon name="images" style={styles.item_icon} />
+                            </TouchableOpacity>
+                            <Text style={styles.title_text}>Gallery</Text>
+                        </View>
+                        <View style={{marginRight:20}}>
+                            <TouchableOpacity style={styles.item_outline}>
+                                <Icon name="file-alt" style={styles.item_icon} />
+                            </TouchableOpacity>
+                            <Text style={styles.title_text}>Document</Text>
+                        </View>
+                    </View>
+                </View>
+            )}
+           
         </ImageBackground>
     )
 }
@@ -102,6 +135,41 @@ const SendMessageArea = ({navigation}) => {
 export default SendMessageArea
 
 const styles = StyleSheet.create({
+    showBottomSheet:{
+        display:'flex'
+    },
+    hideBottomSheet:{
+        display:'none'
+    },
+    bottom_sheet_container:{
+        height:250,
+        backgroundColor:"#fff",
+        padding:20
+    },
+    bottom_sheet_items:{
+        flexDirection:'row',
+        flexWrap:'wrap',
+        justifyContent:'flex-start',
+        alignItems:'center'
+    },
+    item_outline:{
+        backgroundColor:'#f8f8ff',
+        justifyContent:'center',
+        alignItems:'center',
+        height:70,
+        width:70,
+        borderWidth:1,
+        borderStyle:'solid',
+        borderColor:'#004040',
+        borderRadius:10,
+        padding:10,
+        marginBottom:8,
+        elevation:2
+    },
+    item_icon:{
+        fontSize:28,
+        color:'#000'
+    },
     container:{
         flex:1
     },
@@ -200,7 +268,7 @@ const styles = StyleSheet.create({
         backgroundColor:'#F2F7FB',
         padding:10,
         borderWidth:1,
-        borderColor:'#fff',
+        borderColor:'#e5e4e2',
         borderRadius:10,
         marginLeft:50,
         marginBottom:10,
@@ -220,7 +288,7 @@ const styles = StyleSheet.create({
         textAlign:'right'
     },
     receiver_message_area:{
-        backgroundColor:'#36454F',
+        backgroundColor:'#414a4c',
         padding:10,
         borderWidth:1,
         borderColor:'#36454F',
@@ -266,8 +334,8 @@ const styles = StyleSheet.create({
         padding: 12,
         fontFamily:'Poppins Regular',
     },
-    camera_icon:{
-        fontSize: 30,
+    attachment_icon:{
+        fontSize: 25,
         color: '#535353',
     },
     send_message_btn:{
@@ -318,6 +386,12 @@ const styles = StyleSheet.create({
         borderRadius:10,
         marginRight:10,
         marginBottom:10
+    },
+    title_text:{
+        color:"#080808",
+        fontSize:12,
+        fontFamily:'Poppins Medium',
+        textAlign:'center'
     },
 
 })

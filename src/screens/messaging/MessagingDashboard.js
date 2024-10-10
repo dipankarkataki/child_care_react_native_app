@@ -15,7 +15,7 @@ const MessagingDashboard = ({navigation}) => {
                     <View style={styles.chat_user_area}>
                         <Text style={styles.chat_user_title_text}>Shining Star Day Care School</Text>
                         <Text style={styles.preview_user_chat}>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet eros a eros...
+                           Start converstation....
                         </Text>
                     </View>
                     <View style={styles.chat_notification_area}>
