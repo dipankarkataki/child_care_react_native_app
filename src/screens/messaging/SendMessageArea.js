@@ -1,7 +1,10 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, View, Image, TextInput, ScrollView } from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, View, Image, TextInput, ScrollView, Alert } from 'react-native'
 import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
+import { launchImageLibrary, launchCamera  } from 'react-native-image-picker';
+import DocumentPicker from 'react-native-document-picker';
+
 
 const profileImage = require('../../assets/images/pro-image.jpg')
 const background = require('../../assets/images/background.png');
@@ -15,6 +18,81 @@ const SendMessageArea = ({navigation}) => {
     const toggleBottomSheet = () =>{
         setBottomSheet(!bottomSheet);
     }
+
+    const openGallery = () => {
+        const options = {
+            mediaType: 'photo',
+            maxWidth: 300,
+            maxHeight: 300,
+            quality: 0.7,
+            includeBase64: false,
+        };
+
+        launchImageLibrary(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+                setBottomSheet(!bottomSheet);
+            } else if (response.errorCode) {
+                console.log('ImagePicker Error: ', response.errorMessage);
+                Alert.alert('Error', response.errorMessage || 'Something went wrong while selecting the image.');
+            } else if (response.assets && response.assets.length > 0) {
+                const selectedImage = response.assets[0];
+                // setProfileImage({ uri: selectedImage.uri }); // Update the profile image state
+                // TODO: Upload the selected image to your server if needed
+                console.log('Selected Image -->', selectedImage.uri)
+            }
+        });
+    };
+
+    const openCamera = () => {
+        const options = {
+            mediaType: 'photo',
+            cameraType: 'back',
+            maxWidth: 300,
+            maxHeight: 300,
+            quality: 0.7,
+            includeBase64: false,
+            saveToPhotos: true, // Save the captured image to the device's gallery
+        };
+
+        launchCamera(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled camera');
+                setBottomSheet(!bottomSheet);
+            } else if (response.errorCode) {
+                console.log('Camera Error: ', response.errorMessage);
+                Alert.alert('Error', response.errorMessage || 'Something went wrong while accessing the camera.');
+            } else if (response.assets && response.assets.length > 0) {
+                const capturedImage = response.assets[0];
+                // Handle the captured image (e.g., upload to server)
+                console.log('Captured Image -->', capturedImage.uri);
+            }
+        });
+    };
+
+    const openDocument = async () => {
+        try {
+            const res = await DocumentPicker.pick({
+                type: [DocumentPicker.types.pdf, DocumentPicker.types.doc, DocumentPicker.types.docx, DocumentPicker.types.xls, DocumentPicker.types.xlsx],
+            });
+
+            const data = res[0];
+            console.log('Selected Document:', data);
+            // You can handle the selected document here, e.g., upload to server or display in UI
+            // Example: setSelectedDocument(res);
+            Alert.alert('Document Selected', `Name: ${data.name}\nType: ${data.type}\nSize: ${data.size} bytes`);
+            setBottomSheet(!bottomSheet); // Close the bottom sheet after selection
+        } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+                console.log('User cancelled document picker');
+                setBottomSheet(!bottomSheet);
+            } else {
+                console.log('Unknown Error: ', err);
+                Alert.alert('Error', 'An error occurred while selecting the document.');
+            }
+        }
+    };
+    
 
     return (
         <ImageBackground source={background} style={styles.container}>
@@ -107,19 +185,19 @@ const SendMessageArea = ({navigation}) => {
                 <View style={styles.bottom_sheet_container}>
                     <View style={styles.bottom_sheet_items}>
                         <View style={{marginRight:20}}>
-                            <TouchableOpacity style={styles.item_outline}>
+                            <TouchableOpacity style={styles.item_outline} onPress={openCamera}>
                                 <Icon name="camera" style={styles.item_icon} />
                             </TouchableOpacity>
                             <Text style={styles.title_text}>Camera</Text>
                         </View>
                         <View style={{marginRight:20}}>
-                            <TouchableOpacity style={styles.item_outline}>
+                            <TouchableOpacity style={styles.item_outline} onPress={openGallery}>
                                 <Icon name="images" style={styles.item_icon} />
                             </TouchableOpacity>
                             <Text style={styles.title_text}>Gallery</Text>
                         </View>
                         <View style={{marginRight:20}}>
-                            <TouchableOpacity style={styles.item_outline}>
+                            <TouchableOpacity style={styles.item_outline} onPress={openDocument}>
                                 <Icon name="file-alt" style={styles.item_icon} />
                             </TouchableOpacity>
                             <Text style={styles.title_text}>Document</Text>
