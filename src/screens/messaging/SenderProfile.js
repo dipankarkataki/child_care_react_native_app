@@ -6,7 +6,9 @@ const profileImage = require('../../assets/images/pro-image.jpg')
 const background = require('../../assets/images/background.png');
 const placeholder_img = require('../../assets/images/placeholder-img.png');
 
-const SenderProfile = ({navigation}) => {
+const SenderProfile = ({navigation, route}) => {
+
+    const { userId } = route.params;
 
     let [firstName, setFirstName] = useState('');
     let [lastName, setLastName] = useState('');
@@ -15,7 +17,7 @@ const SenderProfile = ({navigation}) => {
     return (
         <ImageBackground source={background} style={styles.container}>
             <View style={styles.profile_header}>
-                <TouchableOpacity style={styles.profile_back_button} onPress={ () => navigation.navigate('SendMessageArea') }>
+                <TouchableOpacity style={styles.profile_back_button} onPress={ () => navigation.navigate('SendMessageArea', {userId: userId}) }>
                     <Icon name="angle-left" style={styles.back_btn_icon} />
                 </TouchableOpacity>
 

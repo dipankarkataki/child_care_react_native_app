@@ -32,7 +32,7 @@ const MessagingDashboard = ({navigation}) => {
                 renderItem={({item}) => (
                     <View style={styles.chat_container}>
                         <View style={styles.card}>
-                            <TouchableOpacity style={styles.card_content} onPress={ () => navigation.navigate('SendMessageArea') }>
+                            <TouchableOpacity style={styles.card_content} onPress={ () => navigation.navigate('SendMessageArea',{userId : item.id}) }>
                                 <Image source={profileImage} style={styles.chat_profile_image}/>
                                 <View style={styles.chat_user_area}>
                                     <Text style={styles.chat_user_title_text}>{item.name}</Text>

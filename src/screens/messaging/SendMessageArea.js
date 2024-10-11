@@ -6,19 +6,22 @@ import { launchImageLibrary, launchCamera  } from 'react-native-image-picker';
 import DocumentPicker from 'react-native-document-picker';
 import FileViewer from 'react-native-file-viewer';
 import RNFS from 'react-native-fs'
+import GetMessagesApi from '../../api/MessagingApi/GetMessagesApi';
 
 
 const profileImage = require('../../assets/images/pro-image.jpg')
 const background = require('../../assets/images/background.png');
 const placeholder_img = require('../../assets/images/placeholder-img.png');
 
-const SendMessageArea = ({navigation}) => {
+const SendMessageArea = ({navigation, route }) => {
 
     const [inputMessage, setInputMessage] = useState(''); // For the TextInput field
     const [messages, setMessages] = useState([]); // Array to store sent messages
     const [attachments, setAttachments] = useState([]); // New state for attachments
     const [bottomSheet, setBottomSheet] = useState(false);
     const scrollViewRef = useRef(null); 
+
+    const { userId } = route.params;
 
     const toggleBottomSheet = () =>{
         setBottomSheet(!bottomSheet);
@@ -129,7 +132,8 @@ const SendMessageArea = ({navigation}) => {
             const newMessage = {
                 text: inputMessage,
                 time: getCurrentTime(),
-                attachments: attachments, // Array of attachments
+                attachments: attachments,
+                type:'send' // Array of attachments
             };
             setMessages([...messages, newMessage]);
             setInputMessage(''); // Clear the input field after sending the message
@@ -143,6 +147,23 @@ const SendMessageArea = ({navigation}) => {
     }
 
     useEffect(() => {
+        console.log('User Id ==> ', userId)
+        GetMessagesApi(userId)
+        .then((result) => {
+            console.log('Chats Data ==> ', result.data['19'][0])
+            let data = result.data['19'][0];
+            const newMessage = {
+                text: data.text,
+                time: getCurrentTime(),
+                attachments: attachments,
+                type:data.type // Array of attachments
+            };
+            setMessages([...messages, newMessage]);
+            console.log('Messages ' , messages)
+        })
+        .catch((err) => {
+            console.log('Error', err);
+        });
         // Scroll to the bottom when the component is first loaded
         setTimeout(() => {
             scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -192,7 +213,7 @@ const SendMessageArea = ({navigation}) => {
 
     return (
         <ImageBackground source={background} style={styles.container}>
-            <TouchableOpacity style={styles.chat_header} onPress={ () => navigation.navigate('SenderProfile')}>
+            <TouchableOpacity style={styles.chat_header} onPress={ () => navigation.navigate('SenderProfile', {userId: userId})}>
                 <TouchableOpacity onPress={ () => navigation.navigate('MessagingDashboard')}>
                     <Icon name="arrow-left" style={styles.back_button} />
                 </TouchableOpacity>
@@ -210,31 +231,106 @@ const SendMessageArea = ({navigation}) => {
                 data={messages}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) => (
-                    <View style={styles.receiver_container}>
-                        <View style={styles.receiver_message_area}>
-                            <View style={styles.receiver_tail} />
-                            {item.text ? (
-                                <Text style={styles.receiver_text}>
-                                    {item.text}
-                                </Text>
-                            ) : null}
-                            {item.attachments && item.attachments.map((attachment, attIndex) => (
-                                <View key={attIndex} style={styles.message_attachment}>
-                                    {attachment.type === 'image' ? (
-                                        <Image source={{ uri: attachment.uri }} style={styles.message_image} />
-                                    ) : (
-                                        <TouchableOpacity onPress={() => handleDocumentPress(attachment.uri, attachment.fileType)}>
-                                            <View style={styles.message_document}>
-                                                <Icon name="file-alt" size={30} color="#000" />
-                                                <Text style={styles.message_document_text}>{attachment.name}</Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                    )}
+                    <>
+                        {item.type === 'send' && (
+                        // If item.type is 'send', show the receiver's message layout
+                            <View style={styles.receiver_container}>
+                                <View style={styles.receiver_message_area}>
+                                    <View style={styles.receiver_tail} />
+                                    
+                                    {item.text ? (
+                                        <Text style={styles.receiver_text}>
+                                            {item.text}
+                                        </Text>
+                                    ) : null}
+                                    
+                                    {/* Handling attachments */}
+                                    {item.attachments && item.attachments.map((attachment, attIndex) => (
+                                        <View key={attIndex} style={styles.message_attachment}>
+                                            {attachment.type === 'image' ? (
+                                                <Image source={{ uri: attachment.uri }} style={styles.message_image} />
+                                            ) : (
+                                                <TouchableOpacity onPress={() => handleDocumentPress(attachment.uri, attachment.fileType)}>
+                                                    <View style={styles.message_document}>
+                                                        <Icon name="file-alt" size={30} color="#000" />
+                                                        <Text style={styles.message_document_text}>{attachment.name}</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                            )}
+                                        </View>
+                                    ))}
+                                    
+                                    <Text style={styles.receiver_message_time}>
+                                        <Icon name="clock" /> {item.time}
+                                    </Text>
                                 </View>
-                            ))}
-                            <Text style={styles.receiver_message_time}> <Icon name="clock" /> {item.time}</Text>
-                        </View>
-                    </View>
+                            </View>
+                        )}
+
+
+                        {item.type === 'received' && (
+                            // If item.type is 'receive', show sender's message layout
+                            <View style={styles.sender_container}>
+                                <View style={styles.sender_message_area}>
+                                    <View style={styles.sender_tail} />
+                                    {item.text ? (
+                                        <Text style={styles.sender_text}>
+                                            {item.text}
+                                        </Text>
+                                    ) : null}
+                                    
+                                    {/* Handling attachments */}
+                                    {item.attachments && item.attachments.map((attachment, attIndex) => (
+                                        <View key={attIndex} style={styles.message_attachment}>
+                                            {attachment.type === 'image' ? (
+                                                <Image source={{ uri: attachment.uri }} style={styles.message_image} />
+                                            ) : (
+                                                <TouchableOpacity onPress={() => handleDocumentPress(attachment.uri, attachment.fileType)}>
+                                                    <View style={styles.message_document}>
+                                                        <Icon name="file-alt" size={30} color="#000" />
+                                                        <Text style={styles.message_document_text}>{attachment.name}</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                            )}
+                                        </View>
+                                    ))}
+                                    
+                                    <Text style={styles.sender_message_time}> 
+                                        <Icon name="clock" /> {item.time}
+                                    </Text>
+                                </View>
+                            </View>
+                        )}
+                    </>
+                    
+
+                    
+
+                    // <View style={styles.receiver_container}>
+                    //     <View style={styles.receiver_message_area}>
+                    //         <View style={styles.receiver_tail} />
+                    //         {item.text ? (
+                    //             <Text style={styles.receiver_text}>
+                    //                 {item.text}
+                    //             </Text>
+                    //         ) : null}
+                    //         {item.attachments && item.attachments.map((attachment, attIndex) => (
+                    //             <View key={attIndex} style={styles.message_attachment}>
+                    //                 {attachment.type === 'image' ? (
+                    //                     <Image source={{ uri: attachment.uri }} style={styles.message_image} />
+                    //                 ) : (
+                    //                     <TouchableOpacity onPress={() => handleDocumentPress(attachment.uri, attachment.fileType)}>
+                    //                         <View style={styles.message_document}>
+                    //                             <Icon name="file-alt" size={30} color="#000" />
+                    //                             <Text style={styles.message_document_text}>{attachment.name}</Text>
+                    //                         </View>
+                    //                     </TouchableOpacity>
+                    //                 )}
+                    //             </View>
+                    //         ))}
+                    //         <Text style={styles.receiver_message_time}> <Icon name="clock" /> {item.time}</Text>
+                    //     </View>
+                    // </View>
                 )}
                 onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
                 onLayout={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
@@ -493,6 +589,9 @@ const styles = StyleSheet.create({
         color: '#fff'
     },
     receiver_container: {
+        marginTop: 20
+    },
+    sender_container:{
         marginTop: 20
     },
     sender_tail: {
