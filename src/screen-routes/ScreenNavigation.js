@@ -18,6 +18,7 @@ import BottomTabNavigation from './BottomTabNavigation';
 import MessagingDashboard from '../screens/messaging/MessagingDashboard';
 import SendMessageArea from '../screens/messaging/SendMessageArea';
 import SenderProfile from '../screens/messaging/SenderProfile';
+import NewChat from '../screens/messaging/NewChat';
 
 const Stack = createNativeStackNavigator();
 const userAvatar = require('../assets/images/profile-image.png')
@@ -148,6 +149,22 @@ const ScreenNavigation = () => {
 
                 <Stack.Screen name="SendMessageArea" component={SendMessageArea} options={{ headerShown: false }}/>
                 <Stack.Screen name="SenderProfile" component={SenderProfile} options={{ headerShown: false }} />
+
+                <Stack.Screen name="NewChat" component={NewChat} options={({ navigation }) => ({
+                        title: 'Select Contact',
+                        headerStyle: {
+                            backgroundColor: '#2CABE2',
+                            elevation: 0,
+                            shadowOpacity: 0,
+                        },
+                        headerTitleAlign: 'center',
+                        headerTintColor: '#fff',
+                        headerTitleStyle:{
+                            fontSize:17,
+                            fontFamily:"Poppins Medium"
+                        },
+                    })}
+                />
             </Stack.Navigator>
 
         </NavigationContainer>

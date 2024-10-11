@@ -213,41 +213,6 @@ const SendMessageArea = ({navigation}) => {
 export default SendMessageArea
 
 const styles = StyleSheet.create({
-    showBottomSheet:{
-        display:'flex'
-    },
-    hideBottomSheet:{
-        display:'none'
-    },
-    bottom_sheet_container:{
-        height:250,
-        backgroundColor:"#fff",
-        padding:20
-    },
-    bottom_sheet_items:{
-        flexDirection:'row',
-        flexWrap:'wrap',
-        justifyContent:'flex-start',
-        alignItems:'center'
-    },
-    item_outline:{
-        backgroundColor:'#f8f8ff',
-        justifyContent:'center',
-        alignItems:'center',
-        height:70,
-        width:70,
-        borderWidth:1,
-        borderStyle:'solid',
-        borderColor:'#004040',
-        borderRadius:10,
-        padding:10,
-        marginBottom:8,
-        elevation:2
-    },
-    item_icon:{
-        fontSize:28,
-        color:'#000'
-    },
     container:{
         flex:1
     },
@@ -470,6 +435,41 @@ const styles = StyleSheet.create({
         fontSize:12,
         fontFamily:'Poppins Medium',
         textAlign:'center'
+    },
+    showBottomSheet:{
+        display:'flex'
+    },
+    hideBottomSheet:{
+        display:'none'
+    },
+    bottom_sheet_container:{
+        height:250,
+        backgroundColor:"#fff",
+        padding:20
+    },
+    bottom_sheet_items:{
+        flexDirection:'row',
+        flexWrap:'wrap',
+        justifyContent:'flex-start',
+        alignItems:'center'
+    },
+    item_outline:{
+        backgroundColor:'#f8f8ff',
+        justifyContent:'center',
+        alignItems:'center',
+        height:70,
+        width:70,
+        borderWidth:1,
+        borderStyle:'solid',
+        borderColor:'#004040',
+        borderRadius:10,
+        padding:10,
+        marginBottom:8,
+        elevation:2
+    },
+    item_icon:{
+        fontSize:28,
+        color:'#000'
     },
 
 })

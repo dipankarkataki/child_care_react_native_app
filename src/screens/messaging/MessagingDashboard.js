@@ -1,6 +1,7 @@
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import Icon from 'react-native-vector-icons/FontAwesome'
+import Icon from 'react-native-vector-icons/FontAwesome5'
+import IonicIcon from 'react-native-vector-icons/Ionicons'
 
 const profileImage = require('../../assets/images/pro-image.jpg')
 const background = require('../../assets/images/background.png');
@@ -27,6 +28,11 @@ const MessagingDashboard = ({navigation}) => {
                     </View>
                 </TouchableOpacity>
             </View>
+        </View>
+        <View style={styles.floating_new_chat_btn_container}>
+            <TouchableOpacity style={styles.floating_new_chat_btn} onPress={ () => navigation.navigate('NewChat')}>
+                <IonicIcon name="chatbox-ellipses" style={styles.new_chat_icon}/>
+            </TouchableOpacity>
         </View>
     </ImageBackground>
     
@@ -120,5 +126,25 @@ const styles = StyleSheet.create({
         fontSize:17,
         color:'#FFBF00',
         elevation:2
-    }
+    },
+    floating_new_chat_btn_container:{
+        position:'absolute',
+        right:30,
+        bottom:40
+    },
+    floating_new_chat_btn:{
+        justifyContent:'center',
+        alignItems:'center',
+        height:60,
+        width:60,
+        borderColor:'#20A090',
+        backgroundColor:'#20A090',
+        borderWidth:1,
+        borderStyle:'solid',
+        borderRadius:20,
+    },
+    new_chat_icon:{
+        fontSize:30,
+        color:'#fff'
+    },
 })
