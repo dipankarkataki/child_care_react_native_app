@@ -1,42 +1,85 @@
-import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import { FlatList, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import IonicIcon from 'react-native-vector-icons/Ionicons'
+import MessagingDashboardApi from '../../api/MessagingApi/MessagingDashboardApi'
 
-const profileImage = require('../../assets/images/pro-image.jpg')
+const profileImage = require('../../assets/images/contact2.jpg')
 const background = require('../../assets/images/background.png');
 
+
 const MessagingDashboard = ({navigation}) => {
-  return (
-    <ImageBackground source={background} style={styles.container}>
-        <View style={styles.chat_container}>
-            <View style={styles.card}>
-                <TouchableOpacity style={styles.card_content} onPress={ () => navigation.navigate('SendMessageArea') }>
-                    <Image source={profileImage} style={styles.chat_profile_image}/>
-                    <View style={styles.chat_user_area}>
-                        <Text style={styles.chat_user_title_text}>Shining Star Day Care School</Text>
-                        <Text style={styles.preview_user_chat}>
-                           Start converstation....
-                        </Text>
-                    </View>
-                    <View style={styles.chat_notification_area}>
-                        <Text style={styles.chat_time_text}>2 mins ago</Text>
-                        <View style={styles.notification_count_container}>
-                            <Text style={styles.notification_count_text}>3</Text>
-                            <Icon name="bell" style={styles.notification_icon}/>
+    
+    const [chatUserList, setChatUserList] = useState([]);
+
+    useEffect( () => {
+        MessagingDashboardApi()
+        .then((result) => {
+            console.log('Users List ==> ', result.data)
+            setChatUserList(result.data.data)
+        })
+        .catch((err) => {
+            console.log('Error', err);
+        });
+    }, []);
+
+
+    return (
+        <ImageBackground source={background} style={styles.container}>
+            <FlatList 
+                data={chatUserList}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({item}) => (
+                    <View style={styles.chat_container}>
+                        <View style={styles.card}>
+                            <TouchableOpacity style={styles.card_content} onPress={ () => navigation.navigate('SendMessageArea') }>
+                                <Image source={profileImage} style={styles.chat_profile_image}/>
+                                <View style={styles.chat_user_area}>
+                                    <Text style={styles.chat_user_title_text}>{item.name}</Text>
+                                    <Text style={styles.preview_user_chat}>
+                                        {item.message}
+                                    </Text>
+                                </View>
+                                <View style={styles.chat_notification_area}>
+                                    <Text style={styles.chat_time_text}> {item.time}</Text>
+                                    <View style={styles.notification_count_container}>
+                                        <Text style={styles.notification_count_text}>3</Text>
+                                        <Icon name="bell" style={styles.notification_icon}/>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
                         </View>
                     </View>
+                )}
+            />
+            {/* <View style={styles.chat_container}>
+                <View style={styles.card}>
+                    <TouchableOpacity style={styles.card_content} onPress={ () => navigation.navigate('SendMessageArea') }>
+                        <Image source={profileImage} style={styles.chat_profile_image}/>
+                        <View style={styles.chat_user_area}>
+                            <Text style={styles.chat_user_title_text}>Shining Star Day Care School</Text>
+                            <Text style={styles.preview_user_chat}>
+                            Start converstation....
+                            </Text>
+                        </View>
+                        <View style={styles.chat_notification_area}>
+                            <Text style={styles.chat_time_text}>2 mins ago</Text>
+                            <View style={styles.notification_count_container}>
+                                <Text style={styles.notification_count_text}>3</Text>
+                                <Icon name="bell" style={styles.notification_icon}/>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            </View> */}
+            <View style={styles.floating_new_chat_btn_container}>
+                <TouchableOpacity style={styles.floating_new_chat_btn} onPress={ () => navigation.navigate('NewChat')}>
+                    <IonicIcon name="chatbox-ellipses" style={styles.new_chat_icon}/>
                 </TouchableOpacity>
             </View>
-        </View>
-        <View style={styles.floating_new_chat_btn_container}>
-            <TouchableOpacity style={styles.floating_new_chat_btn} onPress={ () => navigation.navigate('NewChat')}>
-                <IonicIcon name="chatbox-ellipses" style={styles.new_chat_icon}/>
-            </TouchableOpacity>
-        </View>
-    </ImageBackground>
-    
-  )
+        </ImageBackground>
+        
+    )
 }
 
 export default MessagingDashboard
