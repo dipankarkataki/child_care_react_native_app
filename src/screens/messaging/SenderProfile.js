@@ -8,7 +8,7 @@ const placeholder_img = require('../../assets/images/placeholder-img.png');
 
 const SenderProfile = ({navigation, route}) => {
 
-    const { userId } = route.params;
+    const { userId, userName } = route.params;
 
     let [firstName, setFirstName] = useState('');
     let [lastName, setLastName] = useState('');
@@ -17,14 +17,14 @@ const SenderProfile = ({navigation, route}) => {
     return (
         <ImageBackground source={background} style={styles.container}>
             <View style={styles.profile_header}>
-                <TouchableOpacity style={styles.profile_back_button} onPress={ () => navigation.navigate('SendMessageArea', {userId: userId}) }>
+                <TouchableOpacity style={styles.profile_back_button} onPress={ () => navigation.navigate('SendMessageArea', {userId: userId, userName: userName}) }>
                     <Icon name="angle-left" style={styles.back_btn_icon} />
                 </TouchableOpacity>
 
                 <View style={styles.profile_image_container}>
                     <Image source={profileImage} style={styles.profile_header_image} />
                 </View>
-                <Text style={styles.profile_header_name}>The Shining Star Day Care School</Text>
+                <Text style={styles.profile_header_name}>{userName}</Text>
                 <Text style={styles.profile_header_email}>shiningstar@daycare.com</Text>
             </View>
             <View style={styles.account_type}>

@@ -21,7 +21,7 @@ const SendMessageArea = ({navigation, route }) => {
     const [bottomSheet, setBottomSheet] = useState(false);
     const scrollViewRef = useRef(null); 
 
-    const { userId } = route.params;
+    const { userId, userName } = route.params;
 
     const toggleBottomSheet = () =>{
         setBottomSheet(!bottomSheet);
@@ -213,14 +213,14 @@ const SendMessageArea = ({navigation, route }) => {
 
     return (
         <ImageBackground source={background} style={styles.container}>
-            <TouchableOpacity style={styles.chat_header} onPress={ () => navigation.navigate('SenderProfile', {userId: userId})}>
+            <TouchableOpacity style={styles.chat_header} onPress={ () => navigation.navigate('SenderProfile', {userId: userId, userName: userName})}>
                 <TouchableOpacity onPress={ () => navigation.navigate('MessagingDashboard')}>
                     <Icon name="arrow-left" style={styles.back_button} />
                 </TouchableOpacity>
                 <View style={styles.chat_user_area}>
                     <Image source={profileImage} style={styles.chat_profile_image}/>
                     <View style={styles.chat_title_area}>
-                        <Text style={styles.chat_user_title_text}>The Shining Star Day Care School</Text>
+                        <Text style={styles.chat_user_title_text}>{userName}</Text>
                         <Text style={[styles.chat_user_status]}>Active Now</Text>
                     </View>
                 </View>
