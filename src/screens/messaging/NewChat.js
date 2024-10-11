@@ -85,7 +85,7 @@ const NewChat = ({navigation}) => {
                         <Image source={item.profile_image}  style={styles.contact_image}/>
                         <View style={styles.contact_info_container}>
                             <Text style={styles.main_title}>{item.name}</Text>
-                            <Text style={styles.sub_title}>Account Type : {item.user_type}</Text>
+                            <Text style={styles.sub_title}>Account : {item.user_type}</Text>
                         </View>
                     </TouchableOpacity>
                 )}      
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
         color:'#101618'
     },
     sub_title:{
-        fontSize:14,
+        fontSize:12,
         fontFamily:'Poppins Medium',
         color:'#101618'
     },
