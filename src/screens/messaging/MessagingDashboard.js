@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import IonicIcon from 'react-native-vector-icons/Ionicons'
 import MessagingDashboardApi from '../../api/MessagingApi/MessagingDashboardApi'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const profileImage = require('../../assets/images/contact2.jpg')
 const background = require('../../assets/images/background.png');
@@ -16,7 +17,7 @@ const MessagingDashboard = ({navigation}) => {
         MessagingDashboardApi()
         .then((result) => {
             console.log('Users List ==> ', result.data)
-            setChatUserList(result.data.data)
+            setChatUserList(result.data)
         })
         .catch((err) => {
             console.log('Error', err);

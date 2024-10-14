@@ -233,46 +233,11 @@ const SendMessageArea = ({navigation, route }) => {
                 renderItem={({ item }) => (
                     <>
                         {item.type === 'send' && (
-                        // If item.type is 'send', show the receiver's message layout
-                            <View style={styles.receiver_container}>
-                                <View style={styles.receiver_message_area}>
-                                    <View style={styles.receiver_tail} />
-                                    
-                                    {item.text ? (
-                                        <Text style={styles.receiver_text}>
-                                            {item.text}
-                                        </Text>
-                                    ) : null}
-                                    
-                                    {/* Handling attachments */}
-                                    {item.attachments && item.attachments.map((attachment, attIndex) => (
-                                        <View key={attIndex} style={styles.message_attachment}>
-                                            {attachment.type === 'image' ? (
-                                                <Image source={{ uri: attachment.uri }} style={styles.message_image} />
-                                            ) : (
-                                                <TouchableOpacity onPress={() => handleDocumentPress(attachment.uri, attachment.fileType)}>
-                                                    <View style={styles.message_document}>
-                                                        <Icon name="file-alt" size={30} color="#000" />
-                                                        <Text style={styles.message_document_text}>{attachment.name}</Text>
-                                                    </View>
-                                                </TouchableOpacity>
-                                            )}
-                                        </View>
-                                    ))}
-                                    
-                                    <Text style={styles.receiver_message_time}>
-                                        <Icon name="clock" /> {item.time}
-                                    </Text>
-                                </View>
-                            </View>
-                        )}
-
-
-                        {item.type === 'received' && (
-                            // If item.type is 'receive', show sender's message layout
+                        // If item.type is 'send', show the sender's message layout
                             <View style={styles.sender_container}>
                                 <View style={styles.sender_message_area}>
                                     <View style={styles.sender_tail} />
+                                    
                                     {item.text ? (
                                         <Text style={styles.sender_text}>
                                             {item.text}
@@ -295,43 +260,50 @@ const SendMessageArea = ({navigation, route }) => {
                                         </View>
                                     ))}
                                     
-                                    <Text style={styles.sender_message_time}> 
+                                    <Text style={styles.sender_message_time}>
+                                        <Icon name="clock" /> {item.time}
+                                    </Text>
+                                </View>
+                            </View>
+                        )}
+
+
+                        {item.type === 'received' && (
+                            // If item.type is 'receive', show receiver's message layout
+                            <View style={styles.receiver_container}>
+                                <View style={styles.receiver_message_area}>
+                                    <View style={styles.receiver_tail} />
+                                    {item.text ? (
+                                        <Text style={styles.receiver_text}>
+                                            {item.text}
+                                        </Text>
+                                    ) : null}
+                                    
+                                    {/* Handling attachments */}
+                                    {item.attachments && item.attachments.map((attachment, attIndex) => (
+                                        <View key={attIndex} style={styles.message_attachment}>
+                                            {attachment.type === 'image' ? (
+                                                <Image source={{ uri: attachment.uri }} style={styles.message_image} />
+                                            ) : (
+                                                <TouchableOpacity onPress={() => handleDocumentPress(attachment.uri, attachment.fileType)}>
+                                                    <View style={styles.message_document}>
+                                                        <Icon name="file-alt" size={30} color="#000" />
+                                                        <Text style={styles.message_document_text}>{attachment.name}</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                            )}
+                                        </View>
+                                    ))}
+                                    
+                                    <Text style={styles.receiver_message_time}> 
                                         <Icon name="clock" /> {item.time}
                                     </Text>
                                 </View>
                             </View>
                         )}
                     </>
-                    
-
-                    
-
-                    // <View style={styles.receiver_container}>
-                    //     <View style={styles.receiver_message_area}>
-                    //         <View style={styles.receiver_tail} />
-                    //         {item.text ? (
-                    //             <Text style={styles.receiver_text}>
-                    //                 {item.text}
-                    //             </Text>
-                    //         ) : null}
-                    //         {item.attachments && item.attachments.map((attachment, attIndex) => (
-                    //             <View key={attIndex} style={styles.message_attachment}>
-                    //                 {attachment.type === 'image' ? (
-                    //                     <Image source={{ uri: attachment.uri }} style={styles.message_image} />
-                    //                 ) : (
-                    //                     <TouchableOpacity onPress={() => handleDocumentPress(attachment.uri, attachment.fileType)}>
-                    //                         <View style={styles.message_document}>
-                    //                             <Icon name="file-alt" size={30} color="#000" />
-                    //                             <Text style={styles.message_document_text}>{attachment.name}</Text>
-                    //                         </View>
-                    //                     </TouchableOpacity>
-                    //                 )}
-                    //             </View>
-                    //         ))}
-                    //         <Text style={styles.receiver_message_time}> <Icon name="clock" /> {item.time}</Text>
-                    //     </View>
-                    // </View>
                 )}
+
                 onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
                 onLayout={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
             />
@@ -501,7 +473,7 @@ const styles = StyleSheet.create({
     message_area: {
         padding: 20
     },
-    sender_message_area: {
+    receiver_message_area: {
         backgroundColor: '#F2F7FB',
         padding: 10,
         borderWidth: 1,
@@ -511,20 +483,20 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         width: '80%'
     },
-    sender_text: {
+    receiver_text: {
         color: '#000E08',
         fontSize: 14,
         fontFamily: 'Poppins Medium',
         textAlign: 'justify'
     },
-    sender_message_time: {
+    receiver_message_time: {
         color: '#797C7B',
         fontSize: 12,
         fontFamily: 'Poppins Medium',
         fontWeight: 'bold',
         textAlign: 'right'
     },
-    receiver_message_area: {
+    sender_message_area: {
         backgroundColor: '#414a4c',
         padding: 10,
         borderWidth: 1,
@@ -534,13 +506,13 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         width: '80%'
     },
-    receiver_text: {
+    sender_text: {
         color: '#fff',
         fontSize: 14,
         fontFamily: 'Poppins Medium',
         textAlign: 'justify'
     },
-    receiver_message_time: {
+    sender_message_time: {
         color: '#fff',
         fontSize: 12,
         fontFamily: 'Poppins Medium',
@@ -588,13 +560,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#fff'
     },
-    receiver_container: {
+    sender_container: {
         marginTop: 20
     },
-    sender_container:{
+    receiver_container:{
         marginTop: 20
     },
-    sender_tail: {
+    receiver_tail: {
         position: 'absolute',
         left: -10,
         top: 10,
@@ -607,7 +579,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 10,
         borderBottomColor: 'transparent',
     },
-    receiver_tail: {
+    sender_tail: {
         position: 'absolute',
         right: -10,
         top: 10,
