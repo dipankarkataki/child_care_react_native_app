@@ -490,7 +490,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginLeft: 50,
         marginBottom: 10,
-        width: '80%'
+        width: '60%'
     },
     receiver_text: {
         color: '#000E08',
@@ -513,7 +513,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginLeft: 50,
         marginBottom: 10,
-        width: '80%'
+        width: '60%',
+
     },
     sender_text: {
         color: '#fff',
@@ -570,10 +571,14 @@ const styles = StyleSheet.create({
         color: '#fff'
     },
     sender_container: {
-        marginTop: 20
+        marginTop: 20,
+        alignItems:'flex-end',
+        marginRight:20
     },
     receiver_container:{
-        marginTop: 20
+        marginTop: 20,
+        alignItems:'flex-start',
+        marginLeft:20
     },
     receiver_tail: {
         position: 'absolute',
