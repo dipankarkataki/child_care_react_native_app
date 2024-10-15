@@ -27,52 +27,44 @@ const MessagingDashboard = ({navigation}) => {
 
     return (
         <ImageBackground source={background} style={styles.container}>
-            <FlatList 
-                data={chatUserList}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({item}) => (
-                    <View style={styles.chat_container}>
-                        <View style={styles.card}>
-                            <TouchableOpacity style={styles.card_content} onPress={ () => navigation.navigate('SendMessageArea',{userId : item.id, userName: item.name}) }>
-                                <Image source={profileImage} style={styles.chat_profile_image}/>
-                                <View style={styles.chat_user_area}>
-                                    <Text style={styles.chat_user_title_text}>{item.name}</Text>
-                                    <Text style={styles.preview_user_chat}>
-                                        {item.message}
-                                    </Text>
+            {
+                chatUserList.length > 0 ? (
+                    <FlatList 
+                        data={chatUserList}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({item}) => (
+                            <View style={styles.chat_container}>
+                                <View style={styles.card}>
+                                    <TouchableOpacity style={styles.card_content} onPress={ () => navigation.navigate('SendMessageArea',{userId : item.id, userName: item.name}) }>
+                                        <Image source={profileImage} style={styles.chat_profile_image}/>
+                                        <View style={styles.chat_user_area}>
+                                            <Text style={styles.chat_user_title_text}>{item.name}</Text>
+                                            <Text style={styles.preview_user_chat}>
+                                                {item.message}
+                                            </Text>
+                                        </View>
+                                        <View style={styles.chat_notification_area}>
+                                            <Text style={styles.chat_time_text}> {item.time}</Text>
+                                            <View style={styles.notification_count_container}>
+                                                <Text style={styles.notification_count_text}>3</Text>
+                                                <Icon name="bell" style={styles.notification_icon}/>
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
                                 </View>
-                                <View style={styles.chat_notification_area}>
-                                    <Text style={styles.chat_time_text}> {item.time}</Text>
-                                    <View style={styles.notification_count_container}>
-                                        <Text style={styles.notification_count_text}>3</Text>
-                                        <Icon name="bell" style={styles.notification_icon}/>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                )}
-            />
-            {/* <View style={styles.chat_container}>
-                <View style={styles.card}>
-                    <TouchableOpacity style={styles.card_content} onPress={ () => navigation.navigate('SendMessageArea') }>
-                        <Image source={profileImage} style={styles.chat_profile_image}/>
-                        <View style={styles.chat_user_area}>
-                            <Text style={styles.chat_user_title_text}>Shining Star Day Care School</Text>
-                            <Text style={styles.preview_user_chat}>
-                            Start converstation....
-                            </Text>
-                        </View>
-                        <View style={styles.chat_notification_area}>
-                            <Text style={styles.chat_time_text}>2 mins ago</Text>
-                            <View style={styles.notification_count_container}>
-                                <Text style={styles.notification_count_text}>3</Text>
-                                <Icon name="bell" style={styles.notification_icon}/>
                             </View>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            </View> */}
+                        )}
+                    />
+                ) : (
+                    <View style={styles.select_contact_to_start_chat_container}>
+                        <TouchableOpacity style={styles.select_contact_to_start_chat_btn}>
+                            <Text style={styles.heading_title}>Press the button at the bottom right to start a new chat.</Text>
+                        </TouchableOpacity>
+                    </View>
+                   
+                    
+                )
+            }
             <View style={styles.floating_new_chat_btn_container}>
                 <TouchableOpacity style={styles.floating_new_chat_btn} onPress={ () => navigation.navigate('NewChat')}>
                     <IonicIcon name="chatbox-ellipses" style={styles.new_chat_icon}/>
@@ -191,4 +183,26 @@ const styles = StyleSheet.create({
         fontSize:30,
         color:'#fff'
     },
+    select_contact_to_start_chat_container:{
+        justifyContent:'center',
+        alignItems:'center',
+        marginVertical:20
+    },
+    select_contact_to_start_chat_btn:{
+        height:120,
+        width:'80%',
+        padding:20,
+        borderRadius:2,
+        borderStyle:'dashed',
+        borderWidth:1,
+        borderColor:'#a9a9a9',
+        justifyContent:'center',
+        alignItems:'center',
+    },
+    heading_title:{
+        fontSize:17,
+        color:'#757575',
+        fontFamily:'Poppins Medium',
+        textAlign:'center'
+    }
 })

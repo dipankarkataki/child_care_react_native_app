@@ -1,5 +1,6 @@
 import { FlatList, ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React,{useState, useEffect} from 'react'
+import NewChatApi from '../../api/MessagingApi/NewChatApi';
 
 const background = require('../../assets/images/background.png');
 const contact1_image = require('../../assets/images/contact1.jpg');
@@ -10,83 +11,62 @@ const contact4_image = require('../../assets/images/contact4.png');
 
 const NewChat = ({navigation}) => {
 
-    const selectContactArray = [
-        {
-            id:1,
-            name:'Dipankar Kataki',
-            user_type: 'Owner',
-            profile_image:contact1_image
-        },
-        {
-            id:2,
-            name:'Rahul',
-            user_type: 'Teacher',
-            profile_image:contact2_image
-        },
-        {
-            id:3,
-            name:'Sandeep',
-            user_type: 'Teacher',
-            profile_image:contact3_image
-        },
-        {
-            id:4,
-            name:'Jane Doe',
-            user_type: 'Director',
-            profile_image:contact4_image
-        },
-        {
-            id:5,
-            name:'Jhon Doe',
-            user_type: 'Teacher',
-            profile_image:contact2_image
-        },
-        {
-            id:6,
-            name:'Rahul',
-            user_type: 'Teacher',
-            profile_image:contact2_image
-        },
-        {
-            id:7,
-            name:'Sandeep',
-            user_type: 'Teacher',
-            profile_image:contact3_image
-        },
-        {
-            id:8,
-            name:'Jane Doe',
-            user_type: 'Director',
-            profile_image:contact4_image
-        },
-        {
-            id:9,
-            name:'Jhon Doe',
-            user_type: 'Teacher',
-            profile_image:contact2_image
-        },
-        {
-            id:10,
-            name:'Jhon Doe',
-            user_type: 'Teacher',
-            profile_image:contact2_image
-        },
-        
-    ];
+    const [contactList, setContactList] = useState([]);
+
+    useEffect( () => {
+        NewChatApi()
+        .then((result) => {
+            if(result.data.status == true){
+                console.log('Contact List ==> ', result.data)
+                setContactList(result.data.data)
+            }else{
+                console.log('Oops! Something went wrong')
+            }
+            
+        })
+        .catch((err) => {
+            console.log('Error', err);
+        });
+    }, []);
+
+    const getInitials = (firstname, lastname) => {
+        const firstNameInitial = firstname[0]?.charAt(0).toUpperCase() || '';
+        const lastNameInitial = lastname[0]?.charAt(0).toUpperCase() || '';
+        return firstNameInitial + lastNameInitial;
+    }
+
+    const getAccountType = (type) => {
+        if(type == 13){
+            return 'Parent';
+        }else if(type == 31){
+            return 'Teacher';
+        }else{
+            return 'Owner';
+        }
+    }
 
     return (
         <ImageBackground source={background} style={styles.container}>
             <Text style={[styles.header_title, styles.header_style]}>Contacts on ChildCareSoftware App</Text>
             <FlatList
-                data={selectContactArray}
+                data={contactList}
                 keyExtractor={(item) => item.id}
                 renderItem={({item}) => (
-                    <TouchableOpacity style={styles.contact_container} onPress={ () => navigation.navigate('SendMessageArea')}>
-                        <Image source={item.profile_image}  style={styles.contact_image}/>
-                        <View style={styles.contact_info_container}>
-                            <Text style={styles.main_title}>{item.name}</Text>
-                            <Text style={styles.sub_title}>Account : {item.user_type}</Text>
+                    <TouchableOpacity style={styles.contact_container} onPress={ () => navigation.navigate('SendMessageArea', {userId : item.id, userName: item.firstname + ' ' + item.lastname, initials : getInitials(item.firstname, item.lastname), type : getAccountType(item.user_type) })}>
+                        <View style={styles.contact_initials_container}>
+                            <Text style={styles.contact_initials_text}>{getInitials(item.firstname, item.lastname)}</Text>
                         </View>
+                        {
+                            item.profile_image ? (
+                                <Image source={item.profile_image}  style={styles.contact_image}/>
+                            ) : (
+                                <View style={styles.contact_info_container}>
+                                    <Text style={styles.main_title}>{item.firstname} {item.lastname}</Text>
+                                    <Text style={styles.sub_title}>Account : {getAccountType(item.user_type)} </Text>
+                                </View>
+                            )
+                        }
+                        
                     </TouchableOpacity>
                 )}      
             />
@@ -140,5 +120,21 @@ const styles = StyleSheet.create({
     },
     contact_info_container:{
         marginLeft:20
+    },contact_initials_container:{
+        height:60,
+        width:60,
+        borderRadius:60,
+        borderWidth:1,
+        borderStyle:'dashed',
+        borderColor:'#fff',
+        elevation:1,
+        padding:5,
+        justifyContent:'center',
+        alignItems:'center',
+        backgroundColor:'#6a5acd'
+    },contact_initials_text:{
+        fontSize:18,
+        fontFamily:'Poppins Medium',
+        color:'#fff'
     }
 })

@@ -9,7 +9,7 @@ import RNFS from 'react-native-fs'
 import GetMessagesApi from '../../api/MessagingApi/GetMessagesApi';
 
 
-const profileImage = require('../../assets/images/pro-image.jpg')
+const profileImage =  undefined;
 const background = require('../../assets/images/background.png');
 const placeholder_img = require('../../assets/images/placeholder-img.png');
 
@@ -21,7 +21,7 @@ const SendMessageArea = ({navigation, route }) => {
     const [bottomSheet, setBottomSheet] = useState(false);
     const scrollViewRef = useRef(null); 
 
-    const { userId, userName } = route.params;
+    const { userId, userName, initials, type } = route.params;
 
     const toggleBottomSheet = () =>{
         setBottomSheet(!bottomSheet);
@@ -218,95 +218,104 @@ const SendMessageArea = ({navigation, route }) => {
                     <Icon name="arrow-left" style={styles.back_button} />
                 </TouchableOpacity>
                 <View style={styles.chat_user_area}>
-                    <Image source={profileImage} style={styles.chat_profile_image}/>
+                    {
+                        profileImage ? (
+                            <Image source={profileImage}  style={styles.chat_profile_image}/>
+                        ) : (
+                            <View style={styles.contact_initials_container}>
+                                <Text style={styles.contact_initials_text}>{initials}</Text>
+                            </View>
+                        )
+                    }
                     <View style={styles.chat_title_area}>
                         <Text style={styles.chat_user_title_text}>{userName}</Text>
+                        <Text style={styles.sub_title}>Account : {type}</Text>
                         <Text style={[styles.chat_user_status]}>Active Now</Text>
                     </View>
                 </View>
             </TouchableOpacity>
             <View style={styles.chat_body}>
-            <FlatList
-                ref={scrollViewRef}
-                data={messages}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                    <>
-                        {item.type === 'send' && (
-                        // If item.type is 'send', show the sender's message layout
-                            <View style={styles.sender_container}>
-                                <View style={styles.sender_message_area}>
-                                    <View style={styles.sender_tail} />
-                                    
-                                    {item.text ? (
-                                        <Text style={styles.sender_text}>
-                                            {item.text}
+                <FlatList
+                    ref={scrollViewRef}
+                    data={messages}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item }) => (
+                        <>
+                            {item.type === 'send' && (
+                            // If item.type is 'send', show the sender's message layout
+                                <View style={styles.sender_container}>
+                                    <View style={styles.sender_message_area}>
+                                        <View style={styles.sender_tail} />
+                                        
+                                        {item.text ? (
+                                            <Text style={styles.sender_text}>
+                                                {item.text}
+                                            </Text>
+                                        ) : null}
+                                        
+                                        {/* Handling attachments */}
+                                        {item.attachments && item.attachments.map((attachment, attIndex) => (
+                                            <View key={attIndex} style={styles.message_attachment}>
+                                                {attachment.type === 'image' ? (
+                                                    <Image source={{ uri: attachment.uri }} style={styles.message_image} />
+                                                ) : (
+                                                    <TouchableOpacity onPress={() => handleDocumentPress(attachment.uri, attachment.fileType)}>
+                                                        <View style={styles.message_document}>
+                                                            <Icon name="file-alt" size={30} color="#000" />
+                                                            <Text style={styles.message_document_text}>{attachment.name}</Text>
+                                                        </View>
+                                                    </TouchableOpacity>
+                                                )}
+                                            </View>
+                                        ))}
+                                        
+                                        <Text style={styles.sender_message_time}>
+                                            <Icon name="clock" /> {item.time}
                                         </Text>
-                                    ) : null}
-                                    
-                                    {/* Handling attachments */}
-                                    {item.attachments && item.attachments.map((attachment, attIndex) => (
-                                        <View key={attIndex} style={styles.message_attachment}>
-                                            {attachment.type === 'image' ? (
-                                                <Image source={{ uri: attachment.uri }} style={styles.message_image} />
-                                            ) : (
-                                                <TouchableOpacity onPress={() => handleDocumentPress(attachment.uri, attachment.fileType)}>
-                                                    <View style={styles.message_document}>
-                                                        <Icon name="file-alt" size={30} color="#000" />
-                                                        <Text style={styles.message_document_text}>{attachment.name}</Text>
-                                                    </View>
-                                                </TouchableOpacity>
-                                            )}
-                                        </View>
-                                    ))}
-                                    
-                                    <Text style={styles.sender_message_time}>
-                                        <Icon name="clock" /> {item.time}
-                                    </Text>
+                                    </View>
                                 </View>
-                            </View>
-                        )}
+                            )}
 
 
-                        {item.type === 'received' && (
-                            // If item.type is 'receive', show receiver's message layout
-                            <View style={styles.receiver_container}>
-                                <View style={styles.receiver_message_area}>
-                                    <View style={styles.receiver_tail} />
-                                    {item.text ? (
-                                        <Text style={styles.receiver_text}>
-                                            {item.text}
+                            {item.type === 'received' && (
+                                // If item.type is 'receive', show receiver's message layout
+                                <View style={styles.receiver_container}>
+                                    <View style={styles.receiver_message_area}>
+                                        <View style={styles.receiver_tail} />
+                                        {item.text ? (
+                                            <Text style={styles.receiver_text}>
+                                                {item.text}
+                                            </Text>
+                                        ) : null}
+                                        
+                                        {/* Handling attachments */}
+                                        {item.attachments && item.attachments.map((attachment, attIndex) => (
+                                            <View key={attIndex} style={styles.message_attachment}>
+                                                {attachment.type === 'image' ? (
+                                                    <Image source={{ uri: attachment.uri }} style={styles.message_image} />
+                                                ) : (
+                                                    <TouchableOpacity onPress={() => handleDocumentPress(attachment.uri, attachment.fileType)}>
+                                                        <View style={styles.message_document}>
+                                                            <Icon name="file-alt" size={30} color="#000" />
+                                                            <Text style={styles.message_document_text}>{attachment.name}</Text>
+                                                        </View>
+                                                    </TouchableOpacity>
+                                                )}
+                                            </View>
+                                        ))}
+                                        
+                                        <Text style={styles.receiver_message_time}> 
+                                            <Icon name="clock" /> {item.time}
                                         </Text>
-                                    ) : null}
-                                    
-                                    {/* Handling attachments */}
-                                    {item.attachments && item.attachments.map((attachment, attIndex) => (
-                                        <View key={attIndex} style={styles.message_attachment}>
-                                            {attachment.type === 'image' ? (
-                                                <Image source={{ uri: attachment.uri }} style={styles.message_image} />
-                                            ) : (
-                                                <TouchableOpacity onPress={() => handleDocumentPress(attachment.uri, attachment.fileType)}>
-                                                    <View style={styles.message_document}>
-                                                        <Icon name="file-alt" size={30} color="#000" />
-                                                        <Text style={styles.message_document_text}>{attachment.name}</Text>
-                                                    </View>
-                                                </TouchableOpacity>
-                                            )}
-                                        </View>
-                                    ))}
-                                    
-                                    <Text style={styles.receiver_message_time}> 
-                                        <Icon name="clock" /> {item.time}
-                                    </Text>
+                                    </View>
                                 </View>
-                            </View>
-                        )}
-                    </>
-                )}
+                            )}
+                        </>
+                    )}
 
-                onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-                onLayout={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-            />
+                    onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+                    onLayout={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+                />
                 
             </View>
 
@@ -693,5 +702,35 @@ const styles = StyleSheet.create({
     message_document_text: {
         marginLeft: 5,
         color: '#000',
+    },
+    contact_info_container:{
+        marginLeft:10
+    },
+    contact_initials_container:{
+        height:60,
+        width:60,
+        borderRadius:60,
+        borderWidth:1,
+        borderStyle:'dashed',
+        borderColor:'#fff',
+        elevation:1,
+        padding:5,
+        justifyContent:'center',
+        alignItems:'center',
+        backgroundColor:'#6a5acd'
+    },contact_initials_text:{
+        fontSize:18,
+        fontFamily:'Poppins Medium',
+        color:'#fff'
+    },
+    main_title:{
+        fontSize:17,
+        fontFamily:'Poppins Medium',
+        color:'#101618'
+    },
+    sub_title:{
+        fontSize:12,
+        fontFamily:'Poppins Medium',
+        color:'#101618'
     },
 });
