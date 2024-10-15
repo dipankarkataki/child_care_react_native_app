@@ -1,8 +1,15 @@
 import ApiManager from "../ApiManager";
 
-export default GetMessagesApi = async () => {
+export default SendMessageApi = async (data) => {
     try {
-        const result = await ApiManager('/chat/get-one-to-one-chats');
+        console.log('Sending Chat Data --> ', data)
+        const result = await ApiManager('/chat/store-chat',{
+            method: "POST",
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            data: data,
+        });
         // console.log('API Response: ', result); // Log the response
         return result;
     } catch (error) {

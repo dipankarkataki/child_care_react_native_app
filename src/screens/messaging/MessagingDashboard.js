@@ -5,7 +5,7 @@ import IonicIcon from 'react-native-vector-icons/Ionicons'
 import MessagingDashboardApi from '../../api/MessagingApi/MessagingDashboardApi'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-const profileImage = require('../../assets/images/contact2.jpg')
+const profileImage = undefined
 const background = require('../../assets/images/background.png');
 
 
@@ -17,12 +17,29 @@ const MessagingDashboard = ({navigation}) => {
         MessagingDashboardApi()
         .then((result) => {
             console.log('Users List ==> ', result.data)
-            setChatUserList(result.data)
+            setChatUserList(result.data.data)
         })
         .catch((err) => {
             console.log('Error', err);
         });
     }, []);
+
+    const getInitials = (name) => {
+        const names = name.split(' ');
+        const firstNameInitial = names[0]?.charAt(0).toUpperCase() || '';
+        const lastNameInitial = names[1]?.charAt(0).toUpperCase() || '';
+        return firstNameInitial + lastNameInitial;
+    }
+
+    const getAccountType = (type) => {
+        if(type == 13){
+            return 'Parent';
+        }else if(type == 31){
+            return 'Teacher';
+        }else{
+            return 'Owner';
+        }
+    }
 
 
     return (
@@ -35,8 +52,17 @@ const MessagingDashboard = ({navigation}) => {
                         renderItem={({item}) => (
                             <View style={styles.chat_container}>
                                 <View style={styles.card}>
-                                    <TouchableOpacity style={styles.card_content} onPress={ () => navigation.navigate('SendMessageArea',{userId : item.id, userName: item.name}) }>
-                                        <Image source={profileImage} style={styles.chat_profile_image}/>
+                                    <TouchableOpacity style={styles.card_content} onPress={ () => navigation.navigate('SendMessageArea',{userId : item.id, userName: item.name, initials : getInitials(item.name), type: getAccountType(item.type)}) }>
+                                        {/* <Image source={profileImage} style={styles.chat_profile_image}/> */}
+                                        {
+                                            profileImage ? (
+                                                <Image source={profileImage}  style={styles.chat_profile_image}/>
+                                            ) : (
+                                                <View style={styles.contact_initials_container}>
+                                                    <Text style={styles.contact_initials_text}>{getInitials(item.name)}</Text>
+                                                </View>
+                                            )
+                                        }
                                         <View style={styles.chat_user_area}>
                                             <Text style={styles.chat_user_title_text}>{item.name}</Text>
                                             <Text style={styles.preview_user_chat}>
@@ -204,5 +230,22 @@ const styles = StyleSheet.create({
         color:'#757575',
         fontFamily:'Poppins Medium',
         textAlign:'center'
-    }
+    },
+    contact_initials_container:{
+        height:60,
+        width:60,
+        borderRadius:60,
+        borderWidth:1,
+        borderStyle:'dashed',
+        borderColor:'#fff',
+        elevation:1,
+        padding:5,
+        justifyContent:'center',
+        alignItems:'center',
+        backgroundColor:'#6a5acd'
+    },contact_initials_text:{
+        fontSize:18,
+        fontFamily:'Poppins Medium',
+        color:'#fff'
+    },
 })

@@ -7,6 +7,7 @@ import DocumentPicker from 'react-native-document-picker';
 import FileViewer from 'react-native-file-viewer';
 import RNFS from 'react-native-fs'
 import GetMessagesApi from '../../api/MessagingApi/GetMessagesApi';
+import SendMessageApi from '../../api/MessagingApi/SendMessageApi';
 
 
 const profileImage =  undefined;
@@ -133,33 +134,61 @@ const SendMessageArea = ({navigation, route }) => {
                 text: inputMessage,
                 time: getCurrentTime(),
                 attachments: attachments,
-                type:'send' // Array of attachments
+                type:'sent',
+                receiverId: userId,
             };
-            setMessages([...messages, newMessage]);
-            setInputMessage(''); // Clear the input field after sending the message
-            setAttachments([]); // Clear attachments
+
+            const formData = new FormData();
+            formData.append('message', newMessage.text);
+            formData.append('receiver_id', newMessage.receiverId);
+
+            attachments.forEach((attachment, index) => {
+                formData.append(`attachments[${index}]`, {
+                    uri: attachment.uri,
+                    name: attachment.name || `attachment-${index}`,
+                    type: attachment.type || 'application/octet-stream',
+                });
+            });
+
+            try {
+                // Send FormData to your API
+                SendMessageApi(formData)
+                .then((result) => {
+                    console.log('Send Message ==> ', result.data)
+                })
+                .catch((err) => {
+                    console.log('Error', err);
+                });
     
-            // Scroll to the bottom after sending the message
-            setTimeout(() => {
-                scrollViewRef.current?.scrollToEnd({ animated: true });
-            }, 100);
+                setMessages(prevMessages => [...prevMessages, newMessage]);
+                setInputMessage(''); // Clear the input field after sending the message
+                setAttachments([]); // Clear attachments
+        
+                // Scroll to the bottom after sending the message
+                setTimeout(() => {
+                    scrollViewRef.current?.scrollToEnd({ animated: true });
+                }, 100);
+
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
         }
     }
 
     useEffect(() => {
-        console.log('User Id ==> ', userId)
-        GetMessagesApi(userId)
+        GetMessagesApi()
         .then((result) => {
-            console.log('Chats Data ==> ', result.data['19'][0])
-            let data = result.data['19'][0];
-            const newMessage = {
-                text: data.text,
-                time: getCurrentTime(),
-                attachments: attachments,
-                type:data.type // Array of attachments
-            };
-            setMessages([...messages, newMessage]);
-            console.log('Messages ' , messages)
+            console.log('Chats Data ==> ', result.data.data)
+            let data = result.data.data;
+            const newMessages = data.map(item => ({
+                text: item.text,
+                time: item.time,
+                attachments: item.attachments || [], // Handle attachments gracefully
+                type: item.type
+            }));
+
+            setMessages(prevMessages => [...prevMessages, ...newMessages]);
+            console.log('Messages ----> ' , messages)
         })
         .catch((err) => {
             console.log('Error', err);
@@ -241,8 +270,8 @@ const SendMessageArea = ({navigation, route }) => {
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <>
-                            {item.type === 'send' && (
-                            // If item.type is 'send', show the sender's message layout
+                            {item.type === 'sent' && (
+                            // If item.type is 'sent', show the sender's message layout
                                 <View style={styles.sender_container}>
                                     <View style={styles.sender_message_area}>
                                         <View style={styles.sender_tail} />
@@ -488,7 +517,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#e5e4e2',
         borderRadius: 10,
-        marginLeft: 50,
+        marginLeft: 20,
         marginBottom: 10,
         width: '60%'
     },
@@ -578,7 +607,6 @@ const styles = StyleSheet.create({
     receiver_container:{
         marginTop: 20,
         alignItems:'flex-start',
-        marginLeft:20
     },
     receiver_tail: {
         position: 'absolute',
