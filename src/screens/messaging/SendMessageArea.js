@@ -135,12 +135,14 @@ const SendMessageArea = ({navigation, route }) => {
     const sendMessage = () => {
         if (inputMessage.trim() || attachments.length > 0) {
             const newMessage = {
-                text: inputMessage,
+                text: inputMessage.trim(),
                 time: getCurrentTime(),
                 attachments: attachments,
                 type:'sent',
                 receiverId: userId,
             };
+
+            console.log('Message is ******', newMessage.text )
 
             const formData = new FormData();
             formData.append('message', newMessage.text);
@@ -215,7 +217,11 @@ const SendMessageArea = ({navigation, route }) => {
             const newMessages = data.map(item => ({
                 text: item.text,
                 time: item.time,
-                attachments: item.attachments || [], // Handle attachments gracefully
+                attachments: item.attachment ? [{ 
+                    uri: item.attachment, 
+                    type: item.attachment_type || 'application/octet-stream', 
+                    name: item.attachment.split('/').pop() 
+                }] : [],
                 type: item.type
             }));
 
@@ -248,6 +254,18 @@ const SendMessageArea = ({navigation, route }) => {
         channel.bind('message-sent', async (data) => {
             console.log('New message received:', data);
             console.log('Receiver ID:', data.receiver_id);
+            const newMessage = {
+                text: data.content,
+                time: data.created_at,
+                attachments: data.attachment ? [{
+                    uri: data.attachment,
+                    type: data.attachment_type || 'application/octet-stream',
+                    name: data.attachment.split('/').pop()
+                }] : [],
+                type: userId == data.receiver_id ? 'received' : 'sent',
+                receiverId: userId,
+            };
+            setMessages(prevMessages => [...prevMessages, newMessage]);
             await fetchMessages(); // Optional: Fetch messages on new event
         });
 
@@ -404,12 +422,12 @@ const SendMessageArea = ({navigation, route }) => {
                                         ) : null}
                                         
                                         {/* Handling attachments */}
-                                        {item.attachments && item.attachments.map((attachment, attIndex) => (
-                                            <View key={attIndex} style={styles.message_attachment}>
-                                                {attachment.type === 'image' ? (
+                                        {item.attachments && item.attachments.length > 0 && item.attachments.map((attachment, index) => (
+                                            <View key={index} style={styles.message_attachment}>
+                                                {attachment.type.startsWith('image/') ? (
                                                     <Image source={{ uri: attachment.uri }} style={styles.message_image} />
                                                 ) : (
-                                                    <TouchableOpacity onPress={() => handleDocumentPress(attachment.uri, attachment.fileType)}>
+                                                    <TouchableOpacity onPress={() => handleDocumentPress(attachment.uri, attachment.type)}>
                                                         <View style={styles.message_document}>
                                                             <Icon name="file-alt" size={30} color="#000" />
                                                             <Text style={styles.message_document_text}>{attachment.name}</Text>
