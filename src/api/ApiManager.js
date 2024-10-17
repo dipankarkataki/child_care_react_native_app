@@ -1,5 +1,5 @@
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import TokenManager from "./TokenManager";
 
 const ApiManager = axios.create({
     'baseURL':"http://192.168.31.99/api",
@@ -11,7 +11,7 @@ const ApiManager = axios.create({
 
 ApiManager.interceptors.request.use(
     async (config) => {
-        const token = await AsyncStorage.getItem('AccessToken');
+        const token = await TokenManager.getToken();
         
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;

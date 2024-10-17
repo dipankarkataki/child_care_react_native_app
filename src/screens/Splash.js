@@ -1,6 +1,6 @@
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import TokenManager from '../api/TokenManager';
 
 const splashBackground = require('../assets/images/splash-background.png');
 const logoWhite = require('../assets/images/child-care-logo-white.png');
@@ -14,8 +14,8 @@ const Splash = ({navigation}) => {
   },[])
 
   const handleAccessToken = async () => {
-    const dataToken  = await AsyncStorage.getItem('AccessToken');
-    if(!dataToken){
+    const token = await TokenManager.getToken();
+    if(!token){
       navigation.replace('UserOption')
     }else{
       navigation.replace('Dashboard')

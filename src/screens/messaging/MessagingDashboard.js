@@ -1,9 +1,8 @@
-import { FlatList, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import Icon from 'react-native-vector-icons/FontAwesome5'
-import IonicIcon from 'react-native-vector-icons/Ionicons'
-import MessagingDashboardApi from '../../api/MessagingApi/MessagingDashboardApi'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { ActivityIndicator, FlatList, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import IonicIcon from 'react-native-vector-icons/Ionicons';
+import MessagingDashboardApi from '../../api/MessagingApi/MessagingDashboardApi';
 
 const profileImage = undefined
 const background = require('../../assets/images/background.png');
@@ -14,6 +13,7 @@ const MessagingDashboard = ({navigation}) => {
     const [chatUserList, setChatUserList] = useState([]);
 
     useEffect( () => {
+
         MessagingDashboardApi()
         .then((result) => {
             console.log('Users List ==> ', result.data)
@@ -40,8 +40,8 @@ const MessagingDashboard = ({navigation}) => {
             return 'Owner';
         }
     }
-
-
+    
+      
     return (
         <ImageBackground source={background} style={styles.container}>
             {
@@ -52,7 +52,13 @@ const MessagingDashboard = ({navigation}) => {
                         renderItem={({item}) => (
                             <View style={styles.chat_container}>
                                 <View style={styles.card}>
-                                    <TouchableOpacity style={styles.card_content} onPress={ () => navigation.navigate('SendMessageArea',{userId : item.id, userName: item.name, initials : getInitials(item.name), type: getAccountType(item.type)}) }>
+                                    <TouchableOpacity style={styles.card_content} onPress={ () => navigation.navigate('SendMessageArea',
+                                            {   userId : item.id, 
+                                                userName: item.name, 
+                                                initials : getInitials(item.name), 
+                                                type: getAccountType(item.type),
+                                            }) 
+                                        }>
                                         {/* <Image source={profileImage} style={styles.chat_profile_image}/> */}
                                         {
                                             profileImage ? (

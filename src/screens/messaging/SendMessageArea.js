@@ -8,7 +8,8 @@ import FileViewer from 'react-native-file-viewer';
 import RNFS from 'react-native-fs'
 import GetMessagesApi from '../../api/MessagingApi/GetMessagesApi';
 import SendMessageApi from '../../api/MessagingApi/SendMessageApi';
-
+import TokenManager from '../../api/TokenManager';
+import initializePusher from '../../../pusherConfig';
 
 const profileImage =  undefined;
 const background = require('../../assets/images/background.png');
@@ -21,8 +22,11 @@ const SendMessageArea = ({navigation, route }) => {
     const [attachments, setAttachments] = useState([]); // New state for attachments
     const [bottomSheet, setBottomSheet] = useState(false);
     const scrollViewRef = useRef(null); 
+    const [pusher, setPusher] = useState(null);
+    const [currentUserId, setCurrentUserId] = useState(null);
+    let channel;
 
-    const { userId, userName, initials, type } = route.params;
+    const { userId, userName, initials, type} = route.params;
 
     const toggleBottomSheet = () =>{
         setBottomSheet(!bottomSheet);
@@ -174,12 +178,40 @@ const SendMessageArea = ({navigation, route }) => {
             }
         }
     }
+    //Don't delete 
 
-    useEffect(() => {
-        GetMessagesApi()
-        .then((result) => {
-            console.log('Chats Data ==> ', result.data.data)
+    // useEffect(() => {
+    //     GetMessagesApi()
+    //     .then((result) => {
+    //         console.log('Chats Data ==> ', result.data.data)
+    //         let data = result.data.data;
+    //         const newMessages = data.map(item => ({
+    //             text: item.text,
+    //             time: item.time,
+    //             attachments: item.attachments || [], // Handle attachments gracefully
+    //             type: item.type
+    //         }));
+
+    //         setMessages(prevMessages => [...prevMessages, ...newMessages]);
+    //         console.log('Messages ----> ' , messages)
+    //     })
+    //     .catch((err) => {
+    //         console.log('Error', err);
+    //     });
+    //     // Scroll to the bottom when the component is first loaded
+    //     setTimeout(() => {
+    //         scrollViewRef.current?.scrollToEnd({ animated: true });
+    //     }, 100);
+    // }, []);
+
+    //Experimenting temporaryliy
+
+    const fetchMessages = async () => {
+        try {
+            const result = await GetMessagesApi();
+            console.log('Chats Data ==> ', result.data.data);
             let data = result.data.data;
+
             const newMessages = data.map(item => ({
                 text: item.text,
                 time: item.time,
@@ -187,20 +219,98 @@ const SendMessageArea = ({navigation, route }) => {
                 type: item.type
             }));
 
-            setMessages(prevMessages => [...prevMessages, ...newMessages]);
-            console.log('Messages ----> ' , messages)
-        })
-        .catch((err) => {
+            setMessages(newMessages); // Update messages state directly
+            console.log('Messages ----> ', newMessages);
+
+            // Scroll to the bottom after updating messages
+            setTimeout(() => {
+                scrollViewRef.current?.scrollToEnd({ animated: true });
+            }, 100);
+        } catch (err) {
             console.log('Error', err);
+        }
+    };
+
+    const subscribeToChannel = (userId, pusherInstance) => {
+        const channelName = `chat-channel-${userId}`;
+        console.log(`Subscribing to channel ---- : ${channelName}`);
+
+        channel = pusherInstance.subscribe(channelName);
+
+        channel.bind('pusher:subscription_succeeded', () => {
+            console.log(`Successfully subscribed to channel: ${channelName}`);
         });
-        // Scroll to the bottom when the component is first loaded
-        setTimeout(() => {
-            scrollViewRef.current?.scrollToEnd({ animated: true });
-        }, 100);
+
+        channel.bind('pusher:subscription_error', (status) => {
+            console.error(`Subscription to ${channelName} failed with status:`, status);
+        });
+
+        channel.bind('message-sent', async (data) => {
+            console.log('New message received:', data);
+            console.log('Receiver ID:', data.receiver_id);
+            await fetchMessages(); // Optional: Fetch messages on new event
+        });
+
+        pusherInstance.connection.bind('state_change', (states) => {
+            console.log('Pusher state changed from', states.previous, 'to', states.current);
+        });
+
+        pusherInstance.connection.bind('error', (error) => {
+            console.error('Pusher connection error:', error);
+        });
+    };
+
+    const setupPusherAndSubscribe = async () => {
+        try {
+            const token = await TokenManager.getToken();
+            if (!token) {
+                console.error('User is not authenticated.');
+                return;
+            }
+
+            const userId = await TokenManager.getUserId();
+            console.log('User ID --- :', userId);
+            setCurrentUserId(userId);
+
+            const pusherInstance = await initializePusher();
+            console.log('Pusher Instance --- :', pusherInstance);
+
+            if (pusherInstance) {
+                setPusher(pusherInstance);
+                subscribeToChannel(userId, pusherInstance);
+            }
+        } catch (error) {
+            console.error('Error during setup:', error);
+        }
+    };
+
+    useEffect(() => {
+        setupPusherAndSubscribe();
+
+        // Cleanup on unmount
+        return () => {
+            if (channel) {
+                channel.unbind_all(); // Unbind all events
+                channel.unsubscribe();
+                console.log(`Unsubscribed from channel chat-channel-${currentUserId}`);
+            }
+        };
+    }, []);
+    
+    
+
+    useEffect(() => {
+        // Fetch messages initially when the component mounts
+        fetchMessages();
+
+        // Set an interval to reload messages every 2 seconds
+        // const intervalId = setInterval(fetchMessages, 2000);
+
+        // // Clean up the interval on component unmount
+        // return () => clearInterval(intervalId);
     }, []);
 
     useEffect(() => {
-        // Scroll to the bottom whenever messages change
         setTimeout(() => {
             scrollViewRef.current?.scrollToEnd({ animated: true });
         }, 100);
@@ -239,6 +349,17 @@ const SendMessageArea = ({navigation, route }) => {
             Alert.alert('Error', 'Could not open the file.');
         }
     };
+
+
+    if (!pusher || !currentUserId) {
+        console.log('Current User id -->', currentUserId);
+        return (
+          <View style={{ flex:1, justifyContent:'center', alignItems:'center' }}>
+            <Text style={styles.chat_user_title_text} >Unable to initialize Pusher.</Text>
+          </View>
+        );
+    }
+
 
     return (
         <ImageBackground source={background} style={styles.container}>

@@ -11,47 +11,48 @@ const notice = require('../assets/images/notice.png');
 const invite = require('../assets/images/invite.png');
 
 const Dashboard = ({navigation}) => {
-  return (
-    <ImageBackground source={background} style={styles.container}>
-        <View style={styles.welcome_container}>
-            <Image source={welcome_smily} style={styles.welcome_image}/>
-            <Text style={styles.welcome_text}>Welcome</Text>
-            <Text style={styles.welcome_content}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet eros a eros pellentesque efficitur. Praesent varius fringilla convallis.</Text>
-        </View>
-        <View style={styles.dashboard_items_container}>
-            <View style={styles.items_group}>
-                <TouchableOpacity style={styles.item}>
-                    <Image source={attendance_user} style={styles.item_image}/>
-                    <Text style={styles.item_text}>Attendance</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.item} onPress={ () => navigation.navigate('Billing')}>
-                    <Image source={billing} style={styles.item_image}/>
-                    <Text style={styles.item_text}>Billing</Text>
-                </TouchableOpacity>
+
+    return (
+        <ImageBackground source={background} style={styles.container}>
+            <View style={styles.welcome_container}>
+                <Image source={welcome_smily} style={styles.welcome_image}/>
+                <Text style={styles.welcome_text}>Welcome</Text>
+                <Text style={styles.welcome_content}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet eros a eros pellentesque efficitur. Praesent varius fringilla convallis.</Text>
             </View>
-            <View style={styles.items_group}>
-                <TouchableOpacity style={styles.item}>
-                    <Image source={reports} style={styles.item_image}/>
-                    <Text style={styles.item_text}>Daily Reports</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.item} onPress={ () => navigation.navigate('MessagingDashboard')}>
-                    <Image source={messaging} style={styles.item_image}/>
-                    <Text style={styles.item_text}>Messaging</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.item}>
-                    <Image source={notice} style={styles.item_image}/>
-                    <Text style={styles.item_text}>Notice & Events</Text>
-                </TouchableOpacity>
+            <View style={styles.dashboard_items_container}>
+                <View style={styles.items_group}>
+                    <TouchableOpacity style={styles.item}>
+                        <Image source={attendance_user} style={styles.item_image}/>
+                        <Text style={styles.item_text}>Attendance</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.item} onPress={ () => navigation.navigate('Billing')}>
+                        <Image source={billing} style={styles.item_image}/>
+                        <Text style={styles.item_text}>Billing</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.items_group}>
+                    <TouchableOpacity style={styles.item}>
+                        <Image source={reports} style={styles.item_image}/>
+                        <Text style={styles.item_text}>Daily Reports</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.item} onPress={ () => navigation.navigate('MessagingDashboard')}>
+                        <Image source={messaging} style={styles.item_image}/>
+                        <Text style={styles.item_text}>Messaging</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.item}>
+                        <Image source={notice} style={styles.item_image}/>
+                        <Text style={styles.item_text}>Notice & Events</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.items_group}>
+                    <TouchableOpacity style={styles.item}>
+                        <Image source={invite} style={styles.item_image}/>
+                        <Text style={styles.item_text}>Invite Family Member</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-            <View style={styles.items_group}>
-                <TouchableOpacity style={styles.item}>
-                    <Image source={invite} style={styles.item_image}/>
-                    <Text style={styles.item_text}>Invite Family Member</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-    </ImageBackground>
-  )
+        </ImageBackground>
+    )
 }
 
 export default Dashboard

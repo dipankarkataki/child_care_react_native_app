@@ -54,8 +54,9 @@ const Login = ({ navigation }) => {
                 console.log('Result--- ', result.data);
                 
                 if(result.data.status == 200){
-                    AsyncStorage.setItem('AccessToken', result.data.token)
-                    navigation.replace('Dashboard')
+                    AsyncStorage.setItem('AccessToken', result.data.token);
+                    AsyncStorage.setItem('UserId', result.data.data.user_id.toString());
+                    navigation.replace('Dashboard');
                 }else{
                     setLoader(false);
                     setModalVisible(true);
