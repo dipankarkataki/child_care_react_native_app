@@ -13,17 +13,16 @@ import initializePusher from '../../../pusherConfig';
 
 const profileImage =  undefined;
 const background = require('../../assets/images/background.png');
-const placeholder_img = require('../../assets/images/placeholder-img.png');
 
 const SendMessageArea = ({navigation, route }) => {
 
-    const [inputMessage, setInputMessage] = useState(''); // For the TextInput field
-    const [messages, setMessages] = useState([]); // Array to store sent messages
-    const [attachments, setAttachments] = useState([]); // New state for attachments
+    const [inputMessage, setInputMessage] = useState('');
+    const [messages, setMessages] = useState([]);
     const [bottomSheet, setBottomSheet] = useState(false);
     const scrollViewRef = useRef(null); 
     const [pusher, setPusher] = useState(null);
     const [currentUserId, setCurrentUserId] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
     let channel;
 
     const { userId, userName, initials, type} = route.params;
@@ -32,32 +31,31 @@ const SendMessageArea = ({navigation, route }) => {
         setBottomSheet(!bottomSheet);
     }
 
-    const openGallery = () => {
-        const options = {
-            mediaType: 'photo',
-            maxWidth: 300,
-            maxHeight: 300,
-            quality: 0.7,
-            includeBase64: false,
-        };
-    
-        launchImageLibrary(options, (response) => {
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-                setBottomSheet(false);
-            } else if (response.errorCode) {
-                console.log('ImagePicker Error: ', response.errorMessage);
-                Alert.alert('Error', response.errorMessage || 'Something went wrong while selecting the image.');
-            } else if (response.assets && response.assets.length > 0) {
-                const selectedImage = response.assets[0];
-                console.log('Selected Image -->', selectedImage.uri);
-                setAttachments(prevAttachments => [
-                    ...prevAttachments,
-                    { type: 'image', uri: selectedImage.uri, name: selectedImage.fileName || 'image.jpg' }
-                ]);
-                setBottomSheet(false);
+    const openGallery = async () => {
+
+        try{
+            const result = await DocumentPicker.pick({
+                type: [DocumentPicker.types.images],
+            });
+
+            const fileStats = await RNFS.stat(result[0].uri);
+            const maxSize = 5 * 1024 * 1024; // 5 MB
+
+            if (fileStats.size > maxSize) {
+                Alert.alert('File Size Limit Exceeded', 'Please select a file up to 5 MB.');
+                return;
             }
-        });
+
+            setSelectedFile(result[0]);
+            console.log('Selected File:', result[0]);
+            setBottomSheet(false);
+        }catch(err){
+            if (DocumentPicker.isCancel(err)) {
+                console.log('User Cancelled Doc Picker');
+            }else {
+                throw err;
+            }
+        }
     };
 
     const openCamera = () => {
@@ -68,7 +66,7 @@ const SendMessageArea = ({navigation, route }) => {
             maxHeight: 300,
             quality: 0.7,
             includeBase64: false,
-            saveToPhotos: true, // Save the captured image to the device's gallery
+            saveToPhotos: true,
         };
     
         launchCamera(options, (response) => {
@@ -81,10 +79,6 @@ const SendMessageArea = ({navigation, route }) => {
             } else if (response.assets && response.assets.length > 0) {
                 const capturedImage = response.assets[0];
                 console.log('Captured Image -->', capturedImage.uri);
-                setAttachments(prevAttachments => [
-                    ...prevAttachments,
-                    { type: 'image', uri: capturedImage.uri, name: capturedImage.fileName || 'image.jpg' }
-                ]);
                 setBottomSheet(false);
             }
         });
@@ -97,12 +91,9 @@ const SendMessageArea = ({navigation, route }) => {
             });
     
             const data = res[0];
+            setSelectedFile(data);
             console.log('Selected Document:', data);
             Alert.alert('Document Selected', `Name: ${data.name}\nType: ${data.type}\nSize: ${data.size} bytes`);
-            setAttachments(prevAttachments => [
-                ...prevAttachments,
-                { type: 'document', uri: data.uri, name: data.name, fileType: data.type }
-            ]);
             setBottomSheet(false); // Close the bottom sheet after selection
         } catch (err) {
             if (DocumentPicker.isCancel(err)) {
@@ -133,12 +124,13 @@ const SendMessageArea = ({navigation, route }) => {
     }
 
     const sendMessage = () => {
-        if (inputMessage.trim() || attachments.length > 0) {
+        if (inputMessage.trim() || selectedFile != null) {
             const newMessage = {
                 text: inputMessage.trim(),
                 time: getCurrentTime(),
-                attachments: attachments,
                 type:'sent',
+                attachment: selectedFile ? selectedFile.uri : null,
+                attachment_type: selectedFile ? selectedFile.type.split('/')[1] : null,
                 receiverId: userId,
             };
 
@@ -148,19 +140,21 @@ const SendMessageArea = ({navigation, route }) => {
             formData.append('message', newMessage.text);
             formData.append('receiver_id', newMessage.receiverId);
 
-            attachments.forEach((attachment, index) => {
-                formData.append(`attachments[${index}]`, {
-                    uri: attachment.uri,
-                    name: attachment.name || `attachment-${index}`,
-                    type: attachment.type || 'application/octet-stream',
+            if(selectedFile){
+                formData.append('attachment', {
+                    uri: selectedFile.uri,
+                    name: selectedFile.name,
+                    type: selectedFile.type,
                 });
-            });
+            }
+            
 
             try {
                 // Send FormData to your API
                 SendMessageApi(formData)
                 .then((result) => {
                     console.log('Send Message ==> ', result.data)
+                    setSelectedFile('');
                 })
                 .catch((err) => {
                     console.log('Error', err);
@@ -168,7 +162,6 @@ const SendMessageArea = ({navigation, route }) => {
     
                 setMessages(prevMessages => [...prevMessages, newMessage]);
                 setInputMessage(''); // Clear the input field after sending the message
-                setAttachments([]); // Clear attachments
         
                 // Scroll to the bottom after sending the message
                 setTimeout(() => {
@@ -180,52 +173,23 @@ const SendMessageArea = ({navigation, route }) => {
             }
         }
     }
-    //Don't delete 
 
-    // useEffect(() => {
-    //     GetMessagesApi()
-    //     .then((result) => {
-    //         console.log('Chats Data ==> ', result.data.data)
-    //         let data = result.data.data;
-    //         const newMessages = data.map(item => ({
-    //             text: item.text,
-    //             time: item.time,
-    //             attachments: item.attachments || [], // Handle attachments gracefully
-    //             type: item.type
-    //         }));
-
-    //         setMessages(prevMessages => [...prevMessages, ...newMessages]);
-    //         console.log('Messages ----> ' , messages)
-    //     })
-    //     .catch((err) => {
-    //         console.log('Error', err);
-    //     });
-    //     // Scroll to the bottom when the component is first loaded
-    //     setTimeout(() => {
-    //         scrollViewRef.current?.scrollToEnd({ animated: true });
-    //     }, 100);
-    // }, []);
-
-    //Experimenting temporaryliy
 
     const fetchMessages = async () => {
         try {
             const result = await GetMessagesApi();
-            console.log('Chats Data ==> ', result.data.data);
+            console.log('Fetch Message Data ==> ', result.data.data);
             let data = result.data.data;
 
             const newMessages = data.map(item => ({
                 text: item.text,
                 time: item.time,
-                attachments: item.attachment ? [{ 
-                    uri: item.attachment, 
-                    type: item.attachment_type || 'application/octet-stream', 
-                    name: item.attachment.split('/').pop() 
-                }] : [],
-                type: item.type
+                type: item.type,
+                attachment: item.attachment,
+                attachment_type: item.attachment ? item.attachment.split('.').pop().toLowerCase() : null,
             }));
 
-            setMessages(newMessages); // Update messages state directly
+            setMessages(newMessages);
             console.log('Messages ----> ', newMessages);
 
             // Scroll to the bottom after updating messages
@@ -257,16 +221,11 @@ const SendMessageArea = ({navigation, route }) => {
             const newMessage = {
                 text: data.content,
                 time: data.created_at,
-                attachments: data.attachment ? [{
-                    uri: data.attachment,
-                    type: data.attachment_type || 'application/octet-stream',
-                    name: data.attachment.split('/').pop()
-                }] : [],
                 type: userId == data.receiver_id ? 'received' : 'sent',
                 receiverId: userId,
             };
             setMessages(prevMessages => [...prevMessages, newMessage]);
-            await fetchMessages(); // Optional: Fetch messages on new event
+            await fetchMessages();
         });
 
         pusherInstance.connection.bind('state_change', (states) => {
@@ -291,7 +250,6 @@ const SendMessageArea = ({navigation, route }) => {
             setCurrentUserId(userId);
 
             const pusherInstance = await initializePusher();
-            console.log('Pusher Instance --- :', pusherInstance);
 
             if (pusherInstance) {
                 setPusher(pusherInstance);
@@ -304,7 +262,7 @@ const SendMessageArea = ({navigation, route }) => {
 
     useEffect(() => {
         setupPusherAndSubscribe();
-
+        
         // Cleanup on unmount
         return () => {
             if (channel) {
@@ -314,18 +272,12 @@ const SendMessageArea = ({navigation, route }) => {
             }
         };
     }, []);
-    
-    
 
     useEffect(() => {
-        // Fetch messages initially when the component mounts
         fetchMessages();
-
-        // Set an interval to reload messages every 2 seconds
-        // const intervalId = setInterval(fetchMessages, 2000);
-
-        // // Clean up the interval on component unmount
-        // return () => clearInterval(intervalId);
+        setTimeout(() => {
+            scrollViewRef.current?.scrollToEnd({ animated: true });
+        }, 100);
     }, []);
 
     useEffect(() => {
@@ -334,39 +286,34 @@ const SendMessageArea = ({navigation, route }) => {
         }, 100);
     }, [messages]);
 
-
-    const removeAttachment = (index) => {
-        setAttachments(prevAttachments => prevAttachments.filter((_, i) => i !== index));
-    };
-
-    const getMimeType = (filePath) => {
-        const extension = filePath.split('.').pop();
-        switch (extension) {
-            case 'pdf': return 'application/pdf';
-            case 'docx': return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-            // Add more file types as needed
-            default: return '';
-        }
-    };
+    // const getMimeType = (filePath) => {
+    //     const extension = filePath.split('.').pop();
+    //     switch (extension) {
+    //         case 'pdf': return 'application/pdf';
+    //         case 'docx': return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    //         // Add more file types as needed
+    //         default: return '';
+    //     }
+    // };
     
 
-    const handleDocumentPress = async (uri) => {
-        const mimeType = getMimeType(uri);
-        try {
-            let localPath = uri;
-            if (uri.startsWith('http')) {
-                const downloadDest = `${RNFS.DocumentDirectoryPath}/${uri.split('/').pop()}`;
-                const { promise } = RNFS.downloadFile({ fromUrl: uri, toFile: downloadDest });
-                await promise;
-                localPath = downloadDest;
-            }
+    // const handleDocumentPress = async (uri) => {
+    //     const mimeType = getMimeType(uri);
+    //     try {
+    //         let localPath = uri;
+    //         if (uri.startsWith('http')) {
+    //             const downloadDest = `${RNFS.DocumentDirectoryPath}/${uri.split('/').pop()}`;
+    //             const { promise } = RNFS.downloadFile({ fromUrl: uri, toFile: downloadDest });
+    //             await promise;
+    //             localPath = downloadDest;
+    //         }
     
-            await FileViewer.open(localPath, { showOpenWithDialog: true, mimeType }); // Optionally specify the MIME type
-        } catch (error) {
-            console.log('Error opening file:', error);
-            Alert.alert('Error', 'Could not open the file.');
-        }
-    };
+    //         await FileViewer.open(localPath, { showOpenWithDialog: true, mimeType }); // Optionally specify the MIME type
+    //     } catch (error) {
+    //         console.log('Error opening file:', error);
+    //         Alert.alert('Error', 'Could not open the file.');
+    //     }
+    // };
 
 
     if (!pusher || !currentUserId) {
@@ -406,6 +353,8 @@ const SendMessageArea = ({navigation, route }) => {
                 <FlatList
                     ref={scrollViewRef}
                     data={messages}
+                    initialNumToRender={10}
+                    maxToRenderPerBatch={5}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <>
@@ -421,21 +370,23 @@ const SendMessageArea = ({navigation, route }) => {
                                             </Text>
                                         ) : null}
                                         
-                                        {/* Handling attachments */}
-                                        {item.attachments && item.attachments.length > 0 && item.attachments.map((attachment, index) => (
-                                            <View key={index} style={styles.message_attachment}>
-                                                {attachment.type.startsWith('image/') ? (
-                                                    <Image source={{ uri: attachment.uri }} style={styles.message_image} />
-                                                ) : (
-                                                    <TouchableOpacity onPress={() => handleDocumentPress(attachment.uri, attachment.type)}>
-                                                        <View style={styles.message_document}>
-                                                            <Icon name="file-alt" size={30} color="#000" />
-                                                            <Text style={styles.message_document_text}>{attachment.name}</Text>
-                                                        </View>
-                                                    </TouchableOpacity>
-                                                )}
-                                            </View>
-                                        ))}
+                                        
+                                        {item.attachment && (
+                                            item.attachment.startsWith('content') ? (
+                                                <Image
+                                                    source={{ uri: item.attachment }}
+                                                    style={{ width: 100, height: 100, borderRadius: 8 }}
+                                                    resizeMode="cover"
+                                                />
+                                            ) : (
+                                                <Image
+                                                    source={{ uri: `http://192.168.31.99/storage/${item.attachment}` }}
+                                                    style={{ width: 100, height: 100, borderRadius: 8 }}
+                                                    resizeMode="cover"
+                                                />
+                                            )
+                                        )}
+                                        
                                         
                                         <Text style={styles.sender_message_time}>
                                             <Icon name="clock" /> {item.time}
@@ -455,22 +406,21 @@ const SendMessageArea = ({navigation, route }) => {
                                                 {item.text}
                                             </Text>
                                         ) : null}
-                                        
-                                        {/* Handling attachments */}
-                                        {item.attachments && item.attachments.map((attachment, attIndex) => (
-                                            <View key={attIndex} style={styles.message_attachment}>
-                                                {attachment.type === 'image' ? (
-                                                    <Image source={{ uri: attachment.uri }} style={styles.message_image} />
-                                                ) : (
-                                                    <TouchableOpacity onPress={() => handleDocumentPress(attachment.uri, attachment.fileType)}>
-                                                        <View style={styles.message_document}>
-                                                            <Icon name="file-alt" size={30} color="#000" />
-                                                            <Text style={styles.message_document_text}>{attachment.name}</Text>
-                                                        </View>
-                                                    </TouchableOpacity>
-                                                )}
-                                            </View>
-                                        ))}
+
+                                        {item.attachment && (item.attachment_type === 'png' || item.attachment_type === 'jpg' || item.attachment_type === 'jpeg') ? (
+                                            <Image
+                                                source={{ uri: `http://192.168.31.99/storage/${item.attachment}` }}
+                                                style={{ width: 200, height: 200, borderRadius: 8 }}
+                                                resizeMode="contain"
+                                            />
+                                        ) : item.attachment ? (
+                                            <TouchableOpacity
+                                                onPress={() => handleDocumentOpen(`http://192.168.31.99/storage/${item.attachment}`)}
+                                                style={{ padding: 10, backgroundColor: '#f0f0f0', borderRadius: 8, marginBottom: 5 }}
+                                            >
+                                                <Text style={{ color: '#007AFF', textDecorationLine: 'underline' }}>Open Document</Text>
+                                            </TouchableOpacity>
+                                        ) : null}
                                         
                                         <Text style={styles.receiver_message_time}> 
                                             <Icon name="clock" /> {item.time}
@@ -487,23 +437,21 @@ const SendMessageArea = ({navigation, route }) => {
                 
             </View>
 
-            {attachments.length > 0 && (
-                <View style={styles.attachments_container}>
-                    {attachments.map((attachment, index) => (
-                        <View key={index} style={styles.attachment_item}>
-                            {attachment.type === 'image' ? (
-                                <Image source={{ uri: attachment.uri }} style={styles.attachment_image} />
-                            ) : (
-                                <View style={styles.attachment_document}>
-                                    <Icon name="file-alt" size={30} color="#000" />
-                                    <Text style={styles.attachment_text}>{attachment.name}</Text>
-                                </View>
-                            )}
-                            <TouchableOpacity onPress={() => removeAttachment(index)}>
-                                <Icon name="times-circle" size={20} color="red" />
-                            </TouchableOpacity>
-                        </View>
-                    ))}
+            {/* Attachment Preview */}
+            {selectedFile && (
+                <View style={styles.attachmentPreview}>
+                    {selectedFile.type.startsWith('image/') ? (
+                        <Image
+                            source={{ uri: selectedFile.uri }}
+                            style={{ width: 100, height: 100, borderRadius: 8 }}
+                            resizeMode="cover"
+                        />
+                    ) : (
+                        <Text>Selected Attachment: {selectedFile.name}</Text>
+                    )}
+                    <TouchableOpacity onPress={() => setSelectedFile(null)}>
+                        <Text style={styles.removeAttachmentText}>Remove</Text>
+                    </TouchableOpacity>
                 </View>
             )}
 
@@ -904,5 +852,20 @@ const styles = StyleSheet.create({
         fontSize:12,
         fontFamily:'Poppins Medium',
         color:'#101618'
+    },
+    attachmentPreview: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 10,
+        borderColor: '#ddd',
+        borderWidth: 1,
+        borderRadius: 5,
+        marginBottom: 10,
+        width:'50%'
+    },
+    removeAttachmentText: {
+        color: 'red',
+        fontWeight: 'bold',
     },
 });

@@ -10,7 +10,7 @@ export default SendMessageApi = async (data) => {
             },
             data: data,
         });
-        // console.log('API Response: ', result); // Log the response
+        // console.log('Send Message API Response: ', result); // Log the response
         return result;
     } catch (error) {
         console.log('Error: ', error); // Log the full error
