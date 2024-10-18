@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LoginApi from '../../api/LoginApi';
 import ModalComponent from '../../components/ModalComponent';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import TokenManager from '../../api/TokenManager';
 
 const background = require('../../assets/images/background.png');
 const logo_large = require('../../assets/images/child-care-logo-large.png');
@@ -50,12 +50,12 @@ const Login = ({ navigation }) => {
             LoginApi({
                 'email': email.toLocaleLowerCase(),
                 'password': password
-            }).then((result) => {
-                console.log('Result--- ', result.data);
+            }).then( async (result) => {
+                console.log('Login Details --- ', result.data.token);
                 
                 if(result.data.status == 200){
-                    AsyncStorage.setItem('AccessToken', result.data.token);
-                    AsyncStorage.setItem('UserId', result.data.data.user_id.toString());
+                    await TokenManager.setToken(result.data.token);
+                    await TokenManager.setUserId(result.data.data.user_id.toString());
                     navigation.replace('Dashboard');
                 }else{
                     setLoader(false);
