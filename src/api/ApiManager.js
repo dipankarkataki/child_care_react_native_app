@@ -1,10 +1,11 @@
 import axios from "axios";
 import TokenManager from "./TokenManager";
+import UrlProvider from "./UrlProvider";
 
 const ApiManager = axios.create({
-    'baseURL':"http://192.168.31.99/api",
-    // 'baseURL': "https://staging.childcaresoftware.com/api",
-    // 'baseURL': "https://childcaresoftware.com/api",
+    'baseURL': UrlProvider.local_url,
+    // 'baseURL': UrlProvider.staging_url,
+    // 'baseURL': UrlProvider.production_url,
     responseType:'json',
     withCredentials:true
 });
