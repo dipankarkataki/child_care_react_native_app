@@ -1,11 +1,14 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Modal } from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Modal, Animated } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ProfileDetailsApi from '../api/ProfileDetailsApi';
 import { launchImageLibrary } from 'react-native-image-picker';
+import LinearGradient from 'react-native-linear-gradient';
+import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 
 const backgroundImage = require('../assets/images/background.png');
 const defaultProfileImage = require('../assets/images/profile-image.png'); 
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
 
 const ProfileSettings = ({ navigation }) => {
@@ -26,6 +29,9 @@ const ProfileSettings = ({ navigation }) => {
     const [confirmPassVisibilty, setConfirmPassVisibility] = useState(true);
     const [profileImage, setProfileImage] = useState(defaultProfileImage);
     const [modalVisible, setModalVisible] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    const avatarRef = React.createRef();
 
 
     const selectProfileImage = () => {
@@ -53,6 +59,10 @@ const ProfileSettings = ({ navigation }) => {
     };
 
     useEffect( () => {
+        const profileHeaderAnimated = Animated.stagger(400, [avatarRef.current.getAnimated()]);
+        Animated.loop(profileHeaderAnimated).start();
+
+
         ProfileDetailsApi()
         .then( (result) => {
             if(result.status == 200){
@@ -62,6 +72,7 @@ const ProfileSettings = ({ navigation }) => {
                 setPhone(result.data.data.phone);
                 setFamilyId(result.data.data.family_id);
                 setSiteId(result.data.data.site_id);
+                setLoading(false);
             }
             console.log('Result Data --', result.data)
         })
@@ -81,90 +92,115 @@ const ProfileSettings = ({ navigation }) => {
         handleModalClose();
     };
 
-    
-
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>
-            <View style={styles.profile_header}>
-                <TouchableOpacity style={styles.profile_back_button} onPress={ () => navigation.navigate('Dashboard') }>
-                    <Icon name="angle-left" style={styles.back_btn_icon} />
-                </TouchableOpacity>
+            {loading ? (
+                <View style={styles.profile_header}>
+                    <ShimmerPlaceholder ref={avatarRef} style={styles.profile_header_image} stopAutoRun />
+                </View>
+            ) : (
+                <View style={styles.profile_header}>
+                    <TouchableOpacity style={styles.profile_back_button} onPress={ () => navigation.navigate('Dashboard') }>
+                        <Icon name="angle-left" style={styles.back_btn_icon} />
+                    </TouchableOpacity>
 
-                <View style={styles.profile_image_container}>
-                    <Image source={profileImage} style={styles.profile_header_image} />
-                    <TouchableOpacity style={styles.edit_image_btn} onPress={selectProfileImage}> 
-                        <Icon name="pencil" style={styles.icon} />
-                    </TouchableOpacity>
-                </View>
-
-                <Text style={styles.profile_header_name}>{firstName} {lastName}</Text>
-                <Text style={styles.profile_header_email}>{email}</Text>
-            </View>
-            <ScrollView style={styles.profile_content_container}>
-                <View style={styles.card}>
-                    <View style={styles.text_input_container}>
-                        <Text style={styles.input_title}>First Name</Text>
-                        <TextInput 
-                            style={styles.text_input} 
-                            placeholder='William.J' 
-                            placeholderTextColor='#b9b9b9' 
-                            value={firstName}
-                            onChangeText={(text) => setFirstName(text)}
-                        />
-                    </View>
-                    <View style={styles.text_input_container}>
-                        <Text style={styles.input_title}>Last Name</Text>
-                        <TextInput 
-                            style={styles.text_input} 
-                            placeholder='Sartor' 
-                            placeholderTextColor='#b9b9b9'
-                            value={lastName}
-                            onChangeText={(text) => setLastName(text)} 
-                        />
-                    </View>
-                    <View style={styles.text_input_container}>
-                        <Text style={styles.input_title}>Phone Number</Text>
-                        <TextInput 
-                            style={styles.text_input} 
-                            maxLength={10} keyboardType="number-pad" 
-                            placeholder='631-932-5700' 
-                            placeholderTextColor='#b9b9b9'
-                            value={phone}
-                            onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ''))} 
-                        />
-                    </View>
-                </View>
-                <View style={styles.card}>
-                    <TouchableOpacity style={styles.family_details_card} onPress={() => navigation.navigate('FamilyDetails', {familyId, siteId} )}>
-                        <Text style={styles.family_details_text}>Family Details</Text>
-                        <Icon name="angle-right" style={styles.icon} />
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.card}>
-                    <Text style={styles.title_text}>Security</Text>
-                    <TouchableOpacity style={styles.family_details_card} onPress={ () => setModalVisible(true)}>
-                        <Text style={styles.change_password_text}>Change Password</Text>
-                        <Icon name="angle-right" style={styles.icon} />
-                    </TouchableOpacity>
-                    <Text style={styles.title_text}>KIOSK ACCESS (PIN)</Text>
-                    <View style={styles.kiosk_container}>
-                        <TextInput 
-                            style={styles.kiosk_input}
-                            maxLength={4} keyboardType="number-pad" 
-                            placeholder='* * * *' 
-                            placeholderTextColor='#b9b9b9'
-                            value={kioskPin}
-                            secureTextEntry={kioskVisibilty}
-                            onChangeText={(text) => setKioskPin(text.replace(/[^0-9]/g, ''))}
-                            readOnly
-                        />
-                        <TouchableOpacity 
-                            onPress={ () => setKioskVisibility(!kioskVisibilty) } 
-                            style={styles.show_kiosk_pin_text}>
-                            <Text style={styles.show_kiosk_pin_text}>{ !kioskVisibilty ? 'Hide PIN' : 'Show PIN'}</Text>
+                    <View style={styles.profile_image_container}>
+                        <Image source={profileImage} style={styles.profile_header_image} />
+                        <TouchableOpacity style={styles.edit_image_btn} onPress={selectProfileImage}> 
+                            <Icon name="pencil" style={styles.icon} />
                         </TouchableOpacity>
                     </View>
+
+                    <Text style={styles.profile_header_name}>{firstName} {lastName}</Text>
+                    <Text style={styles.profile_header_email}>{email}</Text>
                 </View>
+            )}
+            <ScrollView style={styles.profile_content_container}>
+                {loading ? (
+                    <View>
+                        <ShimmerPlaceholder style={styles.shimmerInputPlaceholder} />
+                        <ShimmerPlaceholder style={styles.shimmerInputPlaceholder} />
+                        <ShimmerPlaceholder style={styles.shimmerInputPlaceholder} />
+                    </View>
+                ) : (
+                    <View style={styles.card}>
+                        <View style={styles.text_input_container}>
+                            <Text style={styles.input_title}>First Name</Text>
+                            <TextInput 
+                                style={styles.text_input} 
+                                placeholder='William.J' 
+                                placeholderTextColor='#b9b9b9' 
+                                value={firstName}
+                                onChangeText={(text) => setFirstName(text)}
+                            />
+                        </View>
+                        <View style={styles.text_input_container}>
+                            <Text style={styles.input_title}>Last Name</Text>
+                            <TextInput 
+                                style={styles.text_input} 
+                                placeholder='Sartor' 
+                                placeholderTextColor='#b9b9b9'
+                                value={lastName}
+                                onChangeText={(text) => setLastName(text)} 
+                            />
+                        </View>
+                        <View style={styles.text_input_container}>
+                            <Text style={styles.input_title}>Phone Number</Text>
+                            <TextInput 
+                                style={styles.text_input} 
+                                maxLength={10} keyboardType="number-pad" 
+                                placeholder='631-932-5700' 
+                                placeholderTextColor='#b9b9b9'
+                                value={phone}
+                                onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ''))} 
+                            />
+                        </View>
+                    </View>
+                )}
+
+                {loading ? (
+                    <View>
+                        <ShimmerPlaceholder style={styles.shimmerViewPlaceholder} />
+                    </View>
+                ) : (
+                    <View style={styles.card}>
+                        <TouchableOpacity style={styles.family_details_card} onPress={() => navigation.navigate('FamilyDetails', {familyId, siteId} )}>
+                            <Text style={styles.family_details_text}>Family Details</Text>
+                            <Icon name="angle-right" style={styles.icon} />
+                        </TouchableOpacity>
+                    </View>
+                )}
+                {loading ? (
+                    <View>
+                        <ShimmerPlaceholder style={styles.shimmerViewPlaceholder} />
+                    </View>
+                ) : (
+                    <View style={styles.card}>
+                        <Text style={styles.title_text}>Security</Text>
+                        <TouchableOpacity style={styles.family_details_card} onPress={ () => setModalVisible(true)}>
+                            <Text style={styles.change_password_text}>Change Password</Text>
+                            <Icon name="angle-right" style={styles.icon} />
+                        </TouchableOpacity>
+                        <Text style={styles.title_text}>KIOSK ACCESS (PIN)</Text>
+                        <View style={styles.kiosk_container}>
+                            <TextInput 
+                                style={styles.kiosk_input}
+                                maxLength={4} keyboardType="number-pad" 
+                                placeholder='* * * *' 
+                                placeholderTextColor='#b9b9b9'
+                                value={kioskPin}
+                                secureTextEntry={kioskVisibilty}
+                                onChangeText={(text) => setKioskPin(text.replace(/[^0-9]/g, ''))}
+                                readOnly
+                            />
+                            <TouchableOpacity 
+                                onPress={ () => setKioskVisibility(!kioskVisibilty) } 
+                                style={styles.show_kiosk_pin_text}>
+                                <Text style={styles.show_kiosk_pin_text}>{ !kioskVisibilty ? 'Hide PIN' : 'Show PIN'}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                )}
             </ScrollView>
 
 
@@ -480,4 +516,16 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         backgroundColor: '#fff'
     },
+    shimmerInputPlaceholder: {
+        height: 50,
+        marginBottom: 20,
+        borderRadius: 6,
+        width:'100%'
+    },
+    shimmerViewPlaceholder:{
+        height: 200,
+        marginBottom: 20,
+        borderRadius: 6,
+        width:'100%'
+    }
 });
