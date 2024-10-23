@@ -1,10 +1,15 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Modal, Animated } from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Modal, Animated, Alert } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
-import ProfileDetailsApi from '../api/ProfileDetailsApi';
+import ProfileDetailsApi from '../api/ProfileApi/ProfileDetailsApi';
 import { launchImageLibrary } from 'react-native-image-picker';
+import DocumentPicker from 'react-native-document-picker';
+import RNFS from 'react-native-fs';
 import LinearGradient from 'react-native-linear-gradient';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
+import ModalComponent from '../components/ModalComponent';
+import UploadImageApi from '../api/ProfileApi/UploadImageApi';
+import UrlProvider from '../api/UrlProvider';
 
 const backgroundImage = require('../assets/images/background.png');
 const defaultProfileImage = require('../assets/images/profile-image.png'); 
@@ -30,56 +35,128 @@ const ProfileSettings = ({ navigation }) => {
     const [profileImage, setProfileImage] = useState(defaultProfileImage);
     const [modalVisible, setModalVisible] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [sendingFile, setSendingFile] = useState(false);
+    const [messageModalVisible, setMessageModalVisible] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalIcon, setModalIcon] = useState(null);
 
     const avatarRef = React.createRef();
 
-
-    const selectProfileImage = () => {
-        const options = {
-            mediaType: 'photo',
-            maxWidth: 300,
-            maxHeight: 300,
-            quality: 0.7,
-            includeBase64: false,
-        };
-
-        launchImageLibrary(options, (response) => {
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.errorCode) {
-                console.log('ImagePicker Error: ', response.errorMessage);
-                Alert.alert('Error', response.errorMessage || 'Something went wrong while selecting the image.');
-            } else if (response.assets && response.assets.length > 0) {
-                const selectedImage = response.assets[0];
-                setProfileImage({ uri: selectedImage.uri }); // Update the profile image state
-                // TODO: Upload the selected image to your server if needed
-                console.log('Selected Image -->', selectedImage.uri)
+    const selectProfileImage = async () => {
+        try{
+            const result = await DocumentPicker.pick({
+                type: [DocumentPicker.types.images],
+            });
+            setProfileImage(result[0].uri);
+            await uploadProfileImage(result[0]);
+        }catch(err){
+            if (DocumentPicker.isCancel(err)) {
+                console.log('User Cancelled Profile Image Picker');
+            }else {
+                throw err;
             }
-        });
+        }
     };
 
+    const validateImage = (image) => {
+        let isValid = true;
+
+        if(image){
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            if (!validTypes.includes(image.type)) {
+                setModalMessage('Invalid file type. Only JPG, PNG, and JPEG are allowed.');
+                setMessageModalVisible(true);
+                setModalIcon('error');  
+                isValid = false;
+            }else{
+                setModalMessage('');
+            }
+
+            const maxSizeInKB = 1024; // 1 MB = 1024 KB
+            const maxSizeInBytes = maxSizeInKB * 1024;
+            if (image.size > maxSizeInBytes) {
+                setModalMessage('File size exceeds 1 MB. Please select image within 1 MB.');
+                setMessageModalVisible(true);
+                setModalIcon('error');                  
+                isValid = false;
+            }else{
+                setModalMessage('');
+            }
+        }else{
+            setModalMessage('No image selected.');
+            setMessageModalVisible(true);
+            setModalIcon('error');
+            isValid = false;
+        }
+
+        return isValid;
+    };
+
+    const uploadProfileImage = async (image) => {
+        if(validateImage(image)){
+            setSendingFile(true)
+            const formData = new FormData();
+            formData.append('image', {
+                uri: image.uri,
+                name: image.name,
+                type: image.type,
+            });
+
+
+            UploadImageApi(formData)
+            .then( (result) => {
+                if(result.data.status){
+                    setSendingFile(false);
+                    setMessageModalVisible(true);
+                    setModalMessage('Image uploaded successfully');
+                    setModalIcon('success');
+                }else{
+                    setSendingFile(false);
+                    setMessageModalVisible(true);
+                    setModalMessage(result.data.message);
+                    setModalIcon('error');
+                }
+                console.log('Upload Image ===', result.data)
+            }).catch((err) => {
+                console.log('Error --> ',err);
+                setSendingFile(false);
+            });
+        }
+    }
+
     useEffect( () => {
-        const profileHeaderAnimated = Animated.stagger(400, [avatarRef.current.getAnimated()]);
-        Animated.loop(profileHeaderAnimated).start();
+        const profileDetailsAnimated = Animated.stagger(400, [avatarRef.current.getAnimated()]);
+        Animated.loop(profileDetailsAnimated).start();
 
 
         ProfileDetailsApi()
         .then( (result) => {
-            if(result.status == 200){
-                setFirstName(result.data.data.firstname);
-                setLastName(result.data.data.lastname);
-                setEmail(result.data.data.email);
-                setPhone(result.data.data.phone);
-                setFamilyId(result.data.data.family_id);
-                setSiteId(result.data.data.site_id);
+            let response = result.data;
+            if(response.status == true){
+                setFirstName(response.data.firstname);
+                setLastName(response.data.lastname);
+                setEmail(response.data.email);
+                setPhone(response.data.phone);
+                setFamilyId(response.data.family_id);
+                setSiteId(response.data.site_id);
+                const imageUrl = response.data.profile_image
+                ? `${UrlProvider.asset_url_local}/${response.data.profile_image}`
+                : null;
+
+                setProfileImage(imageUrl);
                 setLoading(false);
             }
-            console.log('Result Data --', result.data)
+
+            console.log('Profile Details ---', response)
         })
         .catch((err) => {
             console.log('Error --> ',err);
         });
     },[])
+
+    const handleMessageModalOnClose = () => {
+        setMessageModalVisible(false);
+    }
 
     const handleModalClose = () => {
         setModalVisible(false);
@@ -91,6 +168,8 @@ const ProfileSettings = ({ navigation }) => {
     const handleSaveDetails = () => {
         handleModalClose();
     };
+
+    console.log('Response Image ----', profileImage)
 
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>
@@ -105,12 +184,12 @@ const ProfileSettings = ({ navigation }) => {
                     </TouchableOpacity>
 
                     <View style={styles.profile_image_container}>
-                        <Image source={profileImage} style={styles.profile_header_image} />
+                        <Image source={profileImage ? { uri: profileImage } : defaultProfileImage} style={styles.profile_header_image} />
                         <TouchableOpacity style={styles.edit_image_btn} onPress={selectProfileImage}> 
                             <Icon name="pencil" style={styles.icon} />
                         </TouchableOpacity>
                     </View>
-
+                    
                     <Text style={styles.profile_header_name}>{firstName} {lastName}</Text>
                     <Text style={styles.profile_header_email}>{email}</Text>
                 </View>
@@ -123,39 +202,50 @@ const ProfileSettings = ({ navigation }) => {
                         <ShimmerPlaceholder style={styles.shimmerInputPlaceholder} />
                     </View>
                 ) : (
-                    <View style={styles.card}>
-                        <View style={styles.text_input_container}>
-                            <Text style={styles.input_title}>First Name</Text>
-                            <TextInput 
-                                style={styles.text_input} 
-                                placeholder='William.J' 
-                                placeholderTextColor='#b9b9b9' 
-                                value={firstName}
-                                onChangeText={(text) => setFirstName(text)}
-                            />
+
+                    <>
+                        <View> 
+                            { sendingFile && ( 
+                                <Text style={[styles.input_title, {color:'crimson'}]}>Uploading profile pic please wait...</Text> 
+                            ) } 
                         </View>
-                        <View style={styles.text_input_container}>
-                            <Text style={styles.input_title}>Last Name</Text>
-                            <TextInput 
-                                style={styles.text_input} 
-                                placeholder='Sartor' 
-                                placeholderTextColor='#b9b9b9'
-                                value={lastName}
-                                onChangeText={(text) => setLastName(text)} 
-                            />
+                        
+                        <View style={styles.card}>
+                            <View style={styles.text_input_container}>
+                                <Text style={styles.input_title}>First Name</Text>
+                                <TextInput 
+                                    style={styles.text_input} 
+                                    placeholder='William.J' 
+                                    placeholderTextColor='#b9b9b9' 
+                                    value={firstName}
+                                    onChangeText={(text) => setFirstName(text)}
+                                />
+                            </View>
+                            <View style={styles.text_input_container}>
+                                <Text style={styles.input_title}>Last Name</Text>
+                                <TextInput 
+                                    style={styles.text_input} 
+                                    placeholder='Sartor' 
+                                    placeholderTextColor='#b9b9b9'
+                                    value={lastName}
+                                    onChangeText={(text) => setLastName(text)} 
+                                />
+                            </View>
+                            <View style={styles.text_input_container}>
+                                <Text style={styles.input_title}>Phone Number</Text>
+                                <TextInput 
+                                    style={styles.text_input} 
+                                    maxLength={10} keyboardType="number-pad" 
+                                    placeholder='631-932-5700' 
+                                    placeholderTextColor='#b9b9b9'
+                                    value={phone}
+                                    onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ''))} 
+                                />
+                            </View>
                         </View>
-                        <View style={styles.text_input_container}>
-                            <Text style={styles.input_title}>Phone Number</Text>
-                            <TextInput 
-                                style={styles.text_input} 
-                                maxLength={10} keyboardType="number-pad" 
-                                placeholder='631-932-5700' 
-                                placeholderTextColor='#b9b9b9'
-                                value={phone}
-                                onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ''))} 
-                            />
-                        </View>
-                    </View>
+                    
+                    </>
+                    
                 )}
 
                 {loading ? (
@@ -308,6 +398,15 @@ const ProfileSettings = ({ navigation }) => {
                     </View>
                 </View>
             </Modal>
+
+            <ModalComponent 
+                modalVisible={messageModalVisible}
+                setModalVisible={setMessageModalVisible}
+                message={modalMessage}
+                onClose={handleMessageModalOnClose}
+                icon={modalIcon}
+            
+            />
         </ImageBackground>
     );
 }

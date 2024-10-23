@@ -1,4 +1,4 @@
-import ApiManager from "./ApiManager";
+import ApiManager from "../ApiManager";
 
 export default ProfileDetailsApi = async () => {
 

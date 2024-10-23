@@ -5,7 +5,7 @@ import IonicIcon from 'react-native-vector-icons/Ionicons';
 import { launchImageLibrary, launchCamera  } from 'react-native-image-picker';
 import DocumentPicker from 'react-native-document-picker';
 import FileViewer from 'react-native-file-viewer';
-import RNFS from 'react-native-fs'
+import RNFS from 'react-native-fs';
 import GetMessagesApi from '../../api/MessagingApi/GetMessagesApi';
 import SendMessageApi from '../../api/MessagingApi/SendMessageApi';
 import TokenManager from '../../api/TokenManager';
