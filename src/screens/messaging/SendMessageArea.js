@@ -62,32 +62,6 @@ const SendMessageArea = ({navigation, route }) => {
         }
     };
 
-    const openCamera = () => {
-        const options = {
-            mediaType: 'photo',
-            cameraType: 'back',
-            maxWidth: 300,
-            maxHeight: 300,
-            quality: 0.7,
-            includeBase64: false,
-            saveToPhotos: true,
-        };
-    
-        launchCamera(options, (response) => {
-            if (response.didCancel) {
-                console.log('User cancelled camera');
-                setBottomSheet(false);
-            } else if (response.errorCode) {
-                console.log('Camera Error: ', response.errorMessage);
-                Alert.alert('Error', response.errorMessage || 'Something went wrong while accessing the camera.');
-            } else if (response.assets && response.assets.length > 0) {
-                const capturedImage = response.assets[0];
-                console.log('Captured Image -->', capturedImage.uri);
-                setBottomSheet(false);
-            }
-        });
-    };
-
     const openDocument = async () => {
         try{
             const result = await DocumentPicker.pick({
@@ -514,12 +488,6 @@ const SendMessageArea = ({navigation, route }) => {
             {bottomSheet && (
                 <View style={styles.bottom_sheet_container}>
                     <View style={styles.bottom_sheet_items}>
-                        <View style={{marginRight:20}}>
-                            <TouchableOpacity style={styles.item_outline} onPress={openCamera}>
-                                <Icon name="camera" style={styles.item_icon} />
-                            </TouchableOpacity>
-                            <Text style={styles.title_text}>Camera</Text>
-                        </View>
                         <View style={{marginRight:20}}>
                             <TouchableOpacity style={styles.item_outline} onPress={openGallery}>
                                 <Icon name="images" style={styles.item_icon} />
