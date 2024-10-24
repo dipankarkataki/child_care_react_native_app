@@ -47,7 +47,6 @@ const ProfileSettings = ({ navigation }) => {
             const result = await DocumentPicker.pick({
                 type: [DocumentPicker.types.images],
             });
-            setProfileImage(result[0].uri);
             await uploadProfileImage(result[0]);
         }catch(err){
             if (DocumentPicker.isCancel(err)) {
@@ -63,24 +62,22 @@ const ProfileSettings = ({ navigation }) => {
 
         if(image){
             const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            const maxSizeInKB = 1024; // 1 MB = 1024 KB
+            const maxSizeInBytes = maxSizeInKB * 1024;
+
             if (!validTypes.includes(image.type)) {
                 setModalMessage('Invalid file type. Only JPG, PNG, and JPEG are allowed.');
                 setMessageModalVisible(true);
                 setModalIcon('error');  
                 isValid = false;
-            }else{
-                setModalMessage('');
-            }
-
-            const maxSizeInKB = 1024; // 1 MB = 1024 KB
-            const maxSizeInBytes = maxSizeInKB * 1024;
-            if (image.size > maxSizeInBytes) {
+            }else if (image.size > maxSizeInBytes) {
                 setModalMessage('File size exceeds 1 MB. Please select image within 1 MB.');
                 setMessageModalVisible(true);
                 setModalIcon('error');                  
                 isValid = false;
             }else{
                 setModalMessage('');
+                setProfileImage(image.uri);
             }
         }else{
             setModalMessage('No image selected.');
@@ -146,8 +143,6 @@ const ProfileSettings = ({ navigation }) => {
                 setProfileImage(imageUrl);
                 setLoading(false);
             }
-
-            console.log('Profile Details ---', response)
         })
         .catch((err) => {
             console.log('Error --> ',err);
@@ -168,8 +163,6 @@ const ProfileSettings = ({ navigation }) => {
     const handleSaveDetails = () => {
         handleModalClose();
     };
-
-    console.log('Response Image ----', profileImage)
 
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>
