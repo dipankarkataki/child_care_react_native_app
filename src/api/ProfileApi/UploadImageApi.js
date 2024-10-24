@@ -3,7 +3,6 @@ import ApiManager from "../ApiManager";
 export default UploadImageApi = async (data) => {
 
     try{
-        console.log('Sending Profile Data --> ', data)
         const result = await ApiManager('/profile/update-image',{
             method: "POST",
             headers: {

@@ -14,6 +14,7 @@ import UrlProvider from '../../api/UrlProvider';
 
 const profileImage =  undefined;
 const background = require('../../assets/images/background.png');
+const isImage = ['jpeg', 'png', 'jpg'];
 
 const SendMessageArea = ({navigation, route }) => {
 
@@ -40,10 +41,10 @@ const SendMessageArea = ({navigation, route }) => {
                 type: [DocumentPicker.types.images],
             });
 
-            const fileStats = await RNFS.stat(result[0].uri);
-            const maxSize = 5 * 1024 * 1024; // 5 MB
+            const maxSizeInMB = 5; // 1 MB = 1024 KB
+            const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 
-            if (fileStats.size > maxSize) {
+            if (result[0].size > maxSizeInBytes) {
                 Alert.alert('File Size Limit Exceeded', 'Please select a file up to 5 MB.');
                 return;
             }
@@ -57,6 +58,7 @@ const SendMessageArea = ({navigation, route }) => {
             }else {
                 throw err;
             }
+            setBottomSheet(false);
         }
     };
 
@@ -87,25 +89,29 @@ const SendMessageArea = ({navigation, route }) => {
     };
 
     const openDocument = async () => {
-        try {
-            const res = await DocumentPicker.pick({
+        try{
+            const result = await DocumentPicker.pick({
                 type: [DocumentPicker.types.pdf, DocumentPicker.types.doc, DocumentPicker.types.docx, DocumentPicker.types.xls, DocumentPicker.types.xlsx],
             });
-    
-            const data = res[0];
-            setSelectedFile(data);
-            console.log('Selected Document:', data);
-            Alert.alert('Document Selected', `Name: ${data.name}\nType: ${data.type}\nSize: ${data.size} bytes`);
-            setBottomSheet(false); // Close the bottom sheet after selection
-        } catch (err) {
-            if (DocumentPicker.isCancel(err)) {
-                console.log('User cancelled document picker');
-                setBottomSheet(false);
-            } else {
-                console.log('Unknown Error: ', err);
-                Alert.alert('Error', 'An error occurred while selecting the document.');
-                setBottomSheet(false);
+
+            const maxSizeInMB = 5; // 1 MB = 1024 KB
+            const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+
+            if (result[0].size > maxSizeInBytes) {
+                Alert.alert('File Size Limit Exceeded', 'Please select a file up to 5 MB.');
+                return;
             }
+
+            setSelectedFile(result[0]);
+            console.log('Selected File:', result[0]);
+            setBottomSheet(false);
+        }catch(err){
+            if (DocumentPicker.isCancel(err)) {
+                console.log('User Cancelled Doc Picker');
+            }else {
+                throw err;
+            }
+            setBottomSheet(false);
         }
     };
     
@@ -126,6 +132,10 @@ const SendMessageArea = ({navigation, route }) => {
     }
 
     const sendMessage = () => {
+        if(inputMessage == null || selectedFile == null){
+            Alert.alert('Please type a message or select an attachment.');
+            return;
+        }
         if (inputMessage.trim() || selectedFile != null) {
             const newMessage = {
                 text: inputMessage.trim(),
@@ -194,7 +204,6 @@ const SendMessageArea = ({navigation, route }) => {
             }));
 
             setMessages(newMessages);
-            // console.log('Messages ----> ', newMessages);
 
             // Scroll to the bottom after updating messages
             setTimeout(() => {
@@ -371,24 +380,26 @@ const SendMessageArea = ({navigation, route }) => {
                                                 {item.text}
                                             </Text>
                                         ) : null}
-                                        
+
                                         {item.attachment && (
-                                            item.attachment?.startsWith('content') ? (
+                                            isImage.includes(item.attachment_type) ? (
                                                 <Image
-                                                    source={{ uri: item.attachment }}
+                                                    source={{ uri: item.attachment.startsWith('content') ? item.attachment : `${UrlProvider.asset_url_local}/${item.attachment}` }}
                                                     style={{ width: 200, height: 200, borderRadius: 8 }}
                                                     resizeMode="cover"
                                                 />
                                             ) : (
-                                                <Image
-                                                    source={{ uri: `${UrlProvider.asset_url_local}/${item.attachment}` }}
-                                                    style={{ width: 200, height: 200, borderRadius: 8 }}
-                                                    resizeMode="cover"
-                                                />
+                                                <TouchableOpacity style={{ padding: 15, backgroundColor: '#f0f0f0', borderRadius: 8, marginBottom: 5 }}>
+                                                    <View style={{justifyContent:'center', alignItems:'center', marginBottom:10}}>
+                                                        <Icon name="file-alt" style={styles.attachment_icon} />
+                                                    </View>
+                                                   
+                                                    <Text style={{ color: '#007AFF', textAlign:'center', textDecorationLine: 'underline' }}>
+                                                        Open {item.attachment_type} Document
+                                                    </Text>
+                                                </TouchableOpacity>
                                             )
                                         )}
-                                        
-                                        
                                         <Text style={styles.sender_message_time}>
                                             <Icon name="clock" /> {item.time}
                                         </Text>
@@ -408,21 +419,25 @@ const SendMessageArea = ({navigation, route }) => {
                                             </Text>
                                         ) : null}
 
-                                        {item.attachment && (item.attachment_type === 'png' || item.attachment_type === 'jpg' || item.attachment_type === 'jpeg') ? (
-                                            <Image
-                                                source={{ uri: `${UrlProvider.asset_url_local}/${item.attachment}` }}
-                                                style={{ width: 200, height: 200, borderRadius: 8 }}
-                                                resizeMode="contain"
-                                            />
-                                        ) : item.attachment ? (
-                                            <TouchableOpacity
-                                                onPress={() => handleDocumentOpen(`${UrlProvider.asset_url_local}/${item.attachment}`)}
-                                                style={{ padding: 10, backgroundColor: '#f0f0f0', borderRadius: 8, marginBottom: 5 }}
-                                            >
-                                                <Text style={{ color: '#007AFF', textDecorationLine: 'underline' }}>Open Document</Text>
-                                            </TouchableOpacity>
-                                        ) : null}
-                                        
+                                        {item.attachment && (
+                                            isImage.includes(item.attachment_type) ? (
+                                                <Image
+                                                    source={{ uri: item.attachment.startsWith('content') ? item.attachment : `${UrlProvider.asset_url_local}/${item.attachment}` }}
+                                                    style={{ width: 200, height: 200, borderRadius: 8 }}
+                                                    resizeMode="cover"
+                                                />
+                                            ) : (
+                                                <TouchableOpacity style={{ padding: 15, backgroundColor: '#36454f', borderRadius: 8, marginBottom: 5 }}>
+                                                    <View style={{justifyContent:'center', alignItems:'center', marginBottom:10}}>
+                                                        <Icon name="file-alt" style={[styles.attachment_icon, {color:'#f0f0f0'}]} />
+                                                    </View>
+                                                   
+                                                    <Text style={{ color: '#f0f0f0', textAlign:'center', textDecorationLine: 'underline' }}>
+                                                        Open {item.attachment_type} Document
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            )
+                                        )}
                                         <Text style={styles.receiver_message_time}> 
                                             <Icon name="clock" /> {item.time}
                                         </Text>
@@ -437,7 +452,6 @@ const SendMessageArea = ({navigation, route }) => {
                 />
                 
                 {/* Attachment Preview */}
-                
                 {selectedFile && (
                     <View style={styles.sender_container}>
                         <View style={styles.sender_message_area}>
@@ -453,7 +467,16 @@ const SendMessageArea = ({navigation, route }) => {
                                 )}
 
                                 {selectedFile.type?.startsWith('application/') && (
-                                    <Text>Selected Attachment: {selectedFile.name}</Text>
+
+                                    <TouchableOpacity style={{ padding: 15, backgroundColor: '#f0f0f0', borderRadius: 8, marginBottom: 5 }}>
+                                        <View style={{justifyContent:'center', alignItems:'center', marginBottom:10}}>
+                                            <Icon name="file-alt" style={[styles.attachment_icon, {color:'#36454f'}]} />
+                                        </View>
+
+                                        <Text style={{ color: '#36454f', textAlign:'center', textDecorationLine: 'underline' }}>
+                                            Open Document - {selectedFile.name}
+                                        </Text>
+                                    </TouchableOpacity>
                                 )}
 
                                 <TouchableOpacity onPress={() => !sendingFile && setSelectedFile(null)}>
@@ -461,8 +484,6 @@ const SendMessageArea = ({navigation, route }) => {
                                         {!sendingFile   ? 'Remove Item' : 'Sending Wait ....'}
                                     </Text>
                                 </TouchableOpacity>
-                                
-                                
                             </View>
                         </View>
                     </View>
@@ -637,7 +658,7 @@ const styles = StyleSheet.create({
         marginTop:10
     },
     sender_message_area: {
-        backgroundColor: '#414a4c',
+        backgroundColor: '#414a4c ',
         padding: 10,
         borderWidth: 1,
         borderColor: '#36454F',

@@ -59,7 +59,6 @@ const MessagingDashboard = ({navigation}) => {
                                                 type: getAccountType(item.type),
                                             }) 
                                         }>
-                                        {/* <Image source={profileImage} style={styles.chat_profile_image}/> */}
                                         {
                                             profileImage ? (
                                                 <Image source={profileImage}  style={styles.chat_profile_image}/>
@@ -78,8 +77,8 @@ const MessagingDashboard = ({navigation}) => {
                                         <View style={styles.chat_notification_area}>
                                             <Text style={styles.chat_time_text}> {item.time}</Text>
                                             <View style={styles.notification_count_container}>
-                                                <Text style={styles.notification_count_text}>3</Text>
-                                                <Icon name="bell" style={styles.notification_icon}/>
+                                                {/* <Text style={styles.notification_count_text}>3</Text>
+                                                <Icon name="bell" style={styles.notification_icon}/> */}
                                             </View>
                                         </View>
                                     </TouchableOpacity>

@@ -113,7 +113,6 @@ const ProfileSettings = ({ navigation }) => {
                     setModalMessage(result.data.message);
                     setModalIcon('error');
                 }
-                console.log('Upload Image ===', result.data)
             }).catch((err) => {
                 console.log('Error --> ',err);
                 setSendingFile(false);
