@@ -132,60 +132,63 @@ const SendMessageArea = ({navigation, route }) => {
     }
 
     const sendMessage = () => {
-        if(inputMessage == null || selectedFile == null){
+        console.log('My message ---', inputMessage.trim())
+        if((inputMessage.trim().length == 0 && selectedFile == null)){
             Alert.alert('Please type a message or select an attachment.');
             return;
-        }
-        if (inputMessage.trim() || selectedFile != null) {
-            const newMessage = {
-                text: inputMessage.trim(),
-                time: getCurrentTime(),
-                type:'sent',
-                attachment: selectedFile ? selectedFile.uri : null,
-                attachment_type: selectedFile ? selectedFile.type.split('/')[1] : null,
-                receiverId: userId,
-            };
-
-            console.log('Message is ******', newMessage.text )
-
-            const formData = new FormData();
-            formData.append('message', newMessage.text);
-            formData.append('receiver_id', newMessage.receiverId);
-
-            if(selectedFile){
-                formData.append('attachment', {
-                    uri: selectedFile.uri,
-                    name: selectedFile.name,
-                    type: selectedFile.type,
-                });
-            }
-            
-            setSendingFile(true);
-            try {
-                // Send FormData to your API
-                SendMessageApi(formData)
-                .then((result) => {
-                    console.log('Send Message ==> ', result.data)
-                    setSelectedFile('');
-                    setSendingFile(false);
-                })
-                .catch((err) => {
-                    console.log('Error', err);
-                    setSendingFile(false);
-                });
+        }else{
+            if (inputMessage.trim() || selectedFile != null) {
+                const newMessage = {
+                    text: inputMessage.trim(),
+                    time: getCurrentTime(),
+                    type:'sent',
+                    attachment: selectedFile ? selectedFile.uri : null,
+                    attachment_type: selectedFile ? selectedFile.type.split('/')[1] : null,
+                    receiverId: userId,
+                };
     
-                setMessages(prevMessages => [...prevMessages, newMessage]);
-                setInputMessage(''); // Clear the input field after sending the message
+                console.log('Message is ******', newMessage.text )
+    
+                const formData = new FormData();
+                formData.append('message', newMessage.text);
+                formData.append('receiver_id', newMessage.receiverId);
+    
+                if(selectedFile){
+                    formData.append('attachment', {
+                        uri: selectedFile.uri,
+                        name: selectedFile.name,
+                        type: selectedFile.type,
+                    });
+                }
+                
+                setSendingFile(true);
+                try {
+                    // Send FormData to your API
+                    SendMessageApi(formData)
+                    .then((result) => {
+                        console.log('Send Message ==> ', result.data)
+                        setSelectedFile('');
+                        setSendingFile(false);
+                    })
+                    .catch((err) => {
+                        console.log('Error', err);
+                        setSendingFile(false);
+                    });
         
-                // Scroll to the bottom after sending the message
-                setTimeout(() => {
-                    scrollViewRef.current?.scrollToEnd({ animated: true });
-                }, 100);
-
-            } catch (error) {
-                console.error('Error sending message:', error);
+                    setMessages(prevMessages => [...prevMessages, newMessage]);
+                    setInputMessage(''); // Clear the input field after sending the message
+            
+                    // Scroll to the bottom after sending the message
+                    setTimeout(() => {
+                        scrollViewRef.current?.scrollToEnd({ animated: true });
+                    }, 100);
+    
+                } catch (error) {
+                    console.error('Error sending message:', error);
+                }
             }
         }
+        
     }
 
 
@@ -658,10 +661,10 @@ const styles = StyleSheet.create({
         marginTop:10
     },
     sender_message_area: {
-        backgroundColor: '#414a4c ',
+        backgroundColor: '#009b7d',
         padding: 10,
         borderWidth: 1,
-        borderColor: '#36454F',
+        borderColor: '#009b7d',
         borderRadius: 10,
         marginLeft: 50,
         marginBottom: 10,
@@ -675,7 +678,7 @@ const styles = StyleSheet.create({
         textAlign: 'justify'
     },
     sender_message_time: {
-        color: '#fff',
+        color: '#f8f8ff',
         fontSize: 12,
         fontFamily: 'Poppins Medium',
         fontWeight: 'bold',
@@ -752,7 +755,7 @@ const styles = StyleSheet.create({
         width: 0,
         height: 0,
         borderTopWidth: 10,
-        borderTopColor: '#36454F', // same color as sender bubble
+        borderTopColor: '#009b7d', // same color as sender bubble
         borderRightWidth: 10,
         borderRightColor: 'transparent',
         borderBottomWidth: 10,
