@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, View, Image, TextInput, ScrollView, Alert, FlatList } from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, View, Image, TextInput, ScrollView, Alert, FlatList, PermissionsAndroid, Linking, Platform } from 'react-native'
 import React, {useState, useRef, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
@@ -11,6 +11,7 @@ import SendMessageApi from '../../api/MessagingApi/SendMessageApi';
 import TokenManager from '../../api/TokenManager';
 import initializePusher from '../../../pusherConfig';
 import UrlProvider from '../../api/UrlProvider';
+import RNFetchBlob from 'rn-fetch-blob';
 
 const profileImage =  undefined;
 const background = require('../../assets/images/background.png');
@@ -274,35 +275,6 @@ const SendMessageArea = ({navigation, route }) => {
         };
     }, []);
 
-    // const getMimeType = (filePath) => {
-    //     const extension = filePath.split('.').pop();
-    //     switch (extension) {
-    //         case 'pdf': return 'application/pdf';
-    //         case 'docx': return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-    //         // Add more file types as needed
-    //         default: return '';
-    //     }
-    // };
-    
-
-    // const handleDocumentPress = async (uri) => {
-    //     const mimeType = getMimeType(uri);
-    //     try {
-    //         let localPath = uri;
-    //         if (uri.startsWith('http')) {
-    //             const downloadDest = `${RNFS.DocumentDirectoryPath}/${uri.split('/').pop()}`;
-    //             const { promise } = RNFS.downloadFile({ fromUrl: uri, toFile: downloadDest });
-    //             await promise;
-    //             localPath = downloadDest;
-    //         }
-    
-    //         await FileViewer.open(localPath, { showOpenWithDialog: true, mimeType }); // Optionally specify the MIME type
-    //     } catch (error) {
-    //         console.log('Error opening file:', error);
-    //         Alert.alert('Error', 'Could not open the file.');
-    //     }
-    // };
-
 
     if (!pusher || !currentUserId) {
         console.log('Current User id -->', currentUserId);
@@ -312,6 +284,30 @@ const SendMessageArea = ({navigation, route }) => {
           </View>
         );
     }
+
+    const downloadFiles = (item) => {
+        console.log(item)
+        const {config, fs} = RNFetchBlob;
+        const fileDir = fs.dirs.DownloadDir;
+        config({
+            fileCache: true,
+            addAndroidDownloads:{
+                useDownloadManager:true,
+                notification:true,
+                path: fileDir+'/child_care_software/parent_app/'+item.attachment,
+                description:'File download'
+            }
+        })
+        .fetch("GET", UrlProvider.asset_url_local+'/'+item.attachment, {
+            //some headers ..
+        })
+        .then((res) => {
+            // the temp file path
+            console.log("The file saved to ", res.path());
+            Alert.alert('File has been downloaded successfully');
+        });
+    }
+      
 
 
     return (
@@ -366,7 +362,7 @@ const SendMessageArea = ({navigation, route }) => {
                                                     resizeMode="cover"
                                                 />
                                             ) : (
-                                                <TouchableOpacity style={{ padding: 15, backgroundColor: '#f0f0f0', borderRadius: 8, marginBottom: 5 }}>
+                                                <TouchableOpacity style={{ padding: 15, backgroundColor: '#f0f0f0', borderRadius: 8, marginBottom: 5 }} onPress={ () => downloadFiles(item)}>
                                                     <View style={{justifyContent:'center', alignItems:'center', marginBottom:10}}>
                                                         <Icon name="file-alt" style={styles.attachment_icon} />
                                                     </View>
@@ -398,13 +394,16 @@ const SendMessageArea = ({navigation, route }) => {
 
                                         {item.attachment && (
                                             isImage.includes(item.attachment_type) ? (
-                                                <Image
-                                                    source={{ uri: item.attachment.startsWith('content') ? item.attachment : `${UrlProvider.asset_url_local}/${item.attachment}` }}
-                                                    style={{ width: 200, height: 200, borderRadius: 8 }}
-                                                    resizeMode="cover"
-                                                />
+                                                <TouchableOpacity onPress={ () => downloadFiles(item)}>
+                                                    <Image
+                                                        source={{ uri: item.attachment.startsWith('content') ? item.attachment : `${UrlProvider.asset_url_local}/${item.attachment}` }}
+                                                        style={{ width: 200, height: 200, borderRadius: 8 }}
+                                                        resizeMode="cover"
+                                                    />
+                                                </TouchableOpacity>
+                                                
                                             ) : (
-                                                <TouchableOpacity style={{ padding: 15, backgroundColor: '#36454f', borderRadius: 8, marginBottom: 5 }}>
+                                                <TouchableOpacity style={{ padding: 15, backgroundColor: '#36454f', borderRadius: 8, marginBottom: 5 }} onPress={ () => downloadFiles(item)}>
                                                     <View style={{justifyContent:'center', alignItems:'center', marginBottom:10}}>
                                                         <Icon name="file-alt" style={[styles.attachment_icon, {color:'#f0f0f0'}]} />
                                                     </View>
