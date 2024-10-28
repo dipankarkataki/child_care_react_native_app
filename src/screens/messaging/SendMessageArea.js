@@ -12,6 +12,8 @@ import TokenManager from '../../api/TokenManager';
 import initializePusher from '../../../pusherConfig';
 import UrlProvider from '../../api/UrlProvider';
 import RNFetchBlob from 'rn-fetch-blob';
+import * as RNLocalize from 'react-native-localize';
+import moment from 'moment-timezone';
 
 const profileImage =  undefined;
 const background = require('../../assets/images/background.png');
@@ -166,16 +168,28 @@ const SendMessageArea = ({navigation, route }) => {
         
     }
 
+    const deviceTimeZone = RNLocalize.getTimeZone();
+    const formatCreatedAt = (timestamp) => {
+        // Create a moment object from the timestamp in the server's timezone
+        const momentDate = moment.tz(timestamp, "YYYY-MM-DD HH:mm:ss", "Asia/Ho_Chi_Minh");
+    
+        // Convert it to the device's timezone
+        const localTime = momentDate.tz(deviceTimeZone);
+    
+        // Format the time in AM/PM
+        return localTime.format('hh:mm A');
+    };
+
 
     const fetchMessages = async () => {
         try {
             const result = await GetMessagesApi();
-            // console.log('Fetch Message Data ==> ', result.data.data);
+            console.log('Fetch Message Data ==> ', result.data.data);
             let data = result.data.data;
 
             const newMessages = data.map(item => ({
                 text: item.text,
-                time: item.time,
+                time: formatCreatedAt(item.time),
                 type: item.type,
                 attachment: item.attachment,
                 attachment_type: item.attachment ? item.attachment.split('.').pop().toLowerCase() : null,
@@ -208,10 +222,9 @@ const SendMessageArea = ({navigation, route }) => {
 
         channel.bind('message-sent', (data) => {
             console.log('New message received:', data);
-            console.log('Receiver ID:', data.receiver_id);
             const newMessage = {
                 text: data.content,
-                time: data.created_at,
+                time: formatCreatedAt(data.created_at),
                 attachment: data.attachment,
                 attachment_type:data.attachment_type,
                 type: userId == data.receiver_id ? 'received' : 'sent',
@@ -222,7 +235,6 @@ const SendMessageArea = ({navigation, route }) => {
             setTimeout(() => {
                 scrollViewRef.current?.scrollToEnd({ animated: true });
             }, 100);
-            // await fetchMessages();
         });
 
         pusherInstance.connection.bind('state_change', (states) => {

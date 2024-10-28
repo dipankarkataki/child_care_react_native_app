@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
 import MessagingDashboardApi from '../../api/MessagingApi/MessagingDashboardApi';
+import * as RNLocalize from 'react-native-localize';
+import moment from 'moment-timezone';
 
 const profileImage = undefined
 const background = require('../../assets/images/background.png');
@@ -30,6 +32,18 @@ const MessagingDashboard = ({navigation}) => {
         const lastNameInitial = names[1]?.charAt(0).toUpperCase() || '';
         return firstNameInitial + lastNameInitial;
     }
+
+    const deviceTimeZone = RNLocalize.getTimeZone();
+    const formatCreatedAt = (timestamp) => {
+        // Create a moment object from the timestamp in the server's timezone
+        const momentDate = moment.tz(timestamp, "YYYY-MM-DD HH:mm:ss", "Asia/Ho_Chi_Minh");
+    
+        // Convert it to the device's timezone
+        const localTime = momentDate.tz(deviceTimeZone);
+    
+        // Format the time in AM/PM
+        return localTime.format('hh:mm A');
+    };
 
     const getAccountType = (type) => {
         if(type == 13){
@@ -75,7 +89,7 @@ const MessagingDashboard = ({navigation}) => {
                                             </Text>
                                         </View>
                                         <View style={styles.chat_notification_area}>
-                                            <Text style={styles.chat_time_text}> {item.time}</Text>
+                                            <Text style={styles.chat_time_text}> {formatCreatedAt(item.latest_time)}</Text>
                                             <View style={styles.notification_count_container}>
                                                 {/* <Text style={styles.notification_count_text}>3</Text>
                                                 <Icon name="bell" style={styles.notification_icon}/> */}
