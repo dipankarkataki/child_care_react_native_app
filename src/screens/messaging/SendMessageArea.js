@@ -324,7 +324,7 @@ const SendMessageArea = ({navigation, route }) => {
 
     return (
         <ImageBackground source={background} style={styles.container}>
-            <TouchableOpacity style={styles.chat_header} onPress={ () => navigation.navigate('SenderProfile', {userId: userId, userName: userName})}>
+            <TouchableOpacity style={styles.chat_header} onPress={ () => navigation.navigate('SenderProfile', {userId: userId, userName: userName, initials: initials, type: type})}>
                 <TouchableOpacity onPress={ () => navigation.navigate('MessagingDashboard')}>
                     <Icon name="arrow-left" style={styles.back_button} />
                 </TouchableOpacity>

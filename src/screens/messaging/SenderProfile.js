@@ -1,6 +1,8 @@
 import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native'
-import React, {useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import GetSenderProfileAndMediaApi from '../../api/MessagingApi/GetSenderProfileAndMediaApi';
+import UrlProvider from '../../api/UrlProvider';
 
 const profileImage = require('../../assets/images/pro-image.jpg')
 const background = require('../../assets/images/background.png');
@@ -8,16 +10,25 @@ const placeholder_img = require('../../assets/images/placeholder-img.png');
 
 const SenderProfile = ({navigation, route}) => {
 
-    const { userId, userName } = route.params;
+    const { userId, userName, initials, type } = route.params;
+    const [profileMedia, setProfileMedia] = useState({});
 
-    let [firstName, setFirstName] = useState('');
-    let [lastName, setLastName] = useState('');
-    let [email, setEmail] = useState('');
+    useEffect(() => {
+        GetSenderProfileAndMediaApi(userId)
+        .then((result) => {
+            setProfileMedia(result.data.data);
+        })
+        .catch((err) => {
+            console.log('Error', err);
+        });
+    }, []);
 
+    
+    console.log('Sender Profile Data ==> ', profileMedia)
     return (
         <ImageBackground source={background} style={styles.container}>
             <View style={styles.profile_header}>
-                <TouchableOpacity style={styles.profile_back_button} onPress={ () => navigation.navigate('SendMessageArea', {userId: userId, userName: userName}) }>
+                <TouchableOpacity style={styles.profile_back_button} onPress={ () => navigation.navigate('SendMessageArea', {userId: userId, userName: userName, initials: initials, type: type}) }>
                     <Icon name="angle-left" style={styles.back_btn_icon} />
                 </TouchableOpacity>
 
@@ -25,13 +36,13 @@ const SenderProfile = ({navigation, route}) => {
                     <Image source={profileImage} style={styles.profile_header_image} />
                 </View>
                 <Text style={styles.profile_header_name}>{userName}</Text>
-                <Text style={styles.profile_header_email}>shiningstar@daycare.com</Text>
+                <Text style={styles.profile_header_email}>{profileMedia?.profile?.email}</Text>
             </View>
             <View style={styles.account_type}>
                 <Icon name="info-circle" style={styles.icon}/>
                 <View style={styles.account_info_container}>
                     <Text style={styles.main_title}>Owner Account</Text>
-                    <Text style={styles.sub_title}>This account uses ChildCareSoftware Account Type : Owner</Text>
+                    <Text style={styles.sub_title}>This account uses ChildCareSoftware Account Type : {type}</Text>
                 </View>
             </View>
             <ScrollView>
@@ -44,13 +55,13 @@ const SenderProfile = ({navigation, route}) => {
                         <Icon name="angle-right" style={styles.icon}/>
                     </TouchableOpacity>
                     <View style={styles.chat_media_content}>
-                        <Image source={placeholder_img} style={styles.chat_media_items}/>
-                        <Image source={placeholder_img} style={styles.chat_media_items}/>
-                        <Image source={placeholder_img} style={styles.chat_media_items}/>
-                        <Image source={placeholder_img} style={styles.chat_media_items}/>
-                        <Image source={placeholder_img} style={styles.chat_media_items}/>
-                        <Image source={placeholder_img} style={styles.chat_media_items}/>
-                        <Image source={placeholder_img} style={styles.chat_media_items}/>
+                        {profileMedia?.media?.map((item, index) => (
+                            <Image
+                                key={index}
+                                source={{ uri: `${UrlProvider.asset_url_local}/${item.attachment}` }}
+                                style={styles.chat_media_items}
+                            />
+                        ))}
                     </View>
                 </View>
                 <View style={styles.account_creator_details}>
@@ -59,20 +70,12 @@ const SenderProfile = ({navigation, route}) => {
                         <Text style={[styles.main_title, {marginLeft:10}]}>Account Details</Text>
                     </View>
                     <View style={styles.form_group}>
-                        <Text style={styles.main_title2}>Account Created By:</Text>
-                        <Text style={styles.sub_title2}>Dipankar Kataki</Text>
-                    </View>
-                    <View style={styles.form_group}>
-                        <Text style={styles.main_title2}>Email:</Text>
-                        <Text style={styles.sub_title2}>dipankar@childcaresoftware.com</Text>
-                    </View>
-                    <View style={styles.form_group}>
                         <Text style={styles.main_title2}>Phone Number:</Text>
-                        <Text style={styles.sub_title2}>+1 8569874521</Text>
+                        <Text style={styles.sub_title2}>{profileMedia?.profile?.country_code} {profileMedia?.profile?.phone}</Text>
                     </View>
                     <View style={styles.form_group}>
-                        <Text style={styles.main_title2}>Owner:</Text>
-                        <Text style={styles.sub_title2}>The Shining Star Day Care School</Text>
+                        <Text style={styles.main_title2}>Day Care Name:</Text>
+                        <Text style={styles.sub_title2}>{profileMedia?.profile?.site_name}</Text>
                     </View>
                 </View>
             </ScrollView>
@@ -208,7 +211,10 @@ const styles = StyleSheet.create({
         width:80,
         borderRadius:10,
         marginRight:10,
-        marginBottom:10
+        marginBottom:10,
+        borderWidth:1,
+        borderColor:'#dcdcdc',
+        borderStyle:'solid',
     },
     account_creator_details:{
         marginTop:20,
