@@ -6,10 +6,13 @@ const backgroundImage = require('../../assets/images/background.png');
 const dollarImage = require('../../assets/images/dollar-autopay.png');
 
 const AutoPay = ({ navigation }) => {
+
     const [isEnabled, setIsEnabled] = useState(false);
     const [activeTab, setActiveTab] = useState('ACH');
-    const [isShowTab, setShowTab] = useState(false)
-
+    const [isShowTab, setShowTab] = useState(false);
+    const [isPaymentMethod, setPaymentMethod] = useState(false);
+    const [isCrediCard, setCrediCard] = useState(false);
+    const [isACH, setACH] = useState(false);
 
     const toggleSwitch = () =>{
         setIsEnabled(previousState => !previousState)
@@ -51,77 +54,114 @@ const AutoPay = ({ navigation }) => {
             <View style={[styles.card, styles.add_pay_mentod_container]}>
                 <View style={styles.add_pay_method_title_container}>
                     <Text style={styles.title_text}>Saved Payment Methods</Text>
-                    <TouchableOpacity style={styles.auto_pay_details_card}>
-                        <Text style={styles.payment_method_sub_title}>No payment method added</Text>
-                    </TouchableOpacity>
+                    {
+                        isPaymentMethod ? (
+                            <View style={styles.auto_pay_details_card}>
+                                <Text style={styles.payment_method_sub_title}>Available Payment Methods</Text>
+                            </View>
+                        ):(
+                            <View style={styles.auto_pay_details_card}>
+                                <Text style={styles.payment_method_sub_title}>No payment method added</Text>
+                            </View>
+                        )
+                    }
+                    
+                    <View style={styles.available_payment_method_container}>
+                        { isCrediCard && (
+                            <TouchableOpacity style={styles.available_payment_method}>
+                                <Icon name="credit-card" style={[styles.icon_medium, styles.available_payment_method_icon]}/>
+                                <Text style={styles.available_payment_method_text}>Credit Card</Text>
+                            </TouchableOpacity>
+                        )}
+
+                        { isACH && (
+                            <TouchableOpacity style={styles.available_payment_method}>
+                                <Icon name="auto-mode" style={[styles.icon_medium, styles.available_payment_method_icon]}/>
+                                <Text style={styles.available_payment_method_text}>ACH</Text>
+                            </TouchableOpacity>
+                        )}
+                        
+                        
+                    </View>
                 </View>
                 <View>
-                    <TouchableOpacity style={[styles.add_new_pay_method, isShowTab ? styles.hideTab : styles.showTab]} onPress={() => setShowTab(true)}>
-                        <Text style={styles.add_new_pay_method_text}>Add New</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.add_new_pay_method, isShowTab ? styles.showTab : styles.hideTab]} onPress={() => setShowTab(false)}>
-                        <Text style={styles.add_new_pay_method_text}>Cancel</Text>
-                    </TouchableOpacity>
+                    {
+                        isShowTab ? (
+                            <TouchableOpacity style={[styles.add_new_pay_method]} onPress={() => setShowTab(false)}>
+                                <Text style={styles.add_new_pay_method_text}>Cancel</Text>
+                            </TouchableOpacity>
+                        ) : (
+                            <TouchableOpacity style={[styles.add_new_pay_method]} onPress={() => setShowTab(true)}>
+                                <Text style={styles.add_new_pay_method_text}>Add New</Text>
+                            </TouchableOpacity>
+                        )
+                    }
                 </View>
             </View>
-            <ScrollView style={[styles.add_new_ach_container, isShowTab ? styles.showTab : styles.hideTab]} alwaysBounceVertical>
-                <View style={styles.tabsContainer}>
-                    <TouchableOpacity
-                        style={[styles.tabButton, activeTab === 'ACH' ? styles.activeTab : styles.inactiveTab]}
-                        onPress={() => setActiveTab('ACH')}
-                    >
-                        <Text style={activeTab === 'ACH' ? styles.input_title : styles.title_text}>Add ACH</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.tabButton, activeTab === 'CreditCard' ? styles.activeTab : styles.inactiveTab]}
-                        onPress={() => setActiveTab('CreditCard')}
-                    >
-                        <Text style={activeTab === 'CreditCard' ? styles.input_title : styles.title_text}>Add Credit Card</Text>
-                    </TouchableOpacity>
-                </View>
 
-                {activeTab === 'ACH' && (
-                    <View style={styles.card}>
-                        <View style={styles.input_group}>
-                            <Text style={[styles.input_title, {marginBottom:8}]}>Account #</Text>
-                            <TextInput style={styles.text_input} placeholder="Account Number" placeholderTextColor='#b9b9b9' />
+            {
+                isShowTab && (
+                    <ScrollView style={styles.add_new_ach_container} alwaysBounceVertical>
+                        <View style={styles.tabsContainer}>
+                            <TouchableOpacity
+                                style={[styles.tabButton, activeTab === 'ACH' ? styles.activeTab : styles.inactiveTab]}
+                                onPress={() => setActiveTab('ACH')}
+                            >
+                                <Text style={activeTab === 'ACH' ? styles.input_title : styles.title_text}>Add ACH</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.tabButton, activeTab === 'CreditCard' ? styles.activeTab : styles.inactiveTab]}
+                                onPress={() => setActiveTab('CreditCard')}
+                            >
+                                <Text style={activeTab === 'CreditCard' ? styles.input_title : styles.title_text}>Add Credit Card</Text>
+                            </TouchableOpacity>
                         </View>
-                        <View styles={styles.input_group}>
-                            <Text style={[styles.input_title, {marginBottom:8}]}>Routing #</Text>
-                            <TextInput style={styles.text_input} placeholder="Routing Number" placeholderTextColor='#b9b9b9' />
-                        </View>
-                        <TouchableOpacity style={styles.save_btn} >
-                            <Text style={styles.save_btn_text}>Save ACH</Text>
-                        </TouchableOpacity>
-                        
-                    </View>
-                )}
 
-                {activeTab === 'CreditCard' && (
-                    <View style={styles.card}>
-                        <View style={styles.input_group}>
-                            <Text style={[styles.input_title, {marginBottom:8}]}>Card Number</Text>
-                            <TextInput style={styles.text_input} placeholder="4214 4214 4214 4214" placeholderTextColor='#b9b9b9' />
-                        </View>
-                        <View style={styles.input_group}>
-                            <Text style={[styles.input_title, {marginBottom:8}]}>Name on Card</Text>
-                            <TextInput style={styles.text_input} placeholder="William J. Sartor" placeholderTextColor='#b9b9b9' />
-                        </View>
-                        <View style={styles.input_group}>
-                            <Text style={[styles.input_title, {marginBottom:8}]}>CVV</Text>
-                            <TextInput style={styles.text_input} placeholder="* * *" placeholderTextColor='#b9b9b9' />
-                        </View>
-                        <View style={styles.input_group}>
-                            <Text style={[styles.input_title, {marginBottom:8}]}>Expiration Date</Text>
-                            <TextInput style={styles.text_input} placeholder="2028" placeholderTextColor='#b9b9b9' />
-                        </View>
-                        <TouchableOpacity style={styles.save_btn} >
-                            <Text style={styles.save_btn_text}>Save Credit Card</Text>
-                        </TouchableOpacity>
-                        
-                    </View>
-                )}
-            </ScrollView>
+                        {activeTab === 'ACH' && (
+                            <View style={styles.card}>
+                                <View style={styles.input_group}>
+                                    <Text style={[styles.input_title, {marginBottom:8}]}>Account #</Text>
+                                    <TextInput style={styles.text_input} placeholder="Account Number" placeholderTextColor='#b9b9b9' />
+                                </View>
+                                <View styles={styles.input_group}>
+                                    <Text style={[styles.input_title, {marginBottom:8}]}>Routing #</Text>
+                                    <TextInput style={styles.text_input} placeholder="Routing Number" placeholderTextColor='#b9b9b9' />
+                                </View>
+                                <TouchableOpacity style={styles.save_btn} >
+                                    <Text style={styles.save_btn_text}>Save ACH</Text>
+                                </TouchableOpacity>
+                                
+                            </View>
+                        )}
+
+                        {activeTab === 'CreditCard' && (
+                            <View style={styles.card}>
+                                <View style={styles.input_group}>
+                                    <Text style={[styles.input_title, {marginBottom:8}]}>Card Number</Text>
+                                    <TextInput style={styles.text_input} placeholder="4214 4214 4214 4214" placeholderTextColor='#b9b9b9' />
+                                </View>
+                                <View style={styles.input_group}>
+                                    <Text style={[styles.input_title, {marginBottom:8}]}>Name on Card</Text>
+                                    <TextInput style={styles.text_input} placeholder="William J. Sartor" placeholderTextColor='#b9b9b9' />
+                                </View>
+                                <View style={styles.input_group}>
+                                    <Text style={[styles.input_title, {marginBottom:8}]}>CVV</Text>
+                                    <TextInput style={styles.text_input} placeholder="* * *" placeholderTextColor='#b9b9b9' />
+                                </View>
+                                <View style={styles.input_group}>
+                                    <Text style={[styles.input_title, {marginBottom:8}]}>Expiration Date</Text>
+                                    <TextInput style={styles.text_input} placeholder="2028" placeholderTextColor='#b9b9b9' />
+                                </View>
+                                <TouchableOpacity style={styles.save_btn} >
+                                    <Text style={styles.save_btn_text}>Save Credit Card</Text>
+                                </TouchableOpacity>
+                                
+                            </View>
+                        )}
+                    </ScrollView>
+                )
+            }
+            
         </ImageBackground>
     );
 }
@@ -162,6 +202,12 @@ const styles = StyleSheet.create({
     },
     icon_small: {
         fontSize: 18,
+        fontWeight: 'bold',
+        color: 'black',
+        marginRight: 10,
+    },
+    icon_medium: {
+        fontSize: 22,
         fontWeight: 'bold',
         color: 'black',
         marginRight: 10,
@@ -213,7 +259,7 @@ const styles = StyleSheet.create({
         color: '#797979',
         fontSize: 14,
         fontFamily: 'Poppins Medium',
-        width:'90%'
+        fontWeight:'700'
     },
     auto_pay_details_card: {
         flexDirection: 'row',
@@ -276,8 +322,7 @@ const styles = StyleSheet.create({
         marginLeft:10,
         marginRight:10,
         flexDirection:'row',
-        justifyContent:'space-between',
-        alignItems:'center',
+        justifyContent:'space-between'
     },
     add_new_pay_method:{
 
@@ -321,14 +366,36 @@ const styles = StyleSheet.create({
         fontFamily:'Poppins Medium',
         textAlign:'center'
     },
-
-    showTab:{
-        display:'flex'
-    },
-    hideTab:{
-        display:'none'
-    },
     add_pay_method_title_container:{
         width:'80%',
+    },
+    available_payment_method_container:{
+        marginTop:10,
+        flexDirection:'row',
+        justifyContent:'flex-start',
+        flexWrap:'wrap',
+        alignItems:'center',
+    },
+    available_payment_method:{
+        marginRight:10,
+        borderRadius:10,
+        borderWidth:1,
+        borderStyle:'solid',
+        borderColor:"#d3d3d3",
+        height:60,
+        width:100,
+        backgroundColor:'#f0f0ff'
+    },
+    available_payment_method_icon:{
+        marginLeft:10,
+        marginTop:10,
+        color:'#003153'
+    },
+    available_payment_method_text:{
+        color:'#525252',
+        fontSize:12,
+        fontFamily:'Poppins Medium',
+        marginTop:5,
+        marginLeft:10
     }
 });
