@@ -13,10 +13,25 @@ const AutoPay = ({ navigation }) => {
     const [isPaymentMethod, setPaymentMethod] = useState(false);
     const [isCrediCard, setCrediCard] = useState(false);
     const [isACH, setACH] = useState(false);
+    const [cardNumber, setCardNumber] = useState('');
+    const [cardName, setCardName] = useState('');
+    const [cardExpiry, setCardExpiry] = useState('');
+    const [cardCVV, setCardCVV] = useState('');
 
     const toggleSwitch = () =>{
         setIsEnabled(previousState => !previousState)
     }
+
+    const addCreditCard = () =>{
+        setShowTab(false)
+        setPaymentMethod(true)
+        setCrediCard(true)
+    };
+    const addACH= () =>{
+        setShowTab(false)
+        setPaymentMethod(true)
+        setACH(true)
+    };
 
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>
@@ -127,7 +142,7 @@ const AutoPay = ({ navigation }) => {
                                     <Text style={[styles.input_title, {marginBottom:8}]}>Routing #</Text>
                                     <TextInput style={styles.text_input} placeholder="Routing Number" placeholderTextColor='#b9b9b9' />
                                 </View>
-                                <TouchableOpacity style={styles.save_btn} >
+                                <TouchableOpacity style={styles.save_btn} onPress={addACH}>
                                     <Text style={styles.save_btn_text}>Save ACH</Text>
                                 </TouchableOpacity>
                                 
@@ -146,13 +161,13 @@ const AutoPay = ({ navigation }) => {
                                 </View>
                                 <View style={styles.input_group}>
                                     <Text style={[styles.input_title, {marginBottom:8}]}>CVV</Text>
-                                    <TextInput style={styles.text_input} placeholder="* * *" placeholderTextColor='#b9b9b9' />
+                                    <TextInput style={styles.text_input} placeholder="* * *" placeholderTextColor='#b9b9b9'/>
                                 </View>
                                 <View style={styles.input_group}>
                                     <Text style={[styles.input_title, {marginBottom:8}]}>Expiration Date</Text>
                                     <TextInput style={styles.text_input} placeholder="2028" placeholderTextColor='#b9b9b9' />
                                 </View>
-                                <TouchableOpacity style={styles.save_btn} >
+                                <TouchableOpacity style={styles.save_btn} onPress={addCreditCard}>
                                     <Text style={styles.save_btn_text}>Save Credit Card</Text>
                                 </TouchableOpacity>
                                 
