@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Switch, Modal } from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Switch, Modal, ActivityIndicator } from 'react-native'
 import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -12,23 +12,30 @@ const AutoPay = ({ navigation }) => {
     const [activeTab, setActiveTab] = useState('ACH');
     const [isShowTab, setShowTab] = useState(false);
     const [isPaymentMethod, setPaymentMethod] = useState(false);
-    const [isCrediCard, setCrediCard] = useState(false);
+    const [isCrediCard, setCreditCard] = useState(false);
     const [isACH, setACH] = useState(false);
     const [cardNumber, setCardNumber] = useState('');
     const [cardName, setCardName] = useState('');
     const [cardExpiry, setCardExpiry] = useState('');
     const [cardCVV, setCardCVV] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
+    const [loader, setLoader] = useState(false);
 
     const toggleSwitch = () =>{
         setIsEnabled(previousState => !previousState)
     }
 
     const addCreditCard = () =>{
-        setShowTab(false)
-        setPaymentMethod(true)
-        setCrediCard(true)
+
+        setLoader(true);
+        setTimeout(() => {
+            setShowTab(false);
+            setPaymentMethod(true);
+            setCreditCard(true);
+            setLoader(false);
+        }, 3000);
     };
+
     const addACH= () =>{
         setShowTab(false)
         setPaymentMethod(true)
@@ -123,7 +130,7 @@ const AutoPay = ({ navigation }) => {
                                         <Text style={styles.credit_card_name}>Dipankar Kataki</Text>
                                         <Text style={styles.credit_card_number}>XXXX XXXX XXXX 4214</Text>
                                         <Text style={styles.credit_card_expiry}>Valid Upto</Text>
-                                        <Text style={styles.credit_card_expiry_text}>02-2024</Text>
+                                        <Text style={styles.credit_card_expiry_text}>02-2028</Text>
                                     </ImageBackground>
                                 </View>
                                 <View style={styles.modal_button_container}>
@@ -196,18 +203,24 @@ const AutoPay = ({ navigation }) => {
                                 </View>
                                 <View style={styles.input_group}>
                                     <Text style={[styles.input_title, {marginBottom:8}]}>Card Number</Text>
-                                    <TextInput style={styles.text_input} placeholder="XXXX XXXX XXXX 4214" placeholderTextColor='#b9b9b9' />
+                                    <TextInput style={styles.text_input} placeholder="XXXX XXXX XXXX 4214" placeholderTextColor='#b9b9b9' keyboardType="number-pad" maxLength={19}/>
                                 </View>
                                 <View style={styles.input_group}>
                                     <Text style={[styles.input_title, {marginBottom:8}]}>CVV</Text>
-                                    <TextInput style={styles.text_input} placeholder="* * *" placeholderTextColor='#b9b9b9'/>
+                                    <TextInput style={styles.text_input} placeholder="* * *" placeholderTextColor='#b9b9b9' keyboardType="number-pad" maxLength={3} />
                                 </View>
                                 <View style={styles.input_group}>
                                     <Text style={[styles.input_title, {marginBottom:8}]}>Expiration Date</Text>
-                                    <TextInput style={styles.text_input} placeholder="YYYY-MM" placeholderTextColor='#b9b9b9' />
+                                    <TextInput style={styles.text_input} placeholder="YYYY-MM" placeholderTextColor='#b9b9b9' keyboardType="number-pad" maxLength={7}/>
                                 </View>
-                                <TouchableOpacity style={styles.save_btn} onPress={addCreditCard}>
-                                    <Text style={styles.save_btn_text}>Save Credit Card</Text>
+                                <TouchableOpacity style={styles.save_btn} onPress={addCreditCard} disabled={loader}>
+                                    <Text style={styles.save_btn_text}>{loader ? 'Adding Card...' : 'Save Credit Card'}</Text>
+                                    {
+                                        loader && (
+                                            <ActivityIndicator size="large" color='#2E78FF' style={styles.activity_indicator} animating={loader}/>
+                                        )
+                                    }
+                                    
                                 </TouchableOpacity>
                                 
                             </View>
@@ -418,7 +431,7 @@ const styles = StyleSheet.create({
         color: '#000000',
         fontSize: 18,
         fontFamily:'Poppins Medium',
-        textAlign:'center'
+        textAlign:'center',
     },
     add_pay_method_title_container:{
         width:'80%',
@@ -546,5 +559,5 @@ const styles = StyleSheet.create({
         fontFamily:'Poppins Regular',
         fontSize:16,
         color:'#fff',
-    }
+    },
 });
