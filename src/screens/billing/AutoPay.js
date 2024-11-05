@@ -1,9 +1,10 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Switch } from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Switch, Modal } from 'react-native'
 import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const backgroundImage = require('../../assets/images/background.png');
 const dollarImage = require('../../assets/images/dollar-autopay.png');
+const crediCardBg = require('../../assets/images/map-bg.jpg');
 
 const AutoPay = ({ navigation }) => {
 
@@ -17,6 +18,7 @@ const AutoPay = ({ navigation }) => {
     const [cardName, setCardName] = useState('');
     const [cardExpiry, setCardExpiry] = useState('');
     const [cardCVV, setCardCVV] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
 
     const toggleSwitch = () =>{
         setIsEnabled(previousState => !previousState)
@@ -31,6 +33,10 @@ const AutoPay = ({ navigation }) => {
         setShowTab(false)
         setPaymentMethod(true)
         setACH(true)
+    };
+
+    const handleModalClose = () => {
+        setModalVisible(false);
     };
 
     return (
@@ -83,9 +89,11 @@ const AutoPay = ({ navigation }) => {
                     
                     <View style={styles.available_payment_method_container}>
                         { isCrediCard && (
-                            <TouchableOpacity style={styles.available_payment_method}>
-                                <Icon name="credit-card" style={[styles.icon_medium, styles.available_payment_method_icon]}/>
-                                <Text style={styles.available_payment_method_text}>Credit Card</Text>
+                            <TouchableOpacity style={[styles.available_payment_method, {overflow:'hidden'}]} onPress={ () => setModalVisible(true)}>
+                                <ImageBackground source={crediCardBg} style={{flex:1}}>
+                                    <Icon name="credit-card" style={[styles.icon_medium, styles.available_payment_method_icon, {color:'white'}]}/>
+                                    <Text style={[styles.available_payment_method_text,{color:'white'}]}>Credit Card</Text>
+                                </ImageBackground>
                             </TouchableOpacity>
                         )}
 
@@ -94,10 +102,41 @@ const AutoPay = ({ navigation }) => {
                                 <Icon name="auto-mode" style={[styles.icon_medium, styles.available_payment_method_icon]}/>
                                 <Text style={styles.available_payment_method_text}>ACH</Text>
                             </TouchableOpacity>
-                        )}
-                        
-                        
+                        )}   
                     </View>
+                    <Modal  
+                        animationType="fade"
+                        transparent={true}
+                        visible={modalVisible}
+                        onRequestClose={handleModalClose}
+                    >
+                        <View style={styles.backdrop}>
+                            <View style={styles.modal_view}>
+                                <Text style={styles.modal_text}>Saved Payment Method</Text>
+                                <View style={styles.saved_credit_card}>
+                                    <ImageBackground source={crediCardBg} style={{flex:1, padding:20}}>
+                                        <View style={styles.credit_card_container}>
+                                            <Text style={styles.credit_card_header}>CREDIT</Text>
+                                            <Text style={styles.credit_card_header}>CARD</Text>
+                                        </View>
+                                        
+                                        <Text style={styles.credit_card_name}>Dipankar Kataki</Text>
+                                        <Text style={styles.credit_card_number}>XXXX XXXX XXXX 4214</Text>
+                                        <Text style={styles.credit_card_expiry}>Valid Upto</Text>
+                                        <Text style={styles.credit_card_expiry_text}>02-2024</Text>
+                                    </ImageBackground>
+                                </View>
+                                <View style={styles.modal_button_container}>
+                                    <TouchableOpacity style={[styles.button, styles.button_delete]} onPress={handleModalClose}>
+                                        <Text style={styles.button_delete_text}>Delete</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={[styles.button, styles.button_close]} onPress={handleModalClose}>
+                                        <Text style={styles.button_close_text}>Close</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
                 </View>
                 <View>
                     {
@@ -152,12 +191,12 @@ const AutoPay = ({ navigation }) => {
                         {activeTab === 'CreditCard' && (
                             <View style={styles.card}>
                                 <View style={styles.input_group}>
-                                    <Text style={[styles.input_title, {marginBottom:8}]}>Card Number</Text>
-                                    <TextInput style={styles.text_input} placeholder="4214 4214 4214 4214" placeholderTextColor='#b9b9b9' />
-                                </View>
-                                <View style={styles.input_group}>
                                     <Text style={[styles.input_title, {marginBottom:8}]}>Name on Card</Text>
                                     <TextInput style={styles.text_input} placeholder="William J. Sartor" placeholderTextColor='#b9b9b9' />
+                                </View>
+                                <View style={styles.input_group}>
+                                    <Text style={[styles.input_title, {marginBottom:8}]}>Card Number</Text>
+                                    <TextInput style={styles.text_input} placeholder="XXXX XXXX XXXX 4214" placeholderTextColor='#b9b9b9' />
                                 </View>
                                 <View style={styles.input_group}>
                                     <Text style={[styles.input_title, {marginBottom:8}]}>CVV</Text>
@@ -165,7 +204,7 @@ const AutoPay = ({ navigation }) => {
                                 </View>
                                 <View style={styles.input_group}>
                                     <Text style={[styles.input_title, {marginBottom:8}]}>Expiration Date</Text>
-                                    <TextInput style={styles.text_input} placeholder="2028" placeholderTextColor='#b9b9b9' />
+                                    <TextInput style={styles.text_input} placeholder="YYYY-MM" placeholderTextColor='#b9b9b9' />
                                 </View>
                                 <TouchableOpacity style={styles.save_btn} onPress={addCreditCard}>
                                     <Text style={styles.save_btn_text}>Save Credit Card</Text>
@@ -412,5 +451,100 @@ const styles = StyleSheet.create({
         fontFamily:'Poppins Medium',
         marginTop:5,
         marginLeft:10
+    },
+    backdrop: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modal_view: {
+        width: '90%',
+        backgroundColor: '#f8f8ff',
+        borderRadius: 10,
+        padding: 18,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modal_text: {
+        marginBottom: 30,
+        color: '#000',
+        fontSize: 17,
+        fontFamily: 'Poppins Medium',
+    },
+    modal_button_container: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    button: {
+        borderRadius: 5,
+        padding: 10,
+        elevation: 2,
+    },
+    button_delete: {
+        backgroundColor: 'crimson',
+        marginRight:10
+    },
+    button_delete_text: {
+        fontFamily:'Poppins Medium',
+        fontSize:14,
+        color:'#fff'
+    },
+    button_close: {
+        backgroundColor: '#cdcdcd',
+    },
+    button_close_text: {
+        fontFamily:'Poppins Medium',
+        fontSize:14,
+        color:'#242124'
+    },
+    saved_credit_card:{
+        height:220,
+        borderWidth:1,
+        borderColor:'#eee',
+        borderStyle:'solid',
+        borderRadius:10,
+        backgroundColor:'#dcdcdc',
+        marginBottom:20,
+        overflow: 'hidden'
+    },
+    credit_card_container:{
+        marginBottom:15,
+        alignItems:'flex-end'
+    },
+    credit_card_header:{
+        fontFamily:'Poppins Regular',
+        fontSize:22,
+        color:'#fff',
+        marginBottom:-10,
+    },
+    credit_card_name:{
+        fontFamily:'Poppins Regular',
+        fontSize:20,
+        color:'#fff',
+    },
+    credit_card_number:{
+        fontFamily:'Poppins Regular',
+        fontSize:25,
+        color:'#fff',
+        marginBottom:5
+    },
+    credit_card_expiry:{
+        fontFamily:'Poppins Regular',
+        fontSize:12,
+        color:'#fff',
+    },
+    credit_card_expiry_text:{
+        fontFamily:'Poppins Regular',
+        fontSize:16,
+        color:'#fff',
     }
 });
