@@ -1,13 +1,12 @@
-import ApiManager from "./ApiManager";
+import ApiManager from "../ApiManager";
 
-export default LoginApi = async (data) => {
+export default CreateCustomerProfileApi = async (data) => {
     try {
-        const result = await ApiManager('/login', {
+        const result = await ApiManager('/billing/create-customer', {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
             },
-            data: data,
         });
         // console.log('API Response: ', result); // Log the response
         return result;

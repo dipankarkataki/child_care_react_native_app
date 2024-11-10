@@ -38,22 +38,22 @@ const CustomMonthYearPicker = ({ label, value, onChange }) => {
                 <Modal transparent={true} animationType="slide" visible={showModal}>
                     <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
                         <View style={{ backgroundColor: '#fff', margin: 20, padding: 20, borderRadius: 10 }}>
-                            <Text style={{color:'black'}}>Select Month</Text>
+                            <Text style={{color:'black', fontWeight:'bold', fontSize:14}}>Select Month</Text>
                             
                             {/* Month Picker */}
                             <Picker
-                                style={{backgroundColor:'black', marginTop:10, marginBottom:20}}
-                                selectedValue={month}
+                                style={{backgroundColor:'#696969', marginTop:10, marginBottom:20}}
+                                selectedValue={currentMonth}
                                 onValueChange={(itemValue) => setMonth(itemValue)}>
                                 {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                                    <Picker.Item key={m} label={m.toString()} value={m} enabled={m >= currentMonth} />
+                                    <Picker.Item key={m} label={m.toString()} value={m} />
                                 ))}
                             </Picker>
 
                             {/* Year Picker */}
-                            <Text style={{color:'black'}}>Select Year</Text>
+                            <Text style={{color:'black', fontWeight:'bold', fontSize:14}}>Select Year</Text>
                             <Picker
-                                style={{backgroundColor:'black', marginTop:10, marginBottom:10}}
+                                style={{backgroundColor:'#696969', marginTop:10, marginBottom:10}}
                                 selectedValue={year}
                                 onValueChange={(itemValue) => setYear(itemValue)}>
                                 {Array.from({ length: 20 }, (_, i) => new Date().getFullYear() + i).map((y) => (

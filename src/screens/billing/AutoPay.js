@@ -1,7 +1,9 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Switch, Modal, ActivityIndicator } from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Switch, Modal, ActivityIndicator, Alert } from 'react-native'
 import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CustomMonthYearPicker from '../../components/CustomMonthYearPicker';
+import CreateCustomerProfileApi from '../../api/BillingApi/CreateCustomerProfileApi';
+import AddCreditCardApi from '../../api/BillingApi/AddCreditCardApi';
 
 const backgroundImage = require('../../assets/images/background.png');
 const dollarImage = require('../../assets/images/dollar-autopay.png');
@@ -70,15 +72,52 @@ const AutoPay = ({ navigation }) => {
         return isValid;
     };
 
-    const addCreditCard = () =>{
+    const addCreditCard = async () =>{
         if(validateForm()){
             setLoader(true);
-            setTimeout(() => {
-                setShowTab(false);
-                setPaymentMethod(true);
-                setCreditCard(true);
-                setLoader(false);
-            }, 3000);
+
+            try{
+                const createProfileResult = await CreateCustomerProfileApi();
+                if (createProfileResult.data.status && createProfileResult.data.data) {
+                    const customerProfileId = createProfileResult.data.data;
+                    console.log('Customer Profile Id ----', customerProfileId)
+                    // Add credit card
+                    const addCardResult = await AddCreditCardApi({
+                        'customer_profile_id': customerProfileId,
+                        'card_number': cardNumber.replace(/\s+/g, ''),
+                        'expiration_date': cardExpiry,
+                        'card_code': cardCVV,
+                    });
+    
+                    if (addCardResult.status) {
+                        console.log('addCardResult ---> ', addCardResult.data)
+                        Alert.alert('Success', 'Card Added Successfully', [{
+                            text: 'OK',
+                            onPress: () => {
+                                setShowTab(false);
+                                setPaymentMethod(true);
+                                setCreditCard(true);
+                                setLoader(false);
+                                setCardNumber('');
+                                setCardName('');
+                                setCardCVV('');
+                                setCardExpiry('');
+                            }
+                        }]);
+                    }
+                }else{
+                    Alert.alert('Oops!', createProfileResult.data.message, [{
+                        text: 'OK',
+                        onPress: () => {
+                            setLoader(false);
+                        }
+                    }]);
+                }
+            }catch(error){
+                console.log('Response Error --> ', error);
+                setLoader(false); 
+            }
+            
         }
         
     };

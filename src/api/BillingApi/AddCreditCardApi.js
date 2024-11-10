@@ -1,8 +1,9 @@
-import ApiManager from "./ApiManager";
+import ApiManager from "../ApiManager";
 
-export default LoginApi = async (data) => {
+export default AddCreditCardApi = async (data) => {
     try {
-        const result = await ApiManager('/login', {
+        console.log('Add Credit Card Api Data: ', data);
+        const result = await ApiManager('/billing/add-credit-card', {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
