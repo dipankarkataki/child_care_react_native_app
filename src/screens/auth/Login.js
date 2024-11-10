@@ -56,6 +56,7 @@ const Login = ({ navigation }) => {
                 if(result.data.status == 200){
                     await TokenManager.setToken(result.data.token);
                     await TokenManager.setUserId(result.data.data.user_id.toString());
+                    await TokenManager.setCustomerProfileId(result.data.data.aNet_customer_profile_id.toString())
                     navigation.replace('Dashboard');
                 }else{
                     setLoader(false);

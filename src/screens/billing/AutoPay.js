@@ -1,9 +1,11 @@
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Switch, Modal, ActivityIndicator, Alert } from 'react-native'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CustomMonthYearPicker from '../../components/CustomMonthYearPicker';
 import CreateCustomerProfileApi from '../../api/BillingApi/CreateCustomerProfileApi';
 import AddCreditCardApi from '../../api/BillingApi/AddCreditCardApi';
+import GetCustomerProfileApi from '../../api/BillingApi/GetCustomerProfileApi';
+import TokenManager from '../../api/TokenManager';
 
 const backgroundImage = require('../../assets/images/background.png');
 const dollarImage = require('../../assets/images/dollar-autopay.png');
@@ -23,10 +25,50 @@ const AutoPay = ({ navigation }) => {
     const [cardCVV, setCardCVV] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     const [loader, setLoader] = useState(false);
+    const [aNetCustomerProfileId, setANetCustomerProfileId] = useState('');
+    const [aNetPaymentProfileId, setANetPaymentProfileId] = useState([]);
+    const [profileData, setProfileData] = useState('');
 
     const toggleSwitch = () =>{
         setIsEnabled(previousState => !previousState)
     }
+
+    const fetchCustomerProfile = async () => {
+        const profileId = await TokenManager.getCustomerProfileId();
+        if(profileId){
+            try{
+                const customerProfile = await GetCustomerProfileApi({'customer_profile_id' : profileId})
+                if (customerProfile.data && customerProfile.data.data && customerProfile.data.data.profile) {
+                    const profileData = customerProfile.data.data.profile;
+                    return profileData;
+                } else {
+                    console.log("No Customer Profile");
+                    return null;
+                }
+            }catch (error) {
+                console.error("Error fetching customer profile:", error);
+                return null;
+            }
+            
+        }
+    } 
+
+    useEffect( () => {
+
+        const getProfileData = async () => {
+            const profileData = await fetchCustomerProfile();
+            console.log('profileData ----', profileData )
+            if(profileData){
+                setProfileData(profileData)
+                setPaymentMethod(true);
+                setCreditCard(true);
+            }
+            
+        };
+
+        getProfileData();
+        
+    }, [aNetCustomerProfileId, aNetPaymentProfileId]);
 
     const [errors, setErrors] = useState({
         cardNumber: '',
@@ -80,7 +122,9 @@ const AutoPay = ({ navigation }) => {
                 const createProfileResult = await CreateCustomerProfileApi();
                 if (createProfileResult.data.status && createProfileResult.data.data) {
                     const customerProfileId = createProfileResult.data.data;
-                    console.log('Customer Profile Id ----', customerProfileId)
+                    // console.log('Customer Profile Id ----', customerProfileId)
+                    setANetCustomerProfileId(customerProfileId)
+                    await TokenManager.setCustomerProfileId(customerProfileId);
                     // Add credit card
                     const addCardResult = await AddCreditCardApi({
                         'customer_profile_id': customerProfileId,
@@ -91,6 +135,7 @@ const AutoPay = ({ navigation }) => {
     
                     if (addCardResult.status) {
                         console.log('addCardResult ---> ', addCardResult.data)
+                        setANetPaymentProfileId( addCardResult.data.data);
                         Alert.alert('Success', 'Card Added Successfully', [{
                             text: 'OK',
                             onPress: () => {
@@ -106,12 +151,31 @@ const AutoPay = ({ navigation }) => {
                         }]);
                     }
                 }else{
-                    Alert.alert('Oops!', createProfileResult.data.message, [{
-                        text: 'OK',
-                        onPress: () => {
-                            setLoader(false);
-                        }
-                    }]);
+                    const customerProfileId = await TokenManager.getCustomerProfileId();
+                    const addCardResult = await AddCreditCardApi({
+                        'customer_profile_id': customerProfileId,
+                        'card_number': cardNumber.replace(/\s+/g, ''),
+                        'expiration_date': cardExpiry,
+                        'card_code': cardCVV,
+                    });
+    
+                    if (addCardResult.status) {
+                        console.log('addCardResult ---> ', addCardResult.data)
+                        setANetPaymentProfileId( addCardResult.data.data);
+                        Alert.alert('Success', 'Card Added Successfully', [{
+                            text: 'OK',
+                            onPress: () => {
+                                setShowTab(false);
+                                setPaymentMethod(true);
+                                setCreditCard(true);
+                                setLoader(false);
+                                setCardNumber('');
+                                setCardName('');
+                                setCardCVV('');
+                                setCardExpiry('');
+                            }
+                        }]);
+                    }
                 }
             }catch(error){
                 console.log('Response Error --> ', error);
@@ -215,14 +279,22 @@ const AutoPay = ({ navigation }) => {
                     }
                     
                     <View style={styles.available_payment_method_container}>
-                        { isCrediCard && (
-                            <TouchableOpacity style={[styles.available_payment_method, {overflow:'hidden'}]} onPress={ () => setModalVisible(true)}>
-                                <ImageBackground source={crediCardBg} style={{flex:1}}>
-                                    <Icon name="credit-card" style={[styles.icon_medium, styles.available_payment_method_icon, {color:'white'}]}/>
-                                    <Text style={[styles.available_payment_method_text,{color:'white'}]}>Credit Card</Text>
+                    {isCrediCard && profileData?.paymentProfiles && profileData.paymentProfiles.length > 0 && (
+                        profileData.paymentProfiles.map((paymentProfile, index) => (
+                            <TouchableOpacity
+                                key={index}
+                                style={[styles.available_payment_method, { overflow: 'hidden' }]}
+                                onPress={() => setModalVisible(true)}
+                            >
+                                <ImageBackground source={crediCardBg} style={{ flex: 1 }}>
+                                    <Icon name="credit-card" style={[styles.icon_medium, styles.available_payment_method_icon, { color: 'white' }]} />
+                                    <Text style={[styles.available_payment_method_text, { color: 'white' }]}>
+                                        {paymentProfile.accountType} {paymentProfile.cardNumber.slice(-4)} {/* Display last 4 digits */}
+                                    </Text>
                                 </ImageBackground>
                             </TouchableOpacity>
-                        )}
+                        ))
+                    )}
 
                         { isACH && (
                             <TouchableOpacity style={styles.available_payment_method}>

@@ -2,9 +2,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const TOKEN_KEY = 'AccessToken';
 const UserId = 'UserId';
+const CustomerProfileIdAuthorizeNet = 'CustomerProfileId'
 
 let cachedToken = null;
 let cachedUserId = null;
+let cachedCustomerProfileIdAuthorizeNet = null;
 
 const TokenManager = {
     /**
@@ -89,6 +91,51 @@ const TokenManager = {
         try {
             cachedUserId = null;
             await AsyncStorage.removeItem(UserId);
+        } catch (error) {
+            console.error('Error removing token from AsyncStorage:', error);
+        }
+    },
+
+
+
+
+
+    getCustomerProfileId: async () => {
+        if (cachedCustomerProfileIdAuthorizeNet) {
+            return cachedCustomerProfileIdAuthorizeNet;
+        }
+        try {
+            const profileId = await AsyncStorage.getItem(CustomerProfileIdAuthorizeNet);
+            cachedCustomerProfileIdAuthorizeNet = profileId;
+            return profileId;
+        } catch (error) {
+            console.error('Error retrieving token from AsyncStorage:', error);
+            return null;
+        }
+    },
+
+    /**
+     * Sets the userId in both in-memory cache and AsyncStorage.
+     * @param {string} userId - The userId to set.
+     * @returns {Promise<void>}
+     */
+    setCustomerProfileId: async (profileId) => {
+        try {
+            cachedCustomerProfileIdAuthorizeNet = profileId;
+            await AsyncStorage.setItem(CustomerProfileIdAuthorizeNet, profileId);
+        } catch (error) {
+            console.error('Error setting token in AsyncStorage:', error);
+        }
+    },
+
+    /**
+     * Removes the token from both in-memory cache and AsyncStorage.
+     * @returns {Promise<void>}
+     */
+    removeCustomerProfileId: async () => {
+        try {
+            cachedCustomerProfileIdAuthorizeNet = null;
+            await AsyncStorage.removeItem(CustomerProfileIdAuthorizeNet);
         } catch (error) {
             console.error('Error removing token from AsyncStorage:', error);
         }
