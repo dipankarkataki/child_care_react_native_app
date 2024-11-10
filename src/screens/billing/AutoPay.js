@@ -27,7 +27,8 @@ const AutoPay = ({ navigation }) => {
     const [loader, setLoader] = useState(false);
     const [aNetCustomerProfileId, setANetCustomerProfileId] = useState('');
     const [aNetPaymentProfileId, setANetPaymentProfileId] = useState([]);
-    const [profileData, setProfileData] = useState('');
+    const [profileData, setProfileData] = useState(null);
+    const [selectedPaymentProfile, setSelectedPaymentProfile] = useState(null);
 
     const toggleSwitch = () =>{
         setIsEnabled(previousState => !previousState)
@@ -230,6 +231,11 @@ const AutoPay = ({ navigation }) => {
         setCardExpiry(selectedDate); // Receive date in YYYY-MM format from picker
     };
 
+    const handlePaymentProfilePress = (paymentProfile) => {
+        setSelectedPaymentProfile(paymentProfile);
+        setModalVisible(true); // Show modal
+    };
+
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>
             <View style={styles.auto_pay_header}></View>
@@ -263,92 +269,60 @@ const AutoPay = ({ navigation }) => {
                     </View>
                 </View>
             </View>
-            <View style={[styles.card, styles.add_pay_mentod_container]}>
-                <View style={styles.add_pay_method_title_container}>
-                    <Text style={styles.title_text}>Saved Payment Methods</Text>
-                    {
-                        isPaymentMethod ? (
-                            <View style={styles.auto_pay_details_card}>
-                                <Text style={styles.payment_method_sub_title}>Available Payment Methods</Text>
-                            </View>
-                        ):(
-                            <View style={styles.auto_pay_details_card}>
-                                <Text style={styles.payment_method_sub_title}>No payment method added</Text>
-                            </View>
-                        )
-                    }
-                    
-                    <View style={styles.available_payment_method_container}>
+            <View style={[styles.card, {marginTop:90, marginLeft:10, marginRight:10}]}>
+                <View style={styles.add_pay_method_container}>
+                    <View style={styles.add_pay_method_title_container}>
+                        <Text style={styles.title_text}>Saved Payment Methods</Text>
+                        {
+                            isPaymentMethod ? (
+                                <View style={styles.auto_pay_details_card}>
+                                    <Text style={styles.payment_method_sub_title}>Available Payment Methods</Text>
+                                </View>
+                            ):(
+                                <View style={styles.auto_pay_details_card}>
+                                    <Text style={styles.payment_method_sub_title}>No payment method added</Text>
+                                </View>
+                            )
+                        }  
+                    </View>
+                    <View>
+                        {
+                            isShowTab ? (
+                                <TouchableOpacity style={[styles.add_new_pay_method]} onPress={closeShowTab}>
+                                    <Text style={styles.add_new_pay_method_text}>Cancel</Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <TouchableOpacity style={[styles.add_new_pay_method]} onPress={() => setShowTab(true)}>
+                                    <Text style={styles.add_new_pay_method_text}>Add New</Text>
+                                </TouchableOpacity>
+                            )
+                        }
+                    </View>
+                </View>
+                <View style={styles.available_payment_method_container}>
                     {isCrediCard && profileData?.paymentProfiles && profileData.paymentProfiles.length > 0 && (
                         profileData.paymentProfiles.map((paymentProfile, index) => (
                             <TouchableOpacity
                                 key={index}
                                 style={[styles.available_payment_method, { overflow: 'hidden' }]}
-                                onPress={() => setModalVisible(true)}
+                                onPress={() => handlePaymentProfilePress(paymentProfile)}
                             >
                                 <ImageBackground source={crediCardBg} style={{ flex: 1 }}>
                                     <Icon name="credit-card" style={[styles.icon_medium, styles.available_payment_method_icon, { color: 'white' }]} />
                                     <Text style={[styles.available_payment_method_text, { color: 'white' }]}>
-                                        {paymentProfile.accountType} {paymentProfile.cardNumber.slice(-4)} {/* Display last 4 digits */}
+                                        {paymentProfile.accountType} {paymentProfile.cardNumber.slice(-4)}
                                     </Text>
                                 </ImageBackground>
                             </TouchableOpacity>
                         ))
                     )}
 
-                        { isACH && (
-                            <TouchableOpacity style={styles.available_payment_method}>
-                                <Icon name="auto-mode" style={[styles.icon_medium, styles.available_payment_method_icon]}/>
-                                <Text style={styles.available_payment_method_text}>ACH</Text>
-                            </TouchableOpacity>
-                        )}   
-                    </View>
-                    <Modal  
-                        animationType="fade"
-                        transparent={true}
-                        visible={modalVisible}
-                        onRequestClose={handleModalClose}
-                    >
-                        <View style={styles.backdrop}>
-                            <View style={styles.modal_view}>
-                                <Text style={styles.modal_text}>Saved Payment Method</Text>
-                                <View style={styles.saved_credit_card}>
-                                    <ImageBackground source={crediCardBg} style={{flex:1, padding:20}}>
-                                        <View style={styles.credit_card_container}>
-                                            <Text style={styles.credit_card_header}>CREDIT</Text>
-                                            <Text style={styles.credit_card_header}>CARD</Text>
-                                        </View>
-                                        
-                                        <Text style={styles.credit_card_name}>Dipankar Kataki</Text>
-                                        <Text style={styles.credit_card_number}>XXXX XXXX XXXX 4242</Text>
-                                        <Text style={styles.credit_card_expiry}>Valid Upto</Text>
-                                        <Text style={styles.credit_card_expiry_text}>02-2038</Text>
-                                    </ImageBackground>
-                                </View>
-                                <View style={styles.modal_button_container}>
-                                    <TouchableOpacity style={[styles.button, styles.button_delete]} onPress={handleModalClose}>
-                                        <Text style={styles.button_delete_text}>Delete</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={[styles.button, styles.button_close]} onPress={handleModalClose}>
-                                        <Text style={styles.button_close_text}>Close</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </View>
-                    </Modal>
-                </View>
-                <View>
-                    {
-                        isShowTab ? (
-                            <TouchableOpacity style={[styles.add_new_pay_method]} onPress={closeShowTab}>
-                                <Text style={styles.add_new_pay_method_text}>Cancel</Text>
-                            </TouchableOpacity>
-                        ) : (
-                            <TouchableOpacity style={[styles.add_new_pay_method]} onPress={() => setShowTab(true)}>
-                                <Text style={styles.add_new_pay_method_text}>Add New</Text>
-                            </TouchableOpacity>
-                        )
-                    }
+                    { isACH && (
+                        <TouchableOpacity style={styles.available_payment_method}>
+                            <Icon name="auto-mode" style={[styles.icon_medium, styles.available_payment_method_icon]}/>
+                            <Text style={styles.available_payment_method_text}>ACH</Text>
+                        </TouchableOpacity>
+                    )}   
                 </View>
             </View>
 
@@ -447,6 +421,50 @@ const AutoPay = ({ navigation }) => {
                     </ScrollView>
                 )
             }
+
+
+            <Modal  
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={handleModalClose}
+            >
+                <View style={styles.backdrop}>
+                    <View style={styles.modal_view}>
+                        <Text style={styles.modal_text}>Saved Payment Method</Text>
+                            {selectedPaymentProfile && (
+                            <View style={styles.saved_credit_card}>
+                                <ImageBackground source={crediCardBg} style={{ flex: 1, padding: 20 }}>
+                                    <View style={styles.credit_card_container}>
+                                        <Text style={styles.credit_card_header}>CREDIT</Text>
+                                        <Text style={styles.credit_card_header}>CARD</Text>
+                                    </View>
+
+                                    {/* Display payment profile details */}
+                                    <Text style={styles.credit_card_name}>
+                                        {profileData.description.split('--')[1].trim() || 'No Name Available'} {/* You can use profile description or cardholder name */}
+                                    </Text>
+                                    <Text style={styles.credit_card_number}>
+                                        XXXX XXXX XXXX {selectedPaymentProfile.cardNumber.slice(-4)} {/* Display last 4 digits */}
+                                    </Text>
+                                    <Text style={styles.credit_card_expiry}>Valid Upto</Text>
+                                    <Text style={styles.credit_card_expiry_text}>
+                                        {selectedPaymentProfile.expirationDate || 'N/A'} {/* Display expiration date */}
+                                    </Text>
+                                </ImageBackground>
+                            </View>
+                        )}
+                        <View style={styles.modal_button_container}>
+                            <TouchableOpacity style={[styles.button, styles.button_delete]} onPress={handleModalClose}>
+                                <Text style={styles.button_delete_text}>Delete</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.button, styles.button_close]} onPress={handleModalClose}>
+                                <Text style={styles.button_close_text}>Close</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
             
         </ImageBackground>
     );
@@ -603,12 +621,9 @@ const styles = StyleSheet.create({
         fontSize:40,
         color:'#2CABE2'
     },
-    add_pay_mentod_container:{
-        marginTop:100,
-        marginLeft:10,
-        marginRight:10,
+    add_pay_method_container:{
         flexDirection:'row',
-        justifyContent:'space-between'
+        justifyContent:'space-between',
     },
     add_new_pay_method:{
 
@@ -616,7 +631,7 @@ const styles = StyleSheet.create({
     add_new_pay_method_text:{
         color:'#2CABE2',
         fontSize:17,
-        fontFamily:'Poppins Medium'
+        fontFamily:'Poppins Medium',
     },
     tabsContainer: {
         flexDirection: 'row',
@@ -653,24 +668,23 @@ const styles = StyleSheet.create({
         textAlign:'center',
     },
     add_pay_method_title_container:{
-        width:'80%',
     },
     available_payment_method_container:{
         marginTop:10,
         flexDirection:'row',
-        justifyContent:'flex-start',
+        justifyContent:'space-between',
         flexWrap:'wrap',
-        alignItems:'center',
+        alignItems:'center'
     },
     available_payment_method:{
-        marginRight:10,
         borderRadius:10,
         borderWidth:1,
         borderStyle:'solid',
         borderColor:"#d3d3d3",
-        height:60,
-        width:100,
-        backgroundColor:'#f0f0ff'
+        height:80,
+        width:120,
+        backgroundColor:'#f0f0ff',
+        marginBottom:10
     },
     available_payment_method_icon:{
         marginLeft:10,
