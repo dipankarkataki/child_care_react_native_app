@@ -46,7 +46,7 @@ const CustomDatePicker = ({ label, value, onChange }) => {
             <DateTimePicker
                 value={date}
                 mode="date"
-                display="default"
+                display="spinner"
                 onChange={handleChange}
             />
             )}

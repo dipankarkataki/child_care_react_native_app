@@ -1,6 +1,7 @@
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Switch, Modal, ActivityIndicator } from 'react-native'
 import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import CustomMonthYearPicker from '../../components/CustomMonthYearPicker';
 
 const backgroundImage = require('../../assets/images/background.png');
 const dollarImage = require('../../assets/images/dollar-autopay.png');
@@ -25,15 +26,61 @@ const AutoPay = ({ navigation }) => {
         setIsEnabled(previousState => !previousState)
     }
 
-    const addCreditCard = () =>{
+    const [errors, setErrors] = useState({
+        cardNumber: '',
+        cardName: '',
+        cardExpiry:'',
+        cardCVV:''
+    });
 
-        setLoader(true);
-        setTimeout(() => {
-            setShowTab(false);
-            setPaymentMethod(true);
-            setCreditCard(true);
-            setLoader(false);
-        }, 3000);
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = { ...errors };
+
+        if (!cardNumber || !cardNumber.length == 16) {
+            newErrors.cardNumber = 'Valid card number is required';
+            isValid = false;
+        } else {
+            newErrors.cardNumber = '';
+        }
+
+        if (!cardName) {
+            newErrors.cardName = 'Card name is required';
+            isValid = false;
+        } else {
+            newErrors.cardName = '';
+        }
+
+        if (!cardExpiry) {
+            newErrors.cardExpiry = 'Card expiry is required';
+            isValid = false;
+        } else {
+            newErrors.cardExpiry = '';
+        }
+
+        if (!cardCVV) {
+            newErrors.cardCVV = 'Card CVV is required';
+            isValid = false;
+        } else {
+            newErrors.cardCVV = '';
+        }
+        
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
+    const addCreditCard = () =>{
+        if(validateForm()){
+            setLoader(true);
+            setTimeout(() => {
+                setShowTab(false);
+                setPaymentMethod(true);
+                setCreditCard(true);
+                setLoader(false);
+            }, 3000);
+        }
+        
     };
 
     const addACH= () =>{
@@ -42,8 +89,42 @@ const AutoPay = ({ navigation }) => {
         setACH(true)
     };
 
+    const closeShowTab = () => {
+        const errors = {
+            cardNumber: '',
+            cardName: '',
+            cardExpiry:'',
+            cardCVV:''
+        };
+
+        setCardNumber('');
+        setCardName('');
+        setCardCVV('');
+        setCardExpiry('');
+
+        setErrors(errors);
+        setShowTab(false)
+    }
+
     const handleModalClose = () => {
         setModalVisible(false);
+    };
+
+    const formatCardNumber = (text) => {
+        // Remove all spaces
+        const cleaned = text.replace(/\s+/g, '');
+        // Insert a space every 4 digits
+        const formatted = cleaned.match(/.{1,4}/g)?.join(' ') || '';
+        return formatted;
+    };
+
+    const handleCardNumberChange = (text) => {
+        const formattedText = formatCardNumber(text);
+        setCardNumber(formattedText);
+    };
+
+    const handleMonthYearChange = (selectedDate) => {
+        setCardExpiry(selectedDate); // Receive date in YYYY-MM format from picker
     };
 
     return (
@@ -128,9 +209,9 @@ const AutoPay = ({ navigation }) => {
                                         </View>
                                         
                                         <Text style={styles.credit_card_name}>Dipankar Kataki</Text>
-                                        <Text style={styles.credit_card_number}>XXXX XXXX XXXX 4214</Text>
+                                        <Text style={styles.credit_card_number}>XXXX XXXX XXXX 4242</Text>
                                         <Text style={styles.credit_card_expiry}>Valid Upto</Text>
-                                        <Text style={styles.credit_card_expiry_text}>02-2028</Text>
+                                        <Text style={styles.credit_card_expiry_text}>02-2038</Text>
                                     </ImageBackground>
                                 </View>
                                 <View style={styles.modal_button_container}>
@@ -148,7 +229,7 @@ const AutoPay = ({ navigation }) => {
                 <View>
                     {
                         isShowTab ? (
-                            <TouchableOpacity style={[styles.add_new_pay_method]} onPress={() => setShowTab(false)}>
+                            <TouchableOpacity style={[styles.add_new_pay_method]} onPress={closeShowTab}>
                                 <Text style={styles.add_new_pay_method_text}>Cancel</Text>
                             </TouchableOpacity>
                         ) : (
@@ -199,19 +280,46 @@ const AutoPay = ({ navigation }) => {
                             <View style={styles.card}>
                                 <View style={styles.input_group}>
                                     <Text style={[styles.input_title, {marginBottom:8}]}>Name on Card</Text>
-                                    <TextInput style={styles.text_input} placeholder="William J. Sartor" placeholderTextColor='#b9b9b9' />
+                                    <TextInput style={[styles.text_input, { borderColor: errors.cardName ? 'red' : '#E1F3FB' }]} 
+                                        placeholder="William J. Sartor" 
+                                        placeholderTextColor='#b9b9b9' 
+                                        value={cardName}
+                                        onChangeText={(text) => setCardName(text)}
+                                    />
+                                    {errors.cardName ? <Text style={styles.error_text}>{errors.cardName}</Text> : null}
                                 </View>
                                 <View style={styles.input_group}>
                                     <Text style={[styles.input_title, {marginBottom:8}]}>Card Number</Text>
-                                    <TextInput style={styles.text_input} placeholder="XXXX XXXX XXXX 4214" placeholderTextColor='#b9b9b9' keyboardType="number-pad" maxLength={19}/>
+                                    <TextInput style={[styles.text_input, { borderColor: errors.cardNumber ? 'red' : '#E1F3FB' }]} 
+                                        placeholder="XXXX XXXX XXXX 4214"
+                                        placeholderTextColor='#b9b9b9'
+                                        keyboardType="number-pad" 
+                                        maxLength={19}
+                                        value={cardNumber}
+                                        onChangeText={handleCardNumberChange}
+                                    />
+                                    {errors.cardNumber ? <Text style={styles.error_text}>{errors.cardNumber}</Text> : null}
                                 </View>
                                 <View style={styles.input_group}>
                                     <Text style={[styles.input_title, {marginBottom:8}]}>CVV</Text>
-                                    <TextInput style={styles.text_input} placeholder="* * *" placeholderTextColor='#b9b9b9' keyboardType="number-pad" maxLength={3} />
+                                    <TextInput style={[styles.text_input, { borderColor: errors.cardCVV ? 'red' : '#E1F3FB' }]} 
+                                        placeholder="* * *" 
+                                        placeholderTextColor='#b9b9b9' 
+                                        keyboardType="number-pad" 
+                                        maxLength={3} 
+                                        value={cardCVV}
+                                        onChangeText={(text) => setCardCVV(text)}
+                                    />
+                                    {errors.cardCVV ? <Text style={styles.error_text}>{errors.cardCVV}</Text> : null}
                                 </View>
                                 <View style={styles.input_group}>
                                     <Text style={[styles.input_title, {marginBottom:8}]}>Expiration Date</Text>
-                                    <TextInput style={styles.text_input} placeholder="YYYY-MM" placeholderTextColor='#b9b9b9' keyboardType="number-pad" maxLength={7}/>
+                                    <CustomMonthYearPicker 
+                                        label="YYYY-MM" 
+                                        value={cardExpiry}
+                                        onChange={handleMonthYearChange}
+                                    />
+                                    {errors.cardExpiry ? <Text style={styles.error_text}>{errors.cardExpiry}</Text> : null}
                                 </View>
                                 <TouchableOpacity style={styles.save_btn} onPress={addCreditCard} disabled={loader}>
                                     <Text style={styles.save_btn_text}>{loader ? 'Adding Card...' : 'Save Credit Card'}</Text>
@@ -559,5 +667,10 @@ const styles = StyleSheet.create({
         fontFamily:'Poppins Regular',
         fontSize:16,
         color:'#fff',
+    },
+    error_text: {
+        color: 'red',
+        fontSize: 14,
+        marginTop: 5
     },
 });

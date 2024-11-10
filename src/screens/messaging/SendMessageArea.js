@@ -184,7 +184,7 @@ const SendMessageArea = ({navigation, route }) => {
     const fetchMessages = async () => {
         try {
             const result = await GetMessagesApi();
-            console.log('Fetch Message Data ==> ', result.data.data);
+            // console.log('Fetch Message Data ==> ', result.data.data);
             let data = result.data.data;
 
             const newMessages = data.map(item => ({
