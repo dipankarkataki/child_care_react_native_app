@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Switch, Modal, ActivityIndicator, Alert } from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Switch, Modal, ActivityIndicator, Alert, Animated } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CustomMonthYearPicker from '../../components/CustomMonthYearPicker';
@@ -6,10 +6,14 @@ import CreateCustomerProfileApi from '../../api/BillingApi/CreateCustomerProfile
 import AddCreditCardApi from '../../api/BillingApi/AddCreditCardApi';
 import GetCustomerProfileApi from '../../api/BillingApi/GetCustomerProfileApi';
 import TokenManager from '../../api/TokenManager';
+import LinearGradient from 'react-native-linear-gradient';
+import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 
 const backgroundImage = require('../../assets/images/background.png');
 const dollarImage = require('../../assets/images/dollar-autopay.png');
 const crediCardBg = require('../../assets/images/map-bg.jpg');
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
+
 
 const AutoPay = ({ navigation }) => {
 
@@ -29,6 +33,8 @@ const AutoPay = ({ navigation }) => {
     const [aNetPaymentProfileId, setANetPaymentProfileId] = useState([]);
     const [profileData, setProfileData] = useState(null);
     const [selectedPaymentProfile, setSelectedPaymentProfile] = useState(null);
+    const savedCardRef = React.createRef();
+    const [shimmerLoading, setShimmerLoading] = useState(true);
 
     const toggleSwitch = () =>{
         setIsEnabled(previousState => !previousState)
@@ -56,20 +62,30 @@ const AutoPay = ({ navigation }) => {
 
     useEffect( () => {
 
+        if (savedCardRef.current) {
+            const savedPayMethod = Animated.stagger(400, [savedCardRef.current.getAnimated()]);
+            Animated.loop(savedPayMethod).start();
+        }
+
+        
+
         const getProfileData = async () => {
             const profileData = await fetchCustomerProfile();
-            console.log('profileData ----', profileData )
+            console.log('Profile Data --- ', profileData)
             if(profileData){
                 setProfileData(profileData)
                 setPaymentMethod(true);
                 setCreditCard(true);
+                setShimmerLoading(false);
+            }else{
+                setShimmerLoading(false);
             }
             
         };
 
         getProfileData();
         
-    }, [aNetCustomerProfileId, aNetPaymentProfileId]);
+    }, [aNetCustomerProfileId, aNetPaymentProfileId, savedCardRef.current]);
 
     const [errors, setErrors] = useState({
         cardNumber: '',
@@ -300,29 +316,45 @@ const AutoPay = ({ navigation }) => {
                     </View>
                 </View>
                 <View style={styles.available_payment_method_container}>
-                    {isCrediCard && profileData?.paymentProfiles && profileData.paymentProfiles.length > 0 && (
-                        profileData.paymentProfiles.map((paymentProfile, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                style={[styles.available_payment_method, { overflow: 'hidden' }]}
-                                onPress={() => handlePaymentProfilePress(paymentProfile)}
-                            >
-                                <ImageBackground source={crediCardBg} style={{ flex: 1 }}>
-                                    <Icon name="credit-card" style={[styles.icon_medium, styles.available_payment_method_icon, { color: 'white' }]} />
-                                    <Text style={[styles.available_payment_method_text, { color: 'white' }]}>
-                                        {paymentProfile.accountType} {paymentProfile.cardNumber.slice(-4)}
-                                    </Text>
-                                </ImageBackground>
-                            </TouchableOpacity>
-                        ))
-                    )}
+                    {
+                        shimmerLoading ? (
+                            <View style={styles.shimmerContainer}>
+                                <ShimmerPlaceholder ref={savedCardRef} style={styles.shimmerInputPlaceholder} />
+                                <ShimmerPlaceholder ref={savedCardRef} style={styles.shimmerInputPlaceholder} />
+                                <ShimmerPlaceholder ref={savedCardRef} style={styles.shimmerInputPlaceholder} />
+                            </View>
+                        ) : (
+                            <>
+                                {isCrediCard && profileData?.paymentProfiles && profileData.paymentProfiles.length > 0 && (
+                                    profileData.paymentProfiles.map((paymentProfile, index) => (
+                                        <TouchableOpacity
+                                            key={index}
+                                            style={[styles.available_payment_method, { overflow: 'hidden' }]}
+                                            onPress={() => handlePaymentProfilePress(paymentProfile)}
+                                        >
+                                            <ImageBackground source={crediCardBg} style={{ flex: 1 }}>
+                                                <Icon name="credit-card" style={[styles.icon_medium, styles.available_payment_method_icon, { color: 'white' }]} />
+                                                <Text style={[styles.available_payment_method_text, { color: 'white' }]}>
+                                                    {paymentProfile.accountType} {paymentProfile.cardNumber.slice(-4)}
+                                                </Text>
+                                            </ImageBackground>
+                                        </TouchableOpacity>
+                                    ))
+                                )}
 
-                    { isACH && (
-                        <TouchableOpacity style={styles.available_payment_method}>
-                            <Icon name="auto-mode" style={[styles.icon_medium, styles.available_payment_method_icon]}/>
-                            <Text style={styles.available_payment_method_text}>ACH</Text>
-                        </TouchableOpacity>
-                    )}   
+                                { isACH && (
+                                    <TouchableOpacity style={styles.available_payment_method}>
+                                        <Icon name="auto-mode" style={[styles.icon_medium, styles.available_payment_method_icon]}/>
+                                        <Text style={styles.available_payment_method_text}>ACH</Text>
+                                    </TouchableOpacity>
+                                )}
+                            </>
+                                
+                        )
+                    }
+                    
+                    
+                    
                 </View>
             </View>
 
@@ -797,5 +829,17 @@ const styles = StyleSheet.create({
         color: 'red',
         fontSize: 14,
         marginTop: 5
+    },
+    shimmerContainer:{
+        flexDirection:'row',
+        justifyContent:'flex-start',
+        alignItems:'center',
+    },
+    shimmerInputPlaceholder: {
+        height: 80,
+        marginBottom: 20,
+        borderRadius: 6,
+        width:120,
+        marginRight:10
     },
 });
