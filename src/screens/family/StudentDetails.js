@@ -18,9 +18,78 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
     const [familyName, setFamilyName] = useState('');
     const [tuitionPlanItems, setTuitionPlanItems] = useState([]);
     const [selectedTuitionPlan, setSelectedTuitionPlan] = useState('');
+    const [address, setAddress] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [zipCode, setZipCode] = useState('');
+    const [errors, setErrors] = useState({
+        firstName: '',
+        lastName: '',
+        gender:'',
+        status:'',
+        dob:'',
+        admissionDate:'',
+        selectedTuitionPlan:'',
+    });
+
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = { ...errors };
+
+        if (!firstName) {
+            newErrors.firstName = 'First name is required';
+            isValid = false;
+        } else {
+            newErrors.firstName = '';
+        }
+
+        if (!lastName) {
+            newErrors.lastName = 'Last name is required';
+            isValid = false;
+        } else {
+            newErrors.lastName = '';
+        }
+
+        if (!gender) {
+            newErrors.gender = 'Gender is required';
+            isValid = false;
+        } else {
+            newErrors.gender = '';
+        }
+
+        if (!status) {
+            newErrors.status = 'Status is required';
+            isValid = false;
+        } else {
+            newErrors.status = '';
+        }
+
+        if (!dob) {
+            newErrors.dob = 'Date of birth is required';
+            isValid = false;
+        } else {
+            newErrors.dob = '';
+        }
+
+        if (!admissionDate) {
+            newErrors.admissionDate = 'Admission date is required';
+            isValid = false;
+        } else {
+            newErrors.admissionDate = '';
+        }
+
+        if (!selectedTuitionPlan) {
+            newErrors.selectedTuitionPlan = 'Tution plan is required';
+            isValid = false;
+        } else {
+            newErrors.selectedTuitionPlan = '';
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
 
     useEffect(() => {
-
         StudentApi(familyId)
         .then((result) => {
             if (result.status === 200) {
@@ -83,18 +152,32 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
         setStatus(null);
         setDob('');
         setAdmissionDate('');
+        setSelectedTuitionPlan('');
+        setAddress('');
+        setCity('');
+        setState('');
+        setZipCode('');
+        setErrors('');
     };
 
     const handleSaveDetails = () => {
-        console.log('Saving details:', {
-            firstName,
-            lastName,
-            gender,
-            status,
-            dob,
-            admissionDate,
-        });
-        handleModalClose();
+        if(validateForm()){
+            console.log('Saving details:', {
+                firstName,
+                lastName,
+                gender,
+                status,
+                dob,
+                admissionDate,
+                selectedTuitionPlan,
+                address,
+                city,
+                state,
+                zipCode
+            });
+            handleModalClose();
+        }
+       
     };
 
 
@@ -135,7 +218,7 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
                         <Text style={styles.modal_text}>Add Student</Text>
                         <ScrollView style={{ maxHeight: '80%' }}>
                             <View style={styles.form}>
-                                {/* First Name */}
+
                                 <View style={styles.form_group}>
                                     <Text style={styles.input_label}>
                                         First Name<Text style={styles.asterics}>*</Text>
@@ -147,9 +230,9 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
                                         value={firstName}
                                         onChangeText={setFirstName}
                                     />
+                                    {errors.firstName ? <Text style={styles.error_text}>{errors.firstName}</Text> : null}
                                 </View>
 
-                                {/* Last Name */}
                                 <View style={styles.form_group}>
                                     <Text style={styles.input_label}>
                                         Last Name<Text style={styles.asterics}>*</Text>
@@ -161,9 +244,9 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
                                         value={lastName}
                                         onChangeText={setLastName}
                                     />
+                                    {errors.lastName ? <Text style={styles.error_text}>{errors.lastName}</Text> : null}
                                 </View>
 
-                                {/* Gender */}
                                 <View style={styles.form_group}>
                                     <Text style={styles.input_label}>
                                         Gender<Text style={styles.asterics}>*</Text>
@@ -175,9 +258,9 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
                                         setValue={setGender}
                                         zIndex={3000}
                                     />
+                                    {errors.gender ? <Text style={styles.error_text}>{errors.gender}</Text> : null}
                                 </View>
 
-                                {/* Status */}
                                 <View style={styles.form_group}>
                                     <Text style={styles.input_label}>
                                         Status<Text style={styles.asterics}>*</Text>
@@ -189,32 +272,83 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
                                         setValue={setStatus}
                                         zIndex={2000}
                                     />
+                                    {errors.status ? <Text style={styles.error_text}>{errors.status}</Text> : null}
                                 </View>
 
-                                {/* Date of Birth */}
                                 <View style={styles.form_group}>
                                     <Text style={styles.input_label}>
                                         Date of Birth<Text style={styles.asterics}>*</Text>
                                     </Text>
                                     <CustomDatePicker label="mm/dd/YYYY" value={dob} onChange={setDob} />
+                                    {errors.dob ? <Text style={styles.error_text}>{errors.dob}</Text> : null}
                                 </View>
 
                                 <View style={styles.form_group}>
-                                    <Text style={styles.input_label}>Admission Date</Text>
+                                    <Text style={styles.input_label}>Admission Date <Text style={styles.asterics}>*</Text></Text>
                                     <CustomDatePicker
                                         label="mm/dd/YYYY"
                                         value={admissionDate}
                                         onChange={setAdmissionDate}
                                     />
+                                    {errors.admissionDate ? <Text style={styles.error_text}>{errors.admissionDate}</Text> : null}
                                 </View>
                                 <View style={styles.form_group}>
-                                    <Text style={styles.input_label}>Tution Plan</Text>
+                                    <Text style={styles.input_label}>Tution Plan <Text style={styles.asterics}>*</Text></Text>
                                     <CustomDropDownPicker
                                         placeholder="Please Select Tuition Plan"
                                         items={tuitionPlans}
                                         value={selectedTuitionPlan}
                                         setValue={setSelectedTuitionPlan}
                                         zIndex={2000}
+                                    />
+                                    {errors.selectedTuitionPlan ? <Text style={styles.error_text}>{errors.selectedTuitionPlan}</Text> : null}
+                                </View>
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        Address
+                                    </Text>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder="e.g. John"
+                                        placeholderTextColor="#b9b9b9"
+                                        value={address}
+                                        onChangeText={setAddress}
+                                    />
+                                </View>
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        City
+                                    </Text>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder="e.g. John"
+                                        placeholderTextColor="#b9b9b9"
+                                        value={city}
+                                        onChangeText={setCity}
+                                    />
+                                </View>
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        State
+                                    </Text>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder="e.g. John"
+                                        placeholderTextColor="#b9b9b9"
+                                        value={state}
+                                        onChangeText={setState}
+                                    />
+                                </View>
+                                <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>
+                                        Zip Code
+                                    </Text>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder="e.g. John"
+                                        placeholderTextColor="#b9b9b9"
+                                        value={zipCode}
+                                        onChangeText={setZipCode}
                                     />
                                 </View>
                             </View>
@@ -228,6 +362,7 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
                             >
                                 <Text style={styles.textStyle}>Save Details</Text>
                             </TouchableOpacity>
+
                             <TouchableOpacity
                                 style={[styles.button, styles.button_close]}
                                 onPress={handleModalClose}
@@ -369,5 +504,10 @@ const styles = StyleSheet.create({
         color: '#535353',
         fontSize: 13,
         fontFamily: 'Poppins Medium',
+    },
+    error_text: {
+        color: 'red',
+        fontSize: 14,
+        marginTop: 5
     },
 })

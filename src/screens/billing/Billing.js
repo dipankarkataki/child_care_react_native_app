@@ -1,10 +1,13 @@
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView } from 'react-native'
 import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import TokenManager from '../../api/TokenManager';
 
 const backgroundImage = require('../../assets/images/background.png');
 
 const Billing = ({ navigation }) => {
+
+    const customerProfileId = TokenManager.getCustomerProfileId();
 
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>
@@ -33,10 +36,20 @@ const Billing = ({ navigation }) => {
                     <View style={styles.payment_method_container}>
                         <Icon name='credit-card' style={styles.icon_large} />
                         <TouchableOpacity onPress={() => navigation.navigate('AutoPay')}>
-                            <View>
-                                <Text style={styles.payment_method_title}>No Payment method saved</Text>
-                                <Text style={styles.payment_method_sub_title}>Tap here and add one</Text>
-                            </View>
+                            {
+                                customerProfileId ? (
+                                    <View>
+                                        <Text style={[styles.payment_method_title, {color:'teal'}]}>Payment Method Available</Text>
+                                        <Text style={styles.payment_method_sub_title}>Tap here to check</Text>
+                                    </View>
+                                ) : (
+                                    <View>
+                                        <Text style={[styles.payment_method_title, {color:'crimson'}]}>No Payment method found!</Text>
+                                        <Text style={styles.payment_method_sub_title}>Tap here and add one</Text>
+                                    </View>
+                                )
+                            }
+                           
                         </TouchableOpacity>
                         <Icon name='angle-right' style={styles.icon_small}/>
                     </View>

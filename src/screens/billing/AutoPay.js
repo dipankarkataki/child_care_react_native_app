@@ -67,11 +67,8 @@ const AutoPay = ({ navigation }) => {
             Animated.loop(savedPayMethod).start();
         }
 
-        
-
         const getProfileData = async () => {
             const profileData = await fetchCustomerProfile();
-            console.log('Profile Data --- ', profileData)
             if(profileData){
                 setProfileData(profileData)
                 setPaymentMethod(true);

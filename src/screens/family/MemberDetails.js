@@ -68,7 +68,7 @@ const MemberDetails = ({familyId, siteId, navigation}) => {
             if (result.status === 200) {
                 setMember(result.data.data.reverse());
             }
-            console.log('Member Details --', result.data.data);
+            // console.log('Member Details --', result.data.data);
         })
         .catch((err) => {
             console.log('Error', err);
