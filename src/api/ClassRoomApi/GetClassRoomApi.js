@@ -1,8 +1,8 @@
 import ApiManager from "../ApiManager";
 
-const GetTuitionPlanApi = async (siteId) => {
+const GetClassRoomApi = async (siteId) => {
     try{
-        const result = await ApiManager(`/profile/family/tuition-plan/${siteId}`);
+        const result = await ApiManager(`/profile/family/class-rooms/${siteId}`);
         return result;
     }catch(error){
         if (error.response) {
@@ -17,4 +17,4 @@ const GetTuitionPlanApi = async (siteId) => {
     }
 }
 
-export default GetTuitionPlanApi
+export default GetClassRoomApi

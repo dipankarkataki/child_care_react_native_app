@@ -1,10 +1,15 @@
 import ApiManager from "../ApiManager";
 
-const GetTuitionPlanApi = async (siteId) => {
-    try{
-        const result = await ApiManager(`/profile/family/tuition-plan/${siteId}`);
+const AddNewStudentApi = async (data) => {
+    try {
+        const result = await ApiManager('/profile/family/student/add-student', {
+            method: "POST",
+            data: data,
+        });
+        // console.log('API Response: ', result); // Log the response
         return result;
-    }catch(error){
+    } catch (error) {
+        console.log('Error: ', error); // Log the full error
         if (error.response) {
             // If there's an API response, log the status and message
             // console.log('Error Response Data: ', error.response.data);
@@ -17,4 +22,4 @@ const GetTuitionPlanApi = async (siteId) => {
     }
 }
 
-export default GetTuitionPlanApi
+export default AddNewStudentApi

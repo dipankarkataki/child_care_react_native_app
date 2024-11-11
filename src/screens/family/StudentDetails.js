@@ -1,12 +1,15 @@
-import { StyleSheet, Text, View, TextInput, ScrollView, Modal, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TextInput, ScrollView, Modal, TouchableOpacity, ActivityIndicator, Alert } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import StudentApi from '../../api/FamilyApi/StudentApi';
 import GetTuitionPlanApi from '../../api/TuitionPlanApi/GetTuitionPlanApi';
 import CustomDatePicker from '../../components/CustomDatePicker';
 import CustomDropDownPicker from '../../components/CustomDropDownPicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import GetClassRoomApi from '../../api/ClassRoomApi/GetClassRoomApi';
+import AddNewStudentApi from '../../api/FamilyApi/AddNewStudentApi';
 
 const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => {
+    const [loader, setLoader] = useState(false);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [gender, setGender] = useState(null);
@@ -18,10 +21,13 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
     const [familyName, setFamilyName] = useState('');
     const [tuitionPlanItems, setTuitionPlanItems] = useState([]);
     const [selectedTuitionPlan, setSelectedTuitionPlan] = useState('');
+    const [classRoomItems, setClassRoomItems] = useState([]);
+    const [selectedClassRoom, setSelectedClassRoom] = useState([]);
     const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
     const [state, setState] = useState('');
     const [zipCode, setZipCode] = useState('');
+    const [newStudents, setNewStudents] = useState(false);
     const [errors, setErrors] = useState({
         firstName: '',
         lastName: '',
@@ -111,7 +117,18 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
             if (result.status === 200) {
                 setTuitionPlanItems(result.data.data)
             }
-            console.log('Tuition Plan Details --', result.data.data);
+            // console.log('Tuition Plan Details --', result.data.data);
+        })
+        .catch((err) => {
+            console.log('Error', err);
+        });
+
+
+        GetClassRoomApi(siteId)
+        .then((result) => {
+            if (result.data && result.data.status) {
+                setClassRoomItems(result.data.data)
+            }
         })
         .catch((err) => {
             console.log('Error', err);
@@ -119,7 +136,7 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
 
 
 
-    }, [familyId, onFamilyNameFetched]);
+    }, [familyId, onFamilyNameFetched, newStudents]);
 
 
     const tuitionPlans= tuitionPlanItems.map(plan => ({
@@ -131,6 +148,15 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
             </View>
         ),
         value: plan.id 
+    }));
+
+    const classRooms = classRoomItems.map(room => ({
+        label: ( 
+            <View style={[{ flexDirection: 'row', alignItems: 'center', justifyContent:'space-between' }]}>
+                <Text style={[styles.dropdown_list_item,{marginTop:0, marginRight:5}]}>{room.name}</Text>
+            </View>
+        ),
+        value: room.id 
     }));
 
     const genderItems = [
@@ -153,6 +179,7 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
         setDob('');
         setAdmissionDate('');
         setSelectedTuitionPlan('');
+        setSelectedClassRoom('');
         setAddress('');
         setCity('');
         setState('');
@@ -162,20 +189,45 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
 
     const handleSaveDetails = () => {
         if(validateForm()){
-            console.log('Saving details:', {
-                firstName,
-                lastName,
-                gender,
-                status,
-                dob,
-                admissionDate,
-                selectedTuitionPlan,
-                address,
-                city,
-                state,
-                zipCode
+            setLoader(true)
+            const studentData = {
+                'site_id' : siteId,
+                'family_id' : familyId,
+                'firstname' : firstName,
+                'lastname' : lastName,
+                'gender' : gender,
+                'status' : status,
+                'birthday' : dob,
+                'admission_date' : admissionDate,
+                'tuition_plan_id' : selectedTuitionPlan,
+                'address1' : address,
+                'city' : city,
+                'state' : state,
+                'zipcode' : zipCode,
+                'homeroom_id' : selectedClassRoom
+            }
+            console.log('Saving details: ---', studentData);
+
+            AddNewStudentApi(studentData)
+            .then((result) => {
+                if(result.data.status){
+                    setLoader(false)
+                    setNewStudents(true);
+                    Alert.alert('Success', result.data.message, [{
+                        text: 'OK',
+                        onPress: handleModalClose
+                    }]);
+                }else{
+                    setLoader(false)
+                    Alert.alert('Error', result.data.data+' '+result.data.message, [{
+                        text: 'OK',
+                    }]);
+                }
+                console.log('Add New Student Api Result ===', result.data)
+            })
+            .catch((err) => {
+                console.log('Error', err);
             });
-            handleModalClose();
         }
        
     };
@@ -304,6 +356,16 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
                                     {errors.selectedTuitionPlan ? <Text style={styles.error_text}>{errors.selectedTuitionPlan}</Text> : null}
                                 </View>
                                 <View style={styles.form_group}>
+                                    <Text style={styles.input_label}>Class Room</Text>
+                                    <CustomDropDownPicker
+                                        placeholder="Please Select Class Room"
+                                        items={classRooms}
+                                        value={selectedClassRoom}
+                                        setValue={setSelectedClassRoom}
+                                        zIndex={2000}
+                                    />
+                                </View>
+                                <View style={styles.form_group}>
                                     <Text style={styles.input_label}>
                                         Address
                                     </Text>
@@ -349,6 +411,7 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
                                         placeholderTextColor="#b9b9b9"
                                         value={zipCode}
                                         onChangeText={setZipCode}
+                                        keyboardType='numeric'
                                     />
                                 </View>
                             </View>
@@ -356,17 +419,12 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
 
                         {/* Modal Buttons */}
                         <View style={styles.modal_button_container}>
-                            <TouchableOpacity
-                                style={[styles.button, styles.button_save_details]}
-                                onPress={handleSaveDetails}
-                            >
-                                <Text style={styles.textStyle}>Save Details</Text>
+                            <TouchableOpacity style={[styles.button, styles.button_save_details]} onPress={handleSaveDetails} disabled={loader}>
+                                <Text style={[styles.textStyle, {marginLeft:20}]}>{loader ? 'Adding Student...' : 'Save Details'}</Text>
+                                <ActivityIndicator size="large" color='#2E78FF' animating={loader}/>
                             </TouchableOpacity>
 
-                            <TouchableOpacity
-                                style={[styles.button, styles.button_close]}
-                                onPress={handleModalClose}
-                            >
+                            <TouchableOpacity style={[styles.button, styles.button_close]} onPress={handleModalClose}>
                                 <Text style={styles.textStyle}>Close</Text>
                             </TouchableOpacity>
                         </View>
@@ -486,6 +544,9 @@ const styles = StyleSheet.create({
     button_save_details: {
         backgroundColor: '#FFB52E',
         marginRight: 10,
+        flexDirection:'row',
+        justifyContent:'center',
+        alignItems:'center'
     },
     textStyle: {
         color: '#000',

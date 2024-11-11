@@ -23,6 +23,7 @@ const MemberDetails = ({familyId, siteId, navigation}) => {
     const [shouldNavigate, setShouldNavigate] = useState(true);
     const [modalMessage, setModalMessage] = useState('');
     const [modalIcon, setModalIcon] = useState(null); 
+    const [newMember, setNewMember] = useState(false);
 
     const contactTypeItems = [
         { label: 'Parent', value: 1 },
@@ -73,20 +74,7 @@ const MemberDetails = ({familyId, siteId, navigation}) => {
         .catch((err) => {
             console.log('Error', err);
         });
-    }, [familyId]);
-
-    const reloadApiData = () => {
-        GetMemberApi(familyId)
-        .then((result) => {
-            if (result.status === 200) {
-                setMember(result.data.data.reverse());
-            }
-            console.log('Member Details --', result.data.data);
-        })
-        .catch((err) => {
-            console.log('Error', err);
-        });
-    }
+    }, [familyId, newMember]);
 
 
     const validateForm = () => {
@@ -183,7 +171,7 @@ const MemberDetails = ({familyId, siteId, navigation}) => {
                     setModalIcon('success');
                     setModalMessage(result.data.message);
                     setLoader(false);
-                    reloadApiData();
+                    setNewMember(true);
                     
                 }else{
                     setResponseModalVisible(true)
@@ -192,7 +180,6 @@ const MemberDetails = ({familyId, siteId, navigation}) => {
                     setShouldNavigate(false)
                     setLoader(false);
                 }
-                console.log('Store Data Result--- ', result.data);
             }).catch((err) => {
                 console.log('Error --> ',err);
             });
@@ -205,8 +192,6 @@ const MemberDetails = ({familyId, siteId, navigation}) => {
             navigation.navigate('FamilyDetails', {familyId, siteId})
             handleModalClose();
         }
-
-        console.log('Should Navigate -->', shouldNavigate)
     }
 
     return (
@@ -301,6 +286,7 @@ const MemberDetails = ({familyId, siteId, navigation}) => {
                                             placeholderTextColor="#b9b9b9"
                                             value={phone}
                                             onChangeText={setPhone}
+                                            keyboardType='numeric'
                                         />
                                         {errors.phone ? <Text style={styles.error_text}>{errors.phone}</Text> : null}
                                     </View>
@@ -367,6 +353,7 @@ const MemberDetails = ({familyId, siteId, navigation}) => {
                                             placeholderTextColor="#b9b9b9"
                                             value={zipCode}
                                             onChangeText={setZipCode}
+                                            keyboardType='numeric'
                                         />
                                         {errors.zipCode ? <Text style={styles.error_text}>{errors.zipCode}</Text> : null}
                                     </View>
@@ -379,7 +366,7 @@ const MemberDetails = ({familyId, siteId, navigation}) => {
                         <View style={styles.modal_button_container}>
                             <TouchableOpacity style={[styles.button, styles.button_save_details]} onPress={() => submitForm()} disabled={loader}>
                                 <Text style={[styles.textStyle, styles.save_details_text]}>{loader ? 'Please wait...' : 'Save Details'}</Text>
-                                <ActivityIndicator size="large" color='#2E78FF' style={styles.activity_indicator} animating={loader}/>
+                                <ActivityIndicator size="large" color='#2E78FF' animating={loader}/>
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.button, styles.button_close]} onPress={handleModalClose}>
                                 <Text style={styles.textStyle}>Close</Text>
