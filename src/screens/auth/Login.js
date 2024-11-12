@@ -57,6 +57,7 @@ const Login = ({ navigation }) => {
                     await TokenManager.setToken(result.data.token);
                     await TokenManager.setUserId(result.data.data.user_id.toString());
                     await TokenManager.setCustomerProfileId(result.data.data.aNet_customer_profile_id.toString())
+                    await TokenManager.setUserProfileImage(result.data.data.profile_image)
                     navigation.replace('Dashboard');
                 }else{
                     setLoader(false);

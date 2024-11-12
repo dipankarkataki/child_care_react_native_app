@@ -3,10 +3,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const TOKEN_KEY = 'AccessToken';
 const UserId = 'UserId';
 const CustomerProfileIdAuthorizeNet = 'CustomerProfileId'
+const UserProfileImage = 'UserProfileImage';
 
 let cachedToken = null;
 let cachedUserId = null;
 let cachedCustomerProfileIdAuthorizeNet = null;
+let cachedUserProfileImage = null;
 
 const TokenManager = {
     /**
@@ -96,10 +98,6 @@ const TokenManager = {
         }
     },
 
-
-
-
-
     getCustomerProfileId: async () => {
         if (cachedCustomerProfileIdAuthorizeNet) {
             return cachedCustomerProfileIdAuthorizeNet;
@@ -136,6 +134,48 @@ const TokenManager = {
         try {
             cachedCustomerProfileIdAuthorizeNet = null;
             await AsyncStorage.removeItem(CustomerProfileIdAuthorizeNet);
+        } catch (error) {
+            console.error('Error removing token from AsyncStorage:', error);
+        }
+    },
+
+
+    getUserProfileImage: async () => {
+        if (cachedUserProfileImage) {
+            return cachedUserProfileImage;
+        }
+        try {
+            const userProfileImage = await AsyncStorage.getItem(UserProfileImage);
+            cachedUserProfileImage = userProfileImage;
+            return userProfileImage;
+        } catch (error) {
+            console.error('Error retrieving token from AsyncStorage:', error);
+            return null;
+        }
+    },
+
+    /**
+     * Sets the userId in both in-memory cache and AsyncStorage.
+     * @param {string} userId - The userId to set.
+     * @returns {Promise<void>}
+     */
+    setUserProfileImage: async (userProfileImage) => {
+        try {
+            cachedUserProfileImage = userProfileImage;
+            await AsyncStorage.setItem(UserProfileImage, userProfileImage);
+        } catch (error) {
+            console.error('Error setting token in AsyncStorage:', error);
+        }
+    },
+
+    /**
+     * Removes the token from both in-memory cache and AsyncStorage.
+     * @returns {Promise<void>}
+     */
+    removeUserProfileImage: async () => {
+        try {
+            cachedUserProfileImage = null;
+            await AsyncStorage.removeItem(UserProfileImage);
         } catch (error) {
             console.error('Error removing token from AsyncStorage:', error);
         }

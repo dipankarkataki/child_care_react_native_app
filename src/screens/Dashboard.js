@@ -1,7 +1,8 @@
 import { Alert, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import CheckTokenApi from '../api/CheckTokenApi/CheckTokenApi';
 import TokenManager from '../api/TokenManager';
+import UrlProvider from '../api/UrlProvider';
 
 const background = require('../assets/images/background.png');
 const userAvatar = require('../assets/images/profile-image.png')
@@ -14,6 +15,8 @@ const notice = require('../assets/images/notice.png');
 const invite = require('../assets/images/invite.png');
 
 const Dashboard = ({ navigation }) => {
+
+    const [userProfileImage, setUserProfileImage] = useState(null);
 
     const revokeToken = async () => {
         await TokenManager.removeToken();
@@ -34,6 +37,12 @@ const Dashboard = ({ navigation }) => {
             .catch((err) => {
                 console.log('Response Error --> ', err);
             });
+        const profileImage = async () => {
+            const image = await TokenManager.getUserProfileImage();
+            setUserProfileImage(UrlProvider.asset_url_local+'/'+image)
+        }
+        profileImage();
+
     }, []);
 
     return (
@@ -41,7 +50,7 @@ const Dashboard = ({ navigation }) => {
             <View style={styles.header_container}>
                 <Text style={styles.header_text}>Dashboard</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
-                    <Image source={userAvatar} style={styles.user_avatar} />
+                    <Image  source={userProfileImage ? { uri: userProfileImage } : userAvatar}  style={styles.user_avatar} />
                 </TouchableOpacity>
             </View>
             <View style={styles.welcome_container}>

@@ -5,6 +5,8 @@ import IonicIcon from 'react-native-vector-icons/Ionicons';
 import MessagingDashboardApi from '../../api/MessagingApi/MessagingDashboardApi';
 import * as RNLocalize from 'react-native-localize';
 import moment from 'moment-timezone';
+import UrlProvider from '../../api/UrlProvider';
+import TokenManager from '../../api/TokenManager';
 
 const profileImage = undefined
 const background = require('../../assets/images/background.png');
@@ -14,6 +16,7 @@ const userAvatar = require('../../assets/images/profile-image.png')
 const MessagingDashboard = ({navigation}) => {
     
     const [chatUserList, setChatUserList] = useState([]);
+    const [userProfileImage, setUserProfileImage] = useState(null);
 
     useEffect( () => {
 
@@ -25,6 +28,13 @@ const MessagingDashboard = ({navigation}) => {
         .catch((err) => {
             console.log('Error', err);
         });
+
+        const profileImage = async () => {
+            const image = await TokenManager.getUserProfileImage();
+            setUserProfileImage(UrlProvider.asset_url_local+'/'+image)
+        }
+        profileImage();
+
     }, []);
 
     const getInitials = (name) => {
@@ -65,7 +75,7 @@ const MessagingDashboard = ({navigation}) => {
                 </TouchableOpacity>
                 <Text style={styles.header_text}>Chat Dashboard</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
-                    <Image source={userAvatar} style={styles.user_avatar} />
+                    <Image  source={userProfileImage ? { uri: userProfileImage } : userAvatar}  style={styles.user_avatar} />
                 </TouchableOpacity>
             </View>
             {

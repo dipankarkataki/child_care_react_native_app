@@ -1,7 +1,8 @@
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView } from 'react-native'
-import React, {useState} from 'react'
-import Icon from 'react-native-vector-icons/FontAwesome';
+import React, {useEffect, useState} from 'react'
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import TokenManager from '../../api/TokenManager';
+import UrlProvider from '../../api/UrlProvider';
 
 const backgroundImage = require('../../assets/images/background.png');
 const userAvatar = require('../../assets/images/profile-image.png')
@@ -9,13 +10,25 @@ const userAvatar = require('../../assets/images/profile-image.png')
 const Billing = ({ navigation }) => {
 
     const customerProfileId = TokenManager.getCustomerProfileId();
+    const [userProfileImage, setUserProfileImage] = useState(null);
+
+    useEffect(() => {
+        const profileImage = async () => {
+            const image = await TokenManager.getUserProfileImage();
+            setUserProfileImage(UrlProvider.asset_url_local+'/'+image)
+        }
+        profileImage();
+    }, [])
 
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>
             <View style={styles.header_container}>
+                <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
+                    <Icon name="long-arrow-alt-left" style={styles.header_icon} />
+                </TouchableOpacity>
                 <Text style={styles.header_text}>Billing</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
-                    <Image source={userAvatar} style={styles.user_avatar} />
+                <Image  source={userProfileImage ? { uri: userProfileImage } : userAvatar}  style={styles.user_avatar} />
                 </TouchableOpacity>
             </View>
             <View style={styles.billing_header}>
@@ -174,6 +187,10 @@ const styles = StyleSheet.create({
         color:'#fff',
         fontFamily:'Poppins Medium',
         fontSize:20,
+    },
+    header_icon:{
+        fontSize: 20,
+        color: '#fff',
     },
     user_avatar: {
         width: 40,

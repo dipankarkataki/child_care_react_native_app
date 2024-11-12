@@ -10,6 +10,7 @@ import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 import ModalComponent from '../components/ModalComponent';
 import UploadImageApi from '../api/ProfileApi/UploadImageApi';
 import UrlProvider from '../api/UrlProvider';
+import TokenManager from '../api/TokenManager';
 
 const backgroundImage = require('../assets/images/background.png');
 const defaultProfileImage = require('../assets/images/profile-image.png'); 
@@ -142,11 +143,16 @@ const ProfileSettings = ({ navigation }) => {
 
                 setProfileImage(imageUrl);
                 setLoading(false);
+
+                (async () => {
+                    await TokenManager.setUserProfileImage(response.data.profile_image);
+                })();
             }
         })
         .catch((err) => {
             console.log('Error --> ',err);
         });
+
     },[avatarRef.current])
 
     const handleMessageModalOnClose = () => {
