@@ -36,7 +36,7 @@ const Billing = ({ navigation }) => {
                     <Icon name='plus' style={styles.icon}/>
                     <Text style={styles.balance}>$2,2200.00</Text>
                 </View>
-                <Text style={styles.small_text}>Current Balance</Text>
+                <Text style={styles.small_text}>Due Amount</Text>
             </View>
             <View style={styles.billing_content_container}>
                 <View style={styles.card}>
@@ -223,9 +223,9 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     small_text: {
-        fontSize: 14,
+        fontSize: 16,
         fontFamily: 'Poppins Regular',
-        color: 'white',
+        color: '#fff',
         marginBottom: 5,
     },
     icon: {

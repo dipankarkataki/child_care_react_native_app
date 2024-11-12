@@ -44,6 +44,10 @@ const Dashboard = ({ navigation }) => {
             profileImage();
     }, []);
 
+    const comingSoon = () => {
+        Alert.alert("Feature Coming Soon! 🚀.", "We're working hard to bring this feature to you. Stay tuned for updates!")
+    }
+
     return (
         <ImageBackground source={background} style={styles.container}>
             <View style={styles.header_container}>
@@ -56,12 +60,14 @@ const Dashboard = ({ navigation }) => {
                 <Image source={welcome_smily} style={styles.welcome_image} />
                 <Text style={styles.welcome_text}>Welcome</Text>
                 <Text style={styles.welcome_content}>
-                    Effortlessly manage child care with tools for attendance tracking, billing, secure chatting, daily reports, notices, family invites and event updates.
+                    Effortlessly manage child care with tools for attendance tracking, 
+                    billing, secure chatting, daily reports, notices, family invites
+                    and event updates.
                 </Text>
             </View>
             <View style={styles.dashboard_items_container}>
                 <View style={styles.items_group}>
-                    <TouchableOpacity style={styles.item}>
+                    <TouchableOpacity style={styles.item} onPress={comingSoon}>
                         <Image source={attendance_user} style={styles.item_image} />
                         <Text style={styles.item_text}>Attendance</Text>
                     </TouchableOpacity>
@@ -71,7 +77,7 @@ const Dashboard = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.items_group}>
-                    <TouchableOpacity style={styles.item}>
+                    <TouchableOpacity style={styles.item} onPress={comingSoon}>
                         <Image source={reports} style={styles.item_image} />
                         <Text style={styles.item_text}>Daily Reports</Text>
                     </TouchableOpacity>
@@ -79,13 +85,13 @@ const Dashboard = ({ navigation }) => {
                         <Image source={messaging} style={styles.item_image} />
                         <Text style={styles.item_text}>Messaging</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.item}>
+                    <TouchableOpacity style={styles.item} onPress={comingSoon}>
                         <Image source={notice} style={styles.item_image} />
                         <Text style={styles.item_text}>Notice & Events</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.items_group}>
-                    <TouchableOpacity style={styles.item}>
+                    <TouchableOpacity style={styles.item} onPress={comingSoon}>
                         <Image source={invite} style={styles.item_image} />
                         <Text style={styles.item_text}>Invite Family Member</Text>
                     </TouchableOpacity>
