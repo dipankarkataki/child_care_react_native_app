@@ -90,7 +90,7 @@ const ProfileSettings = ({ navigation }) => {
         return isValid;
     };
 
-    const uploadProfileImage = async (image) => {
+    const uploadProfileImage = async (image, retries = 3) => {
         if(validateImage(image)){
             setSendingFile(true)
             const formData = new FormData();
@@ -100,24 +100,33 @@ const ProfileSettings = ({ navigation }) => {
                 type: image.type,
             });
 
-
-            UploadImageApi(formData)
-            .then( (result) => {
-                if(result.data.status){
-                    setSendingFile(false);
-                    setMessageModalVisible(true);
-                    setModalMessage('Image uploaded successfully');
-                    setModalIcon('success');
-                }else{
-                    setSendingFile(false);
-                    setMessageModalVisible(true);
-                    setModalMessage(result.data.message);
-                    setModalIcon('error');
+            const upload = async () => {
+                try {
+                    const result = await UploadImageApi(formData);
+    
+                    if (result.data && result.data.status) {
+                        setSendingFile(false);
+                        setMessageModalVisible(true);
+                        setModalMessage('Image uploaded successfully');
+                        setModalIcon('success');
+                    } else {
+                        throw new Error('Upload failed, try again later');
+                    }
+                } catch (err) {
+                    console.log('Error --> ', err);
+                    if (retries > 0) {
+                        console.log('Retrying upload...');
+                        setTimeout(() => upload(image, retries - 1), 2000); // Retry after 2 seconds
+                    } else {
+                        setSendingFile(false);
+                        setMessageModalVisible(true);
+                        setModalMessage('Oops Something went wrong. Please try again later');
+                        setModalIcon('error');
+                    }
                 }
-            }).catch((err) => {
-                console.log('Error --> ',err);
-                setSendingFile(false);
-            });
+            };
+    
+            upload();
         }
     }
 
@@ -143,10 +152,6 @@ const ProfileSettings = ({ navigation }) => {
 
                 setProfileImage(imageUrl);
                 setLoading(false);
-
-                (async () => {
-                    await TokenManager.setUserProfileImage(response.data.profile_image);
-                })();
             }
         })
         .catch((err) => {

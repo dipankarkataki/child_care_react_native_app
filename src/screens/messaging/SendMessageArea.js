@@ -139,30 +139,85 @@ const SendMessageArea = ({navigation, route }) => {
                 }
                 
                 setSendingFile(true);
-                try {
-                    // Send FormData to your API
-                    SendMessageApi(formData)
-                    .then((result) => {
-                        console.log('Send Message ==> ', result.data)
-                        setSelectedFile('');
-                        setSendingFile(false);
-                    })
-                    .catch((err) => {
-                        console.log('Error', err);
-                        setSendingFile(false);
-                    });
+                // try {
+                //     // Send FormData to your API
+                //     SendMessageApi(formData)
+                //     .then((result) => {
+                //         console.log('Send Message ==> ', result.data)
+                //         setSelectedFile('');
+                //         setSendingFile(false);
+                //     })
+                //     .catch((err) => {
+                //         console.log('Error', err);
+                //         setSendingFile(false);
+                //     });
         
-                    setMessages(prevMessages => [...prevMessages, newMessage]);
-                    setInputMessage(''); // Clear the input field after sending the message
+                //     setMessages(prevMessages => [...prevMessages, newMessage]);
+                //     setInputMessage(''); // Clear the input field after sending the message
             
-                    // Scroll to the bottom after sending the message
-                    setTimeout(() => {
-                        scrollViewRef.current?.scrollToEnd({ animated: true });
-                    }, 100);
+                //     // Scroll to the bottom after sending the message
+                //     setTimeout(() => {
+                //         scrollViewRef.current?.scrollToEnd({ animated: true });
+                //     }, 100);
     
-                } catch (error) {
-                    console.error('Error sending message:', error);
-                }
+                // } catch (error) {
+                //     console.error('Error sending message:', error);
+                // }
+
+                const send = async (retries = 3) => {
+                    try {
+                        const result = await SendMessageApi(formData);
+    
+                        console.log('Send Message ==> ', result.data);
+                        if(result.data){
+                            setSelectedFile('');
+                            setSendingFile(false);
+                            setMessages(prevMessages => [...prevMessages, newMessage]);
+                            setInputMessage(''); // Clear the input field after sending the message
+        
+                            // Scroll to the bottom after sending the message
+                            setTimeout(() => {
+                                scrollViewRef.current?.scrollToEnd({ animated: true });
+                            }, 100);
+                        }else{
+                            Alert.alert('Error', 'Oops! Network error failed to send message. Please try again.', [
+                                {
+                                    text: 'Retry',
+                                    onPress: () => {
+                                        console.log('Retrying to send message ...');
+                                        send(retries - 1);  // Trigger retry if retries are remaining
+                                    },
+                                },
+                                {
+                                    text: 'Close',
+                                    onPress: () => {
+                                        console.log('Alert closed without retry');
+                                        setSelectedFile('');
+                                        setSendingFile(false);
+                                        setInputMessage('');
+                                    },
+                                    style: 'cancel',  // Optional: Style to differentiate the close button
+                                }
+                            ])
+                        }
+                        
+                    } catch (err) {
+                        console.log('Error sending message:', err);
+    
+                        if (retries > 0) {
+                            // Retry after 2 seconds if retries are remaining
+                            console.log('Retrying to send message ...');
+                            setTimeout(() => send(retries - 1), 2000);
+                        } else {
+                            // Final failure message after all retries
+                            setSendingFile(false);
+                            Alert.alert('Failed to send message. Please try again later.');
+                        }
+                    }
+                };
+    
+                // Call the retry logic
+                send();
             }
         }
         
@@ -443,6 +498,11 @@ const SendMessageArea = ({navigation, route }) => {
                 {selectedFile && (
                     <View style={styles.sender_container}>
                         <View style={styles.sender_message_area}>
+                            <TouchableOpacity onPress={() => !sendingFile && setSelectedFile(null)}>
+                                <Text style={styles.removeAttachmentText}>
+                                    {!sendingFile   ? ( <Icon name="times-circle" style={{fontSize:30}} /> ) : 'Sending Wait ....'}
+                                </Text>
+                            </TouchableOpacity>
                             <View style={styles.sender_tail} />
                             
                             <View style={styles.attachmentPreview}>
@@ -467,11 +527,11 @@ const SendMessageArea = ({navigation, route }) => {
                                     </TouchableOpacity>
                                 )}
 
-                                <TouchableOpacity onPress={() => !sendingFile && setSelectedFile(null)}>
+                                {/* <TouchableOpacity onPress={() => !sendingFile && setSelectedFile(null)}>
                                     <Text style={styles.removeAttachmentText}>
                                         {!sendingFile   ? 'Remove Item' : 'Sending Wait ....'}
                                     </Text>
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                         </View>
                     </View>
@@ -877,17 +937,15 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 10,
-        borderColor: '#ddd',
-        borderWidth: 1,
-        borderRadius: 5,
-        marginBottom: 10,
+        marginTop:20
     },
     removeAttachmentText: {
         color: '#fff',
         fontWeight: 'bold',
-        marginTop:10,
         backgroundColor:'crimson',
-        padding:8,
-        borderRadius:10
+        borderRadius:20,
+        position:'absolute',
+        top:0,
+        right:0
     },
 });

@@ -37,12 +37,11 @@ const Dashboard = ({ navigation }) => {
             .catch((err) => {
                 console.log('Response Error --> ', err);
             });
-        const profileImage = async () => {
-            const image = await TokenManager.getUserProfileImage();
-            setUserProfileImage(UrlProvider.asset_url_local+'/'+image)
-        }
-        profileImage();
-
+            const profileImage = async () => {
+                const image = await TokenManager.getUserProfileImage();
+                setUserProfileImage(UrlProvider.asset_url_local+'/'+image)
+            }
+            profileImage();
     }, []);
 
     return (
