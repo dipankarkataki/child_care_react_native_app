@@ -38,22 +38,9 @@ const ScreenNavigation = () => {
                         headerTintColor: '#fff',
                     }}
                 />
-                <Stack.Screen name="Dashboard" component={Dashboard}
-                    options={({ navigation }) => ({
-                        title: 'Dashboard',
-                        headerStyle: {
-                            backgroundColor: '#2CABE2',
-                            elevation: 0,
-                            shadowOpacity: 0,
-                        },
-                        headerTintColor: '#fff',
-                        headerRight: () => (
-                            <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
-                                <Image source={userAvatar} style={styles.user_avatar} />
-                            </TouchableOpacity>
-                        ),
-                    })}
-                />
+
+                <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }} />
+
                 <Stack.Screen name="SignUp" component={SignUp} options={{
                     title: 'Sign Up',
                     headerStyle: {
@@ -90,62 +77,14 @@ const ScreenNavigation = () => {
                     },
                     headerTintColor: '#fff',
                 }} />
-                <Stack.Screen name="FamilyDetails" component={FamilyDetails} options={({ navigation }) => ({
-                    title: 'Family Details',
-                    headerStyle: {
-                        backgroundColor: '#2CABE2',
-                        elevation: 0,
-                        shadowOpacity: 0,
-                    },
-                    headerTitleAlign: 'center',
-                    headerTintColor: '#fff',
-                    headerRight: () => (
-                        <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
-                            <Image source={userAvatar} style={styles.user_avatar} />
-                        </TouchableOpacity>
-                    ),
-                })}
-                />
-                <Stack.Screen name="Billing" component={Billing} 
-                    options={({ navigation }) => ({
-                        title: 'Billing',
-                        headerStyle: {
-                            backgroundColor: '#2CABE2',
-                            elevation: 0,
-                            shadowOpacity: 0,
-                        },
-                        headerTitleAlign: 'center',
-                        headerTintColor: '#fff',
-                        headerRight: () => (
-                            <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
-                                <Image source={userAvatar} style={styles.user_avatar} />
-                            </TouchableOpacity>
-                        ),
-                    })}
-                />
-                <Stack.Screen name="AutoPay" component={AutoPay} 
-                    options={{ headerShown: false }}
-                />
-                <Stack.Screen name="MessagingDashboard" component={MessagingDashboard} options={({ navigation }) => ({
-                        title: 'ChildCareSoftware - Chat System',
-                        headerStyle: {
-                            backgroundColor: '#2CABE2',
-                            elevation: 0,
-                            shadowOpacity: 0,
-                        },
-                        headerTitleAlign: 'center',
-                        headerTintColor: '#fff',
-                        headerTitleStyle:{
-                            fontSize:17,
-                            fontFamily:"Poppins Medium"
-                        },
-                        headerRight: () => (
-                            <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
-                                <Image source={userAvatar} style={styles.user_avatar} />
-                            </TouchableOpacity>
-                        ),
-                    })}
-                />
+
+                <Stack.Screen name="FamilyDetails" component={FamilyDetails} options={{headerShown:false}}/>
+
+                <Stack.Screen name="Billing" component={Billing}  options={{headerShown:false}}/>
+
+                <Stack.Screen name="AutoPay" component={AutoPay}  options={{ headerShown: false }}/>
+
+                <Stack.Screen name="MessagingDashboard" component={MessagingDashboard} options={{headerShown:false}} />
 
                 <Stack.Screen name="SendMessageArea" component={SendMessageArea} options={{ headerShown: false }}/>
                 <Stack.Screen name="SenderProfile" component={SenderProfile} options={{ headerShown: false }} />

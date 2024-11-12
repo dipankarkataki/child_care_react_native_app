@@ -4,6 +4,7 @@ import CheckTokenApi from '../api/CheckTokenApi/CheckTokenApi';
 import TokenManager from '../api/TokenManager';
 
 const background = require('../assets/images/background.png');
+const userAvatar = require('../assets/images/profile-image.png')
 const welcome_smily = require('../assets/images/welcome_smily.png');
 const attendance_user = require('../assets/images/attendance_user.png');
 const billing = require('../assets/images/billing.png');
@@ -37,6 +38,12 @@ const Dashboard = ({ navigation }) => {
 
     return (
         <ImageBackground source={background} style={styles.container}>
+            <View style={styles.header_container}>
+                <Text style={styles.header_text}>Dashboard</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
+                    <Image source={userAvatar} style={styles.user_avatar} />
+                </TouchableOpacity>
+            </View>
             <View style={styles.welcome_container}>
                 <Image source={welcome_smily} style={styles.welcome_image} />
                 <Text style={styles.welcome_text}>Welcome</Text>
@@ -83,6 +90,30 @@ export default Dashboard
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    header_container:{
+        height:60,
+        backgroundColor:'#2CABE2',
+        elevation:3,
+        paddingHorizontal:20,
+        paddingVertical:10,
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center'
+    },
+    header_text:{
+        color:'#fff',
+        fontFamily:'Poppins Medium',
+        fontSize:20
+    },
+    user_avatar: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#fff',
+        borderWidth: 2,
+        borderStyle: 'solid',
+        borderColor: 'white'
     },
     welcome_container: {
         flex: 1 / 4,

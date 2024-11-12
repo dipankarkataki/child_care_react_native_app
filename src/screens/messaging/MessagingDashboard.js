@@ -8,6 +8,7 @@ import moment from 'moment-timezone';
 
 const profileImage = undefined
 const background = require('../../assets/images/background.png');
+const userAvatar = require('../../assets/images/profile-image.png')
 
 
 const MessagingDashboard = ({navigation}) => {
@@ -58,6 +59,15 @@ const MessagingDashboard = ({navigation}) => {
       
     return (
         <ImageBackground source={background} style={styles.container}>
+            <View style={styles.header_container}>
+                <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
+                    <Icon name="long-arrow-alt-left" style={styles.header_icon} />
+                </TouchableOpacity>
+                <Text style={styles.header_text}>Chat Dashboard</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
+                    <Image source={userAvatar} style={styles.user_avatar} />
+                </TouchableOpacity>
+            </View>
             {
                 chatUserList.length > 0 ? (
                     <FlatList 
@@ -125,7 +135,34 @@ export default MessagingDashboard
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        padding:5
+    },
+    header_container:{
+        height:60,
+        backgroundColor:'#2CABE2',
+        elevation:3,
+        paddingHorizontal:20,
+        paddingVertical:10,
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center'
+    },
+    header_text:{
+        color:'#fff',
+        fontFamily:'Poppins Medium',
+        fontSize:18
+    },
+    header_icon:{
+        fontSize: 20,
+        color: '#fff',
+    },
+    user_avatar: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#fff',
+        borderWidth: 2,
+        borderStyle: 'solid',
+        borderColor: 'white'
     },
     chat_container:{
         padding:8,

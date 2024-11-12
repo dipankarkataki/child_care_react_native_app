@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import TokenManager from '../../api/TokenManager';
 
 const backgroundImage = require('../../assets/images/background.png');
+const userAvatar = require('../../assets/images/profile-image.png')
 
 const Billing = ({ navigation }) => {
 
@@ -11,6 +12,12 @@ const Billing = ({ navigation }) => {
 
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>
+            <View style={styles.header_container}>
+                <Text style={styles.header_text}>Billing</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
+                    <Image source={userAvatar} style={styles.user_avatar} />
+                </TouchableOpacity>
+            </View>
             <View style={styles.billing_header}>
                 <View style={styles.billing_revenue_container}>
                     <Icon name='plus' style={styles.icon}/>
@@ -23,7 +30,7 @@ const Billing = ({ navigation }) => {
                     <View style={styles.pay_now_header}>
                         <View>
                             <Text style={styles.title_text}>Due Date</Text>
-                            <Text style={styles.pay_now_header_text}>-</Text>
+                            <Text style={styles.pay_now_header_text}>MM/DD/YYYY</Text>
                         </View>
                         <View>
                             <Text style={styles.title_text}>Auto Pay</Text>
@@ -151,8 +158,34 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    header_container:{
+        height:60,
+        backgroundColor:'#2CABE2',
+        elevation:5,
+        borderWidth:1,
+        borderBottomColor:'#87ceeb',
+        paddingHorizontal:20,
+        paddingVertical:10,
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center'
+    },
+    header_text:{
+        color:'#fff',
+        fontFamily:'Poppins Medium',
+        fontSize:20,
+    },
+    user_avatar: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#fff',
+        borderWidth: 2,
+        borderStyle: 'solid',
+        borderColor: 'white'
+    },
     billing_header: {
-        height:200,
+        height:180,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1,
@@ -200,7 +233,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         right: 0,
-        top:160,
+        top:200,
         paddingLeft: 10,
         paddingRight: 10,
         paddingTop: 10,

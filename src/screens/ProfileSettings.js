@@ -121,9 +121,10 @@ const ProfileSettings = ({ navigation }) => {
     }
 
     useEffect( () => {
-        const profileDetailsAnimated = Animated.stagger(400, [avatarRef.current.getAnimated()]);
-        Animated.loop(profileDetailsAnimated).start();
-
+        if(avatarRef.current){
+            const profileDetailsAnimated = Animated.stagger(400, [avatarRef.current.getAnimated()]);
+            Animated.loop(profileDetailsAnimated).start();
+        }
 
         ProfileDetailsApi()
         .then( (result) => {
@@ -146,7 +147,7 @@ const ProfileSettings = ({ navigation }) => {
         .catch((err) => {
             console.log('Error --> ',err);
         });
-    },[])
+    },[avatarRef.current])
 
     const handleMessageModalOnClose = () => {
         setMessageModalVisible(false);
@@ -440,7 +441,7 @@ const styles = StyleSheet.create({
         width: 35,
         borderWidth: 2,
         borderStyle: 'solid',
-        borderColor: 'white',
+        borderColor: '#dcdcdc',
         borderRadius: 80,
         justifyContent: 'center',
         alignItems: 'center',
@@ -458,7 +459,9 @@ const styles = StyleSheet.create({
         color: '#C6D0DE'
     },
     back_btn_icon: {
-        fontSize: 24,
+        fontSize: 30,
+        fontWeight:'bold',
+        color:'#fff'
     },
     icon: {
         fontSize: 20,

@@ -1,10 +1,12 @@
 // FamilyDetails.js
-import {ImageBackground, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView, Modal,} from 'react-native';
+import {ImageBackground, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView, Modal, Image} from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import StudentDetails from './StudentDetails';
 import MemberDetails from './MemberDetails';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const backgroundImage = require('../../assets/images/background.png');
+const userAvatar = require('../../assets/images/profile-image.png')
 
 const FamilyDetails = ({ navigation, route }) => {
 
@@ -16,6 +18,14 @@ const FamilyDetails = ({ navigation, route }) => {
 
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>
+            <View style={styles.header_container}>
+                <TouchableOpacity onPress={ () => navigation.navigate('ProfileSettings')}>
+                    <Icon name="long-arrow-alt-left" style={styles.header_icon}/>
+                </TouchableOpacity>
+                <View style={styles.header_text_container}>
+                    <Text style={styles.header_text}>Family Details</Text>
+                </View>
+            </View>
             <View style={styles.family_content_container}>
                 <View style={styles.family_name_container}>
                     <Text style={styles.family_name_text}>Family Name: {familyName}</Text>
@@ -32,6 +42,29 @@ export default FamilyDetails;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    header_container:{
+        height:60,
+        backgroundColor:'#2CABE2',
+        elevation:3,
+        paddingHorizontal:20,
+        paddingVertical:10,
+        flexDirection:'row',
+        alignItems:'center'
+    },
+    header_text_container:{
+        width:'92%',
+        justifyContent:'center',
+        alignItems:'center',
+    },
+    header_text:{
+        color:'#fff',
+        fontFamily:'Poppins Medium',
+        fontSize:20,
+    },
+    header_icon:{
+        fontSize: 20,
+        color: '#fff',
     },
     icon: {
         fontSize: 20,
