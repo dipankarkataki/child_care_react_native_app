@@ -47,7 +47,9 @@ const Dashboard = ({ navigation }) => {
             <View style={styles.welcome_container}>
                 <Image source={welcome_smily} style={styles.welcome_image} />
                 <Text style={styles.welcome_text}>Welcome</Text>
-                <Text style={styles.welcome_content}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet eros a eros pellentesque efficitur. Praesent varius fringilla convallis.</Text>
+                <Text style={styles.welcome_content}>
+                    Effortlessly manage child care with tools for attendance tracking, billing, secure chatting, daily reports, notices, family invites and event updates.
+                </Text>
             </View>
             <View style={styles.dashboard_items_container}>
                 <View style={styles.items_group}>
