@@ -54,7 +54,7 @@ const SenderProfile = ({navigation, route}) => {
                         </View>
                         <Icon name="angle-right" style={styles.icon}/>
                     </TouchableOpacity>
-                    <View style={styles.chat_media_content}>
+                    <ScrollView horizontal style={styles.chat_media_content}>
                         {profileMedia?.media?.map((item, index) => (
                             <Image
                                 key={index}
@@ -62,7 +62,7 @@ const SenderProfile = ({navigation, route}) => {
                                 style={styles.chat_media_items}
                             />
                         ))}
-                    </View>
+                    </ScrollView>
                 </View>
                 <View style={styles.account_creator_details}>
                     <View style={styles.account_details_header}>
@@ -204,7 +204,9 @@ const styles = StyleSheet.create({
     chat_media_content:{
         marginTop:20,
         flexDirection:'row',
-        flexWrap:'wrap'
+        flexWrap:'wrap',
+        // height:200,
+        // overflow:'hidden'
     },
     chat_media_items:{
         height:80,
@@ -215,6 +217,7 @@ const styles = StyleSheet.create({
         borderWidth:1,
         borderColor:'#dcdcdc',
         borderStyle:'solid',
+        backgroundColor:'#f8f8ff'
     },
     account_creator_details:{
         marginTop:20,
