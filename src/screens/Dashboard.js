@@ -57,8 +57,6 @@ const Dashboard = ({ navigation }) => {
         Alert.alert("Feature Coming Soon! 🚀.", "We're working hard to bring this feature to you. Stay tuned for updates!")
     }
 
-    console.log('Redux User Profile Image >>>>>>>> ', userProfileImage)
-
     return (
         <ImageBackground source={background} style={styles.container}>
             <View style={styles.header_container}>
