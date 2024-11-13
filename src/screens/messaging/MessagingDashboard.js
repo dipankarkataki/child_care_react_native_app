@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {FlatList, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
@@ -7,6 +7,7 @@ import * as RNLocalize from 'react-native-localize';
 import moment from 'moment-timezone';
 import UrlProvider from '../../api/UrlProvider';
 import TokenManager from '../../api/TokenManager';
+import { useSelector } from 'react-redux';
 
 const profileImage = undefined
 const background = require('../../assets/images/background.png');
@@ -16,10 +17,10 @@ const userAvatar = require('../../assets/images/profile-image.png')
 const MessagingDashboard = ({navigation}) => {
     
     const [chatUserList, setChatUserList] = useState([]);
-    const [userProfileImage, setUserProfileImage] = useState(null);
+
+    const userProfileImage = useSelector((state) => state.profileImageReducer)
 
     useEffect( () => {
-
         MessagingDashboardApi()
         .then((result) => {
             console.log('Users List ==> ', result.data)
@@ -28,12 +29,6 @@ const MessagingDashboard = ({navigation}) => {
         .catch((err) => {
             console.log('Error', err);
         });
-
-        const profileImage = async () => {
-            const image = await TokenManager.getUserProfileImage();
-            setUserProfileImage(UrlProvider.asset_url_local+'/'+image)
-        }
-        profileImage();
 
     }, []);
 
@@ -75,7 +70,7 @@ const MessagingDashboard = ({navigation}) => {
                 </TouchableOpacity>
                 <Text style={styles.header_text}>Chat Dashboard</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
-                    <Image  source={userProfileImage ? { uri: userProfileImage } : userAvatar}  style={styles.user_avatar} />
+                    <Image  source={userProfileImage}  style={styles.user_avatar} />
                 </TouchableOpacity>
             </View>
             {

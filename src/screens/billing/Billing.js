@@ -2,23 +2,14 @@ import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextI
 import React, {useEffect, useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import TokenManager from '../../api/TokenManager';
-import UrlProvider from '../../api/UrlProvider';
+import { useSelector } from 'react-redux';
 
 const backgroundImage = require('../../assets/images/background.png');
-const userAvatar = require('../../assets/images/profile-image.png')
 
 const Billing = ({ navigation }) => {
 
     const customerProfileId = TokenManager.getCustomerProfileId();
-    const [userProfileImage, setUserProfileImage] = useState(null);
-
-    useEffect(() => {
-        const profileImage = async () => {
-            const image = await TokenManager.getUserProfileImage();
-            setUserProfileImage(UrlProvider.asset_url_local+'/'+image)
-        }
-        profileImage();
-    }, [])
+    const userProfileImage = useSelector((state) => state.profileImageReducer)
 
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>
@@ -28,7 +19,7 @@ const Billing = ({ navigation }) => {
                 </TouchableOpacity>
                 <Text style={styles.header_text}>Billing</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
-                <Image  source={userProfileImage ? { uri: userProfileImage } : userAvatar}  style={styles.user_avatar} />
+                <Image  source={userProfileImage}  style={styles.user_avatar} />
                 </TouchableOpacity>
             </View>
             <View style={styles.billing_header}>

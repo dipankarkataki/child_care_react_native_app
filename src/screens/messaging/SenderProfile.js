@@ -55,13 +55,31 @@ const SenderProfile = ({navigation, route}) => {
                         <Icon name="angle-right" style={styles.icon}/>
                     </TouchableOpacity>
                     <ScrollView horizontal style={styles.chat_media_content}>
-                        {profileMedia?.media?.map((item, index) => (
-                            <Image
-                                key={index}
-                                source={{ uri: `${UrlProvider.asset_url_local}/${item.attachment}` }}
-                                style={styles.chat_media_items}
-                            />
-                        ))}
+                        {profileMedia?.media?.map((item, index) => {
+                            const extension = item.attachment.split('.').pop().toLowerCase();
+
+                            // Define the condition to check if it's an image
+                            const isImage = ['jpg', 'jpeg', 'png'].includes(extension);
+
+                            return (
+                                <View key={index} style={styles.chat_media_content}>
+                                    {isImage ? (
+                                        // Render Image if it's an image file
+                                        <Image
+                                            key={index}
+                                            source={{ uri: `${UrlProvider.asset_url_local}/${item.attachment}` }}
+                                            style={styles.chat_media_items}
+                                        />
+                                    ) : (
+                                        // Render document icon or text if it's a document
+                                        <View style={styles.chat_doc_items}>
+                                            <Icon name="file-alt" style={styles.doc_icon_style}/>
+                                            <Text style={styles.main_title2}>File: {extension.toUpperCase()}</Text>
+                                        </View>
+                                    )}
+                                </View>
+                            );
+                        })}
                     </ScrollView>
                 </View>
                 <View style={styles.account_creator_details}>
@@ -205,19 +223,35 @@ const styles = StyleSheet.create({
         marginTop:20,
         flexDirection:'row',
         flexWrap:'wrap',
-        // height:200,
-        // overflow:'hidden'
     },
     chat_media_items:{
         height:80,
         width:80,
         borderRadius:10,
-        marginRight:5,
+        marginHorizontal:4,
         marginBottom:10,
         borderWidth:1,
         borderColor:'#dcdcdc',
         borderStyle:'solid',
         backgroundColor:'#f8f8ff'
+    },
+    chat_doc_items:{
+        height:80,
+        width:80,
+        borderRadius:10,
+        marginHorizontal:4,
+        marginBottom:10,
+        borderWidth:1,
+        borderColor:'#dcdcdc',
+        borderStyle:'solid',
+        backgroundColor:'#f8f8ff',
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    doc_icon_style:{
+        fontSize:40,
+        color:'teal',
+        marginBottom:5
     },
     account_creator_details:{
         marginTop:20,
