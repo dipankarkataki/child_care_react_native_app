@@ -1,11 +1,10 @@
 import { Alert, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import CheckTokenApi from '../api/CheckTokenApi/CheckTokenApi';
 import TokenManager from '../api/TokenManager';
-import UrlProvider from '../api/UrlProvider';
+import { useSelector } from 'react-redux';
 
 const background = require('../assets/images/background.png');
-const userAvatar = require('../assets/images/profile-image.png')
 const welcome_smily = require('../assets/images/welcome_smily.png');
 const attendance_user = require('../assets/images/attendance_user.png');
 const billing = require('../assets/images/billing.png');
@@ -16,13 +15,13 @@ const invite = require('../assets/images/invite.png');
 
 const Dashboard = ({ navigation }) => {
 
-    const [userProfileImage, setUserProfileImage] = useState(null);
-
     const revokeToken = async () => {
         await TokenManager.removeToken();
         await TokenManager.removeUserId();
         navigation.replace('Login')
     };
+
+    const userProfileImage = useSelector((state) => state.profileImageReducer);
 
     useEffect(() => {
         CheckTokenApi()
@@ -37,23 +36,20 @@ const Dashboard = ({ navigation }) => {
             .catch((err) => {
                 console.log('Response Error --> ', err);
             });
-            const profileImage = async () => {
-                const image = await TokenManager.getUserProfileImage();
-                setUserProfileImage(UrlProvider.asset_url_local+'/'+image)
-            }
-            profileImage();
     }, []);
 
     const comingSoon = () => {
         Alert.alert("Feature Coming Soon! 🚀.", "We're working hard to bring this feature to you. Stay tuned for updates!")
     }
 
+    console.log('Redux User Profile Image >>>>>>>> ', userProfileImage)
+
     return (
         <ImageBackground source={background} style={styles.container}>
             <View style={styles.header_container}>
                 <Text style={styles.header_text}>Dashboard</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
-                    <Image  source={userProfileImage ? { uri: userProfileImage } : userAvatar}  style={styles.user_avatar} />
+                    <Image  source={userProfileImage}  style={styles.user_avatar} />
                 </TouchableOpacity>
             </View>
             <View style={styles.welcome_container}>

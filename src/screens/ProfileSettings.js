@@ -3,24 +3,24 @@ import React, {useEffect, useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons'
 import ProfileDetailsApi from '../api/ProfileApi/ProfileDetailsApi';
-import { launchImageLibrary } from 'react-native-image-picker';
 import DocumentPicker from 'react-native-document-picker';
-import RNFS from 'react-native-fs';
 import LinearGradient from 'react-native-linear-gradient';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 import ModalComponent from '../components/ModalComponent';
 import UploadImageApi from '../api/ProfileApi/UploadImageApi';
-import UrlProvider from '../api/UrlProvider';
 import TokenManager from '../api/TokenManager';
 import ChangePasswordApi from '../api/ProfileApi/ChangePasswordApi';
 import LogoutApi from '../api/LogoutApi';
+import { setGlobalProfileImage } from '../redux/action';
+import { useDispatch, useSelector } from 'react-redux';
 
 const backgroundImage = require('../assets/images/background.png');
-const defaultProfileImage = require('../assets/images/profile-image.png'); 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
 
 const ProfileSettings = ({ navigation }) => {
+
+    const dispatch = useDispatch();
 
     let [firstName, setFirstName] = useState('');
     let [lastName, setLastName] = useState('');
@@ -36,7 +36,7 @@ const ProfileSettings = ({ navigation }) => {
     const [oldPassVisibilty, setOldPassVisibility] = useState(true);
     const [newPassVisibilty, setNewPassVisibility] = useState(true);
     const [confirmPassVisibilty, setConfirmPassVisibility] = useState(true);
-    const [profileImage, setProfileImage] = useState(defaultProfileImage);
+    const [newUploadAlert, setNewUploadAlert] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [loading, setLoading] = useState(true);
     const [activityLoader, setActivityLoader] = useState(false);
@@ -123,9 +123,6 @@ const ProfileSettings = ({ navigation }) => {
                 setMessageModalVisible(true);
                 setModalIcon('error');                  
                 isValid = false;
-            }else{
-                setModalMessage('');
-                setProfileImage(image.uri);
             }
         }else{
             setModalMessage('No image selected.');
@@ -140,6 +137,7 @@ const ProfileSettings = ({ navigation }) => {
     const uploadProfileImage = async (image, retries = 3) => {
         if(validateImage(image)){
             setSendingFile(true)
+
             const formData = new FormData();
             formData.append('image', {
                 uri: image.uri,
@@ -147,35 +145,39 @@ const ProfileSettings = ({ navigation }) => {
                 type: image.type,
             });
 
-            const upload = async () => {
+            const upload = async (retryCount) => {
                 try {
                     const result = await UploadImageApi(formData);
     
-                    if (result.data && result.data.status) {
+                    if (result?.data && result.data.status) {
+                        setNewUploadAlert(true)
                         setSendingFile(false);
                         setMessageModalVisible(true);
                         setModalMessage('Image uploaded successfully');
                         setModalIcon('success');
-                    } else {
-                        throw new Error('Upload failed, try again later');
-                    }
-                } catch (err) {
-                    console.log('Error --> ', err);
-                    if (retries > 0) {
+                    }else if (retries > 0) {
                         console.log('Retrying upload...');
-                        setTimeout(() => upload(image, retries - 1), 2000); // Retry after 2 seconds
+                        setTimeout(() => upload(retryCount - 1), 2000); // Retry after 2 seconds
                     } else {
                         setSendingFile(false);
                         setMessageModalVisible(true);
                         setModalMessage('Oops Something went wrong. Please try again later');
                         setModalIcon('error');
                     }
+                } catch (err) {
+                    console.log('Error --> ', err);
+                    setSendingFile(false);
+                    setMessageModalVisible(true);
+                    setModalMessage('Oops! Something went wrong. Please try again later');
+                    setModalIcon('error');
                 }
             };
     
-            upload();
+            upload(retries);
         }
     }
+
+    const userProfileImage = useSelector((state) => state.profileImageReducer)
 
     useEffect( () => {
         if(avatarRef.current){
@@ -193,11 +195,7 @@ const ProfileSettings = ({ navigation }) => {
                     setPhone(result.data.data.phone);
                     setFamilyId(result.data.data.family_id);
                     setSiteId(result.data.data.site_id);
-                    const imageUrl = result.data.data.profile_image
-                    ? `${UrlProvider.asset_url_local}/${result.data.data.profile_image}`
-                    : null;
-    
-                    setProfileImage(imageUrl);
+                    dispatch(setGlobalProfileImage(result.data.data.profile_image));
                     setLoading(false);
                 }
             }catch(err){
@@ -207,7 +205,7 @@ const ProfileSettings = ({ navigation }) => {
 
         getProfileDetails();
 
-    },[avatarRef.current])
+    },[avatarRef.current, newUploadAlert])
 
     const handleMessageModalOnClose = () => {
         setMessageModalVisible(false);
@@ -309,7 +307,7 @@ const ProfileSettings = ({ navigation }) => {
                     </TouchableOpacity>
 
                     <View style={styles.profile_image_container}>
-                        <Image source={profileImage ? { uri: profileImage } : defaultProfileImage} style={styles.profile_header_image} />
+                        <Image source={userProfileImage} style={styles.profile_header_image} />
                         <TouchableOpacity style={styles.edit_image_btn} onPress={selectProfileImage}> 
                             <Icon name="pencil" style={styles.icon} />
                         </TouchableOpacity>

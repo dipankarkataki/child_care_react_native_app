@@ -4,11 +4,16 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import LoginApi from '../../api/LoginApi';
 import ModalComponent from '../../components/ModalComponent';
 import TokenManager from '../../api/TokenManager';
+import { useDispatch } from 'react-redux';
+import { setGlobalProfileImage } from '../../redux/action';
 
 const background = require('../../assets/images/background.png');
 const logo_large = require('../../assets/images/child-care-logo-large.png');
 
 const Login = ({ navigation }) => {
+
+    const dispatch = useDispatch();
+
     const [passwordVisibilty, setPasswordVisibility] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -57,7 +62,10 @@ const Login = ({ navigation }) => {
                     await TokenManager.setToken(result.data.token);
                     await TokenManager.setUserId(result.data.data.user_id.toString());
                     await TokenManager.setCustomerProfileId(result.data.data.aNet_customer_profile_id.toString())
-                    await TokenManager.setUserProfileImage(result.data.data.profile_image)
+                    // await TokenManager.setUserProfileImage(result.data.data.profile_image)
+                    if(result.data.data.profile_image != null){
+                        dispatch(setGlobalProfileImage(result.data.data.profile_image))
+                    }
                     navigation.replace('Dashboard');
                 }else{
                     setLoader(false);
