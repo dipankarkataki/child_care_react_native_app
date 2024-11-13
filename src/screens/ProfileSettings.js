@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Modal, Animated, Alert } from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Modal, Animated, Alert, ActivityIndicator } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ProfileDetailsApi from '../api/ProfileApi/ProfileDetailsApi';
@@ -11,6 +11,7 @@ import ModalComponent from '../components/ModalComponent';
 import UploadImageApi from '../api/ProfileApi/UploadImageApi';
 import UrlProvider from '../api/UrlProvider';
 import TokenManager from '../api/TokenManager';
+import ChangePasswordApi from '../api/ProfileApi/ChangePasswordApi';
 
 const backgroundImage = require('../assets/images/background.png');
 const defaultProfileImage = require('../assets/images/profile-image.png'); 
@@ -36,10 +37,53 @@ const ProfileSettings = ({ navigation }) => {
     const [profileImage, setProfileImage] = useState(defaultProfileImage);
     const [modalVisible, setModalVisible] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [activityLoader, setActivityLoader] = useState(false);
     const [sendingFile, setSendingFile] = useState(false);
     const [messageModalVisible, setMessageModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [modalIcon, setModalIcon] = useState(null);
+    const [errors, setErrors] = useState({
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword:'',
+        passwordMatch: ''
+    });
+
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = { ...errors };
+
+        if (!oldPassword) {
+            newErrors.oldPassword = 'Old password is required';
+            isValid = false;
+        } else {
+            newErrors.oldPassword = '';
+        }
+
+        if (!newPassword) {
+            newErrors.newPassword = 'New password is required';
+            isValid = false;
+        } else {
+            newErrors.newPassword = '';
+        }
+
+        if (!confirmPassword) {
+            newErrors.confirmPassword = 'Confirm password is required';
+            isValid = false;
+        } else {
+            newErrors.confirmPassword = '';
+        }
+
+        if (newPassword != confirmPassword) {
+            newErrors.passwordMatch = 'Password not matched';
+            isValid = false;
+        } else {
+            newErrors.passwordMatch = '';
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
 
     const avatarRef = React.createRef();
 
@@ -136,27 +180,29 @@ const ProfileSettings = ({ navigation }) => {
             Animated.loop(profileDetailsAnimated).start();
         }
 
-        ProfileDetailsApi()
-        .then( (result) => {
-            let response = result.data;
-            if(response.status == true){
-                setFirstName(response.data.firstname);
-                setLastName(response.data.lastname);
-                setEmail(response.data.email);
-                setPhone(response.data.phone);
-                setFamilyId(response.data.family_id);
-                setSiteId(response.data.site_id);
-                const imageUrl = response.data.profile_image
-                ? `${UrlProvider.asset_url_local}/${response.data.profile_image}`
-                : null;
-
-                setProfileImage(imageUrl);
-                setLoading(false);
+        const getProfileDetails = async () => {
+            try{
+                const result = await ProfileDetailsApi();
+                if(result.data && result.data.status){
+                    setFirstName(result.data.data.firstname);
+                    setLastName(result.data.data.lastname);
+                    setEmail(result.data.data.email);
+                    setPhone(result.data.data.phone);
+                    setFamilyId(result.data.data.family_id);
+                    setSiteId(result.data.data.site_id);
+                    const imageUrl = result.data.data.profile_image
+                    ? `${UrlProvider.asset_url_local}/${result.data.data.profile_image}`
+                    : null;
+    
+                    setProfileImage(imageUrl);
+                    setLoading(false);
+                }
+            }catch(err){
+                console.log('Error! Failed to get profile details : ', err);
             }
-        })
-        .catch((err) => {
-            console.log('Error --> ',err);
-        });
+        }
+
+        getProfileDetails();
 
     },[avatarRef.current])
 
@@ -169,10 +215,43 @@ const ProfileSettings = ({ navigation }) => {
         setOldPassVisibility(true)
         setNewPassVisibility(true)
         setConfirmPassVisibility(true)
+        setOldPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setErrors('')
     };
 
-    const handleSaveDetails = () => {
-        handleModalClose();
+    const changePassword = () => {
+       if(validateForm()){
+            setActivityLoader(true);
+            try{
+                let data = {
+                    'old_password' : oldPassword,
+                    'password' : newPassword,
+                    'confirm_password' : confirmPassword
+                };
+
+                const update = async () => {
+                    const result = await ChangePasswordApi(data);
+                    if(result.data && result.data.status){
+                        setActivityLoader(false);
+                        setModalVisible(false);
+                        setMessageModalVisible(true);
+                        setModalMessage(result.data.message);
+                        setModalIcon('success');
+                    }else{
+                        setActivityLoader(false);
+                        setMessageModalVisible(true);
+                        setModalMessage(result.data.message);
+                        setModalIcon('error');
+                    }
+                };
+
+                update();
+            }catch(err){
+                console.log('Update failed! Something went wrong : ', err)
+            }
+       }
     };
 
     return (
@@ -333,6 +412,7 @@ const ProfileSettings = ({ navigation }) => {
                                             </TouchableOpacity>
                                         }
                                     </View>
+                                    {errors.oldPassword ? <Text style={styles.error_text}>{errors.oldPassword}</Text> : null}
                                 </View>
                                 <View style={styles.form_group}>
                                     <Text style={styles.input_label}>
@@ -358,6 +438,7 @@ const ProfileSettings = ({ navigation }) => {
                                             </TouchableOpacity>
                                         }
                                     </View>
+                                    {errors.newPassword ? <Text style={styles.error_text}>{errors.newPassword}</Text> : null}
                                 </View>
                                 <View style={styles.form_group}>
                                     <Text style={styles.input_label}>
@@ -383,20 +464,24 @@ const ProfileSettings = ({ navigation }) => {
                                             </TouchableOpacity>
                                         }
                                     </View>
+                                    {errors.confirmPassword ? <Text style={styles.error_text}>{errors.confirmPassword}</Text> : null}
+                                    {errors.passwordMatch ? <Text style={styles.error_text}>{errors.passwordMatch}</Text> : null}
                                 </View>
                             </View>
                         </ScrollView>
 
                         {/* Modal Buttons */}
                         <View style={styles.modal_button_container}>
-                            <TouchableOpacity style={[styles.button, styles.button_save_details]} onPress={handleSaveDetails}>
-                                <Text style={styles.textStyle}>Save Details</Text>
+                            
+                            <TouchableOpacity style={[styles.button, styles.button_save_details]} onPress={changePassword} disabled={activityLoader}>
+                                <Text style={styles.medium_text}>{activityLoader ? 'Updating password ...' : 'Save Details'}</Text>
+                                {
+                                    activityLoader && ( <ActivityIndicator size="large" color='#2E78FF' animating={activityLoader}/> )
+                                }
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.button, styles.button_close]}
-                                onPress={handleModalClose}
-                            >
-                                <Text style={styles.textStyle}>Close</Text>
+                            
+                            <TouchableOpacity style={[styles.button, styles.button_close]} onPress={handleModalClose}>
+                                <Text style={styles.medium_text}>Close</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -516,6 +601,11 @@ const styles = StyleSheet.create({
         fontFamily:'Poppins Medium',
         marginBottom:8
     },
+    medium_text:{
+        color:'black',
+        fontSize:14,
+        fontFamily:'Poppins Medium',
+    },
     input_label: {
         marginBottom: 8,
         color: '#797979',
@@ -601,6 +691,9 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     button_save_details: {
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center',
         backgroundColor: '#FFB52E',
         marginRight: 10,
     },
@@ -632,5 +725,10 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         borderRadius: 6,
         width:'100%'
-    }
+    },
+    error_text: {
+        color: 'red',
+        fontSize: 14,
+        marginTop: 5
+    },
 });
