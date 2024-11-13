@@ -2,7 +2,9 @@ import { Alert, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View
 import React, { useEffect } from 'react'
 import CheckTokenApi from '../api/CheckTokenApi/CheckTokenApi';
 import TokenManager from '../api/TokenManager';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setGlobalProfileImage } from '../redux/action';
+import ProfileDetailsApi from '../api/ProfileApi/ProfileDetailsApi';
 
 const background = require('../assets/images/background.png');
 const welcome_smily = require('../assets/images/welcome_smily.png');
@@ -14,7 +16,7 @@ const notice = require('../assets/images/notice.png');
 const invite = require('../assets/images/invite.png');
 
 const Dashboard = ({ navigation }) => {
-
+     const dispatch = useDispatch();
     const revokeToken = async () => {
         await TokenManager.removeToken();
         await TokenManager.removeUserId();
@@ -31,6 +33,19 @@ const Dashboard = ({ navigation }) => {
                         text: 'OK',
                         onPress: revokeToken
                     }]);
+                }else{
+                    const getProfileDetails = async () => {
+                        try{
+                            const result = await ProfileDetailsApi();
+                            if(result.data && result.data.status){
+                                dispatch(setGlobalProfileImage(result.data.data.profile_image));
+                            }
+                        }catch(err){
+                            console.log('Error! Failed to get profile details : ', err);
+                        }
+                    }
+            
+                    getProfileDetails();
                 }
             })
             .catch((err) => {
