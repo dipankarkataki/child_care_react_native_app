@@ -1,6 +1,7 @@
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Modal, Animated, Alert, ActivityIndicator } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons'
 import ProfileDetailsApi from '../api/ProfileApi/ProfileDetailsApi';
 import { launchImageLibrary } from 'react-native-image-picker';
 import DocumentPicker from 'react-native-document-picker';
@@ -12,6 +13,7 @@ import UploadImageApi from '../api/ProfileApi/UploadImageApi';
 import UrlProvider from '../api/UrlProvider';
 import TokenManager from '../api/TokenManager';
 import ChangePasswordApi from '../api/ProfileApi/ChangePasswordApi';
+import LogoutApi from '../api/LogoutApi';
 
 const backgroundImage = require('../assets/images/background.png');
 const defaultProfileImage = require('../assets/images/profile-image.png'); 
@@ -38,6 +40,7 @@ const ProfileSettings = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [loading, setLoading] = useState(true);
     const [activityLoader, setActivityLoader] = useState(false);
+    const [logoutActivityLoader, setLogoutActivityLoader] = useState(false);
     const [sendingFile, setSendingFile] = useState(false);
     const [messageModalVisible, setMessageModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
@@ -254,6 +257,45 @@ const ProfileSettings = ({ navigation }) => {
        }
     };
 
+    const revokeTokenAndNavigate = async () =>{
+        await TokenManager.removeToken();
+        await TokenManager.removeUserId();
+        await TokenManager.removeCustomerProfileId();
+        await TokenManager.removeUserProfileImage();
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+        });
+    }
+
+    const handleLogout = () => {
+        const logout = async () => {
+            try{
+                setLogoutActivityLoader(true)
+                const result = await LogoutApi();
+                if(result.status == 200){
+                    Alert.alert('Success', result.data.message, [
+                        {
+                            text : 'Close',
+                            onPress:revokeTokenAndNavigate
+                        }
+                    ])
+                }else{
+                    Alert.alert('Error', result.data.message);
+                }
+            }catch(err){
+                console.log('Logout Error : ', err)
+                Alert.alert('Error', 'Something went wrong while loging out');
+            }finally {
+                // Ensure loading indicator is disabled regardless of success or error
+                setLogoutActivityLoader(false);
+            }
+            
+        }
+
+        logout();
+    }
+
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>
             {loading ? (
@@ -348,31 +390,46 @@ const ProfileSettings = ({ navigation }) => {
                         <ShimmerPlaceholder style={styles.shimmerViewPlaceholder} />
                     </View>
                 ) : (
-                    <View style={styles.card}>
-                        <Text style={styles.title_text}>Security</Text>
-                        <TouchableOpacity style={styles.family_details_card} onPress={ () => setModalVisible(true)}>
-                            <Text style={styles.change_password_text}>Change Password</Text>
-                            <Icon name="angle-right" style={styles.icon} />
-                        </TouchableOpacity>
-                        <Text style={styles.title_text}>KIOSK ACCESS (PIN)</Text>
-                        <View style={styles.kiosk_container}>
-                            <TextInput 
-                                style={styles.kiosk_input}
-                                maxLength={4} keyboardType="number-pad" 
-                                placeholder='* * * *' 
-                                placeholderTextColor='#b9b9b9'
-                                value={kioskPin}
-                                secureTextEntry={kioskVisibilty}
-                                onChangeText={(text) => setKioskPin(text.replace(/[^0-9]/g, ''))}
-                                readOnly
-                            />
-                            <TouchableOpacity 
-                                onPress={ () => setKioskVisibility(!kioskVisibilty) } 
-                                style={styles.show_kiosk_pin_text}>
-                                <Text style={styles.show_kiosk_pin_text}>{ !kioskVisibilty ? 'Hide PIN' : 'Show PIN'}</Text>
+                    <>
+                        <View style={styles.card}>
+                            <Text style={styles.title_text}>Security</Text>
+                            <TouchableOpacity style={styles.family_details_card} onPress={ () => setModalVisible(true)}>
+                                <Text style={styles.change_password_text}>Change Password</Text>
+                                <Icon name="angle-right" style={styles.icon} />
                             </TouchableOpacity>
+                            <Text style={styles.title_text}>KIOSK ACCESS (PIN)</Text>
+                            <View style={styles.kiosk_container}>
+                                <TextInput 
+                                    style={styles.kiosk_input}
+                                    maxLength={4} keyboardType="number-pad" 
+                                    placeholder='* * * *' 
+                                    placeholderTextColor='#b9b9b9'
+                                    value={kioskPin}
+                                    secureTextEntry={kioskVisibilty}
+                                    onChangeText={(text) => setKioskPin(text.replace(/[^0-9]/g, ''))}
+                                    readOnly
+                                />
+                                <TouchableOpacity 
+                                    onPress={ () => setKioskVisibility(!kioskVisibilty) } 
+                                    style={styles.show_kiosk_pin_text}>
+                                    <Text style={styles.show_kiosk_pin_text}>{ !kioskVisibilty ? 'Hide PIN' : 'Show PIN'}</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
+                        <View style={styles.card}>
+                            <TouchableOpacity  onPress={handleLogout}  style={styles.logout_btn} disabled={logoutActivityLoader}>
+                                <View style={styles.logout_btn_inner}>
+                                    <SimpleIcon name="logout" style={styles.logout_icon}/>
+                                    <Text style={styles.logout_btn_text}>{logoutActivityLoader ? 'Loging out...' : 'Log Out'}</Text>
+                                    {
+                                        logoutActivityLoader && ( <ActivityIndicator size="large" color='#2E78FF' animating={logoutActivityLoader}/> )
+                                    }
+                                </View>
+                            </TouchableOpacity>
+                        </View >
+                        
+                    </>
+                    
                 )}
             </ScrollView>
 
@@ -731,4 +788,32 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginTop: 5
     },
+    logout_btn:{
+        backgroundColor:'#FFB52E',
+        padding:10,
+        justifyContent:'center',
+        alignItems:'center',
+        width:'60%',
+        borderWidth:1,
+        borderRadius:5,
+        borderStyle:'solid',
+        borderColor:'#FFB52E',
+        elevation:1
+    },
+    logout_btn_inner:{
+        flexDirection:'row',
+        justifyContent:'space-around',
+        alignItems:'center'
+    },
+    logout_btn_text:{
+        fontSize:18,
+        color:'black',
+        marginRight:10
+    },
+    logout_icon:{
+        fontSize:18,
+        color:'black',
+        fontWeight:'bold',
+        marginRight:10
+    }
 });
