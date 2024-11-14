@@ -45,6 +45,7 @@ const AutoPay = ({ navigation }) => {
         if(profileId){
             try{
                 const customerProfile = await GetCustomerProfileApi({'customer_profile_id' : profileId})
+                console.log('Fetch Customer Profile ----', customerProfile);
                 if (customerProfile.data && customerProfile.data.data && customerProfile.data.data.profile) {
                     const profileData = customerProfile.data.data.profile;
                     return profileData;
@@ -135,10 +136,9 @@ const AutoPay = ({ navigation }) => {
 
             try{
                 const createProfileResult = await CreateCustomerProfileApi();
-                console.log('Create Customer Profile Resul ----', createProfileResult)
+                console.log('Create Customer Profile Result ----', createProfileResult)
                 if (createProfileResult.data.status && createProfileResult.data.data) {
                     const customerProfileId = createProfileResult.data.data;
-                    console.log('Customer Profile Id ----', createProfileResult)
                     setANetCustomerProfileId(customerProfileId)
                     await TokenManager.setCustomerProfileId(customerProfileId);
                     // Add credit card

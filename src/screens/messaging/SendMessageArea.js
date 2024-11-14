@@ -21,6 +21,8 @@ const isImage = ['jpeg', 'png', 'jpg'];
 
 const SendMessageArea = ({navigation, route }) => {
 
+    const [userScrolling, setUserScrolling] = useState(false);
+    const [firstLoad, setFirstLoad] = useState(true);
     const [inputMessage, setInputMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [bottomSheet, setBottomSheet] = useState(false);
@@ -287,9 +289,11 @@ const SendMessageArea = ({navigation, route }) => {
             };
             setMessages(prevMessages => [...prevMessages, newMessage]);
 
-            setTimeout(() => {
-                scrollViewRef.current?.scrollToEnd({ animated: true });
-            }, 100);
+            if (!userScrolling) {
+                setTimeout(() => {
+                    scrollViewRef.current?.scrollToEnd({ animated: true });
+                }, 100);
+            }
         });
 
         pusherInstance.connection.bind('state_change', (states) => {
@@ -328,9 +332,12 @@ const SendMessageArea = ({navigation, route }) => {
         setupPusherAndSubscribe();
         fetchMessages();
 
-        setTimeout(() => {
-            scrollViewRef.current?.scrollToEnd({ animated: true });
-        }, 100);
+        if (firstLoad) {
+            setTimeout(() => {
+                scrollViewRef.current?.scrollToEnd({ animated: true });
+            }, 150);
+            setFirstLoad(false);
+        }
         
         // Cleanup on unmount
         return () => {
@@ -490,8 +497,8 @@ const SendMessageArea = ({navigation, route }) => {
                         </>
                     )}
 
-                    onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-                    onLayout={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+                    onScrollBeginDrag={() => setUserScrolling(true)}
+                    onScrollEndDrag={() => setUserScrolling(false)}
                 />
                 
                 {/* Attachment Preview */}
