@@ -1,12 +1,21 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Modal, KeyboardAvoidingView, Platform, ActivityIndicator} from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Modal, KeyboardAvoidingView, Platform, ActivityIndicator, Animated} from 'react-native'
 import React,  { useEffect, useState } from 'react'
 import GetMemberApi from '../../api/FamilyApi/Member/GetMemberApi'
 import CustomDropDownPicker from '../../components/CustomDropDownPicker'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AddMemberApi from '../../api/FamilyApi/Member/AddMemberApi';
 import ModalComponent from '../../components/ModalComponent';
+import LinearGradient from 'react-native-linear-gradient';
+import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 
-const MemberDetails = ({familyId, siteId, navigation}) => {
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
+
+const MemberDetails = ({familyId, siteId, navigation, onFamilyNameFetched}) => {
+
+    console.log('Family Id in Member Details ----', familyId)
+
+    const memberDetailsRef = React.createRef();
+
     const [member, setMember] = useState([]);
     let [firstName, setFirstName] = useState('');
     let [lastName, setLastName] = useState('');
@@ -24,6 +33,7 @@ const MemberDetails = ({familyId, siteId, navigation}) => {
     const [modalMessage, setModalMessage] = useState('');
     const [modalIcon, setModalIcon] = useState(null); 
     const [newMember, setNewMember] = useState(false);
+    const [shimmerLoader, setShimmerLoader] = useState(false);
 
     const contactTypeItems = [
         { label: 'Parent', value: 1 },
@@ -64,17 +74,31 @@ const MemberDetails = ({familyId, siteId, navigation}) => {
     };
 
     useEffect(() => {
+
+        if(memberDetailsRef.current){
+            const memberDetailsAnimated = Animated.stagger(400, [memberDetailsRef.current.getAnimated()]);
+            Animated.loop(memberDetailsAnimated).start();
+        }
+
+        setShimmerLoader(true)
+
         GetMemberApi(familyId)
         .then((result) => {
             if (result.status === 200) {
+                const fetchedFamilyName = result.data.data[0]?.lastname+"'s Family" || '';
+                if (onFamilyNameFetched && typeof onFamilyNameFetched === 'function') {
+                    onFamilyNameFetched(fetchedFamilyName);
+                }
                 setMember(result.data.data.reverse());
+                setShimmerLoader(false)
             }
-            // console.log('Member Details --', result.data.data);
+            console.log('Member Details --', result.data.data);
         })
         .catch((err) => {
             console.log('Error', err);
+            setShimmerLoader(false)
         });
-    }, [familyId, newMember]);
+    }, [memberDetailsRef.current, familyId, newMember]);
 
 
     const validateForm = () => {
@@ -196,27 +220,35 @@ const MemberDetails = ({familyId, siteId, navigation}) => {
 
     return (
         <>
-            <View style={styles.card}>
-                <Text style={styles.title_text}>FAMILY MEMBERS</Text>
-                {member.map((member) => (
-                    <TouchableOpacity
-                        key={member.id}
-                        style={styles.family_details_card}
-                        onPress={() =>
-                            navigation.navigate('FamilyDetails', { familyId: member.family_id })
-                        }
-                    >
-                        <Text style={styles.family_details_text}>
-                            {member.firstname} {member.lastname}
-                        </Text>
-                        <Icon name="angle-right" style={styles.icon} />
-                    </TouchableOpacity>
-                ))}
-                <View style={styles.divider} />
-                <TouchableOpacity onPress={() => setModalVisible(true)}>
-                    <Text style={styles.primary_title_text}>Add New Member</Text>
-                </TouchableOpacity>
-            </View>
+            { shimmerLoader ? (
+                    <View>
+                        <ShimmerPlaceholder style={styles.shimmerViewPlaceholder} />
+                    </View>
+                ) : (
+                    <View style={styles.card}>
+                        <Text style={styles.title_text}>FAMILY MEMBERS</Text>
+                        {member.map((member) => (
+                            <TouchableOpacity
+                                key={member.id}
+                                style={styles.family_details_card}
+                                onPress={() =>
+                                    navigation.navigate('FamilyDetails', { familyId: member.family_id })
+                                }
+                            >
+                                <Text style={styles.family_details_text}>
+                                    {member.firstname} {member.lastname}
+                                </Text>
+                                <Icon name="angle-right" style={styles.icon} />
+                            </TouchableOpacity>
+                        ))}
+                        <View style={styles.divider} />
+                        <TouchableOpacity onPress={() => setModalVisible(true)}>
+                            <Text style={styles.primary_title_text}>Add New Member</Text>
+                        </TouchableOpacity>
+                    </View>
+                )
+            }
+            
 
              {/* Modal for Adding New Contact */}
              <Modal
@@ -527,5 +559,11 @@ const styles = StyleSheet.create({
         color: 'red',
         fontSize: 14,
         marginTop: 5,
-    }
+    },
+    shimmerViewPlaceholder:{
+        height: 200,
+        marginBottom: 20,
+        borderRadius: 6,
+        width:'100%'
+    },
 })

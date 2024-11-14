@@ -1,8 +1,12 @@
-import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native'
+import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, Animated } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import GetSenderProfileAndMediaApi from '../../api/MessagingApi/GetSenderProfileAndMediaApi';
 import UrlProvider from '../../api/UrlProvider';
+import LinearGradient from 'react-native-linear-gradient';
+import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
+
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
 const profileImage = require('../../assets/images/pro-image.jpg')
 const background = require('../../assets/images/background.png');
@@ -12,16 +16,29 @@ const SenderProfile = ({navigation, route}) => {
 
     const { userId, userName, initials, type } = route.params;
     const [profileMedia, setProfileMedia] = useState({});
+    const [shimmerLoader, setShimmerLoader] = useState(false);
+
+    const senderProfileRef = React.createRef();
 
     useEffect(() => {
+        if(senderProfileRef.current){
+            const senderProfileAnimated = Animated.stagger(400, [senderProfileRef.current.getAnimated()]);
+            Animated.loop(senderProfileAnimated).start();
+        }
+
+        setShimmerLoader(true)
+
         GetSenderProfileAndMediaApi(userId)
         .then((result) => {
+            setShimmerLoader(false)
             setProfileMedia(result.data.data);
         })
         .catch((err) => {
+            setShimmerLoader(false)
             console.log('Error', err);
         });
-    }, []);
+
+    }, [senderProfileRef.current]);
 
     
     console.log('Sender Profile Data ==> ', profileMedia)
@@ -54,33 +71,43 @@ const SenderProfile = ({navigation, route}) => {
                         </View>
                         <Icon name="angle-right" style={styles.icon}/>
                     </TouchableOpacity>
-                    <ScrollView horizontal style={styles.chat_media_content}>
-                        {profileMedia?.media?.map((item, index) => {
-                            const extension = item.attachment.split('.').pop().toLowerCase();
+                    {shimmerLoader ? (
+                            <View style={styles.shimmerContainer}>
+                                <ShimmerPlaceholder ref={senderProfileRef} style={styles.shimmerInputPlaceholder} />
+                                <ShimmerPlaceholder ref={senderProfileRef} style={styles.shimmerInputPlaceholder} />
+                                <ShimmerPlaceholder ref={senderProfileRef} style={styles.shimmerInputPlaceholder} />
+                            </View>
+                        ) : (
+                            <ScrollView horizontal style={styles.chat_media_content}>
+                                {profileMedia?.media?.map((item, index) => {
+                                    const extension = item.attachment.split('.').pop().toLowerCase();
 
-                            // Define the condition to check if it's an image
-                            const isImage = ['jpg', 'jpeg', 'png'].includes(extension);
+                                    // Define the condition to check if it's an image
+                                    const isImage = ['jpg', 'jpeg', 'png'].includes(extension);
 
-                            return (
-                                <View key={index} style={styles.chat_media_content}>
-                                    {isImage ? (
-                                        // Render Image if it's an image file
-                                        <Image
-                                            key={index}
-                                            source={{ uri: `${UrlProvider.asset_url_local}/${item.attachment}` }}
-                                            style={styles.chat_media_items}
-                                        />
-                                    ) : (
-                                        // Render document icon or text if it's a document
-                                        <View style={styles.chat_doc_items}>
-                                            <Icon name="file-alt" style={styles.doc_icon_style}/>
-                                            <Text style={styles.main_title2}>File: {extension.toUpperCase()}</Text>
+                                    return (
+                                        <View key={index} style={styles.chat_media_content}>
+                                            {isImage ? (
+                                                // Render Image if it's an image file
+                                                <Image
+                                                    key={index}
+                                                    source={{ uri: `${UrlProvider.asset_url_staging}/${item.attachment}` }}
+                                                    style={styles.chat_media_items}
+                                                />
+                                            ) : (
+                                                // Render document icon or text if it's a document
+                                                <View style={styles.chat_doc_items}>
+                                                    <Icon name="file-alt" style={styles.doc_icon_style}/>
+                                                    <Text style={styles.main_title2}>File: {extension.toUpperCase()}</Text>
+                                                </View>
+                                            )}
                                         </View>
-                                    )}
-                                </View>
-                            );
-                        })}
-                    </ScrollView>
+                                    );
+                                })}
+                            </ScrollView>
+                        )
+                    }
+                    
                 </View>
                 <View style={styles.account_creator_details}>
                     <View style={styles.account_details_header}>
@@ -274,5 +301,18 @@ const styles = StyleSheet.create({
     },
     form_group:{
         marginBottom:2
-    }
+    },
+    shimmerContainer:{
+        marginTop:30,
+        flexDirection:'row',
+        justifyContent:'flex-start',
+        alignItems:'center',
+    },
+    shimmerInputPlaceholder: {
+        height: 60,
+        marginBottom: 20,
+        borderRadius: 6,
+        width:80,
+        marginRight:10
+    },
 })

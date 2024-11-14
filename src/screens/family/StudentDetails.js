@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, ScrollView, Modal, TouchableOpacity, ActivityIndicator, Alert } from 'react-native'
+import { StyleSheet, Text, View, TextInput, ScrollView, Modal, TouchableOpacity, ActivityIndicator, Alert, Animated } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import StudentApi from '../../api/FamilyApi/StudentApi';
 import GetTuitionPlanApi from '../../api/TuitionPlanApi/GetTuitionPlanApi';
@@ -7,8 +7,17 @@ import CustomDropDownPicker from '../../components/CustomDropDownPicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import GetClassRoomApi from '../../api/ClassRoomApi/GetClassRoomApi';
 import AddNewStudentApi from '../../api/FamilyApi/AddNewStudentApi';
+import LinearGradient from 'react-native-linear-gradient';
+import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 
-const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => {
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
+
+const StudentDetails = ({familyId, siteId, navigation}) => {
+
+    console.log('Family Id in Student Details ----', familyId)
+    console.log('Site Id in Student Details ----', siteId)
+    const studentDetailsRef = React.createRef();
+    
     const [loader, setLoader] = useState(false);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -18,7 +27,6 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
     const [modalVisible, setModalVisible] = useState(false);
     const [dob, setDob] = useState('');
     const [admissionDate, setAdmissionDate] = useState('');
-    const [familyName, setFamilyName] = useState('');
     const [tuitionPlanItems, setTuitionPlanItems] = useState([]);
     const [selectedTuitionPlan, setSelectedTuitionPlan] = useState('');
     const [classRoomItems, setClassRoomItems] = useState([]);
@@ -28,6 +36,7 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
     const [state, setState] = useState('');
     const [zipCode, setZipCode] = useState('');
     const [newStudents, setNewStudents] = useState(false);
+    const [shimmerLoader, setShimmerLoader] = useState(false);
     const [errors, setErrors] = useState({
         firstName: '',
         lastName: '',
@@ -96,25 +105,32 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
     };
 
     useEffect(() => {
+
+        if(studentDetailsRef.current){
+            const studentDetailsAnimated = Animated.stagger(400, [studentDetailsRef.current.getAnimated()]);
+            Animated.loop(studentDetailsAnimated).start();
+        }
+
+        setShimmerLoader(true)
+
+
         StudentApi(familyId)
         .then((result) => {
-            if (result.status === 200) {
+            if (result.status === 200 && result.data.data) {
+                setShimmerLoader(false)
                 setStudent(result.data.data);
-                const fetchedFamilyName = result.data.data[0]?.name || '';
-                setFamilyName(fetchedFamilyName);
-                if (onFamilyNameFetched && typeof onFamilyNameFetched === 'function') {
-                    onFamilyNameFetched(fetchedFamilyName);
-                }
+                console.log('Student Details ----', result.data.data )
             }
         })
         .catch((err) => {
+            setShimmerLoader(false)
             console.log('Error', err);
         });
 
 
         GetTuitionPlanApi(siteId)
         .then((result) => {
-            if (result.status === 200) {
+            if (result.status === 200 && result.data.data) {
                 setTuitionPlanItems(result.data.data)
             }
             // console.log('Tuition Plan Details --', result.data.data);
@@ -136,7 +152,7 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
 
 
 
-    }, [familyId, onFamilyNameFetched, newStudents]);
+    }, [studentDetailsRef.current, familyId, newStudents]);
 
 
     const tuitionPlans= tuitionPlanItems.map(plan => ({
@@ -235,28 +251,37 @@ const StudentDetails = ({familyId, siteId, onFamilyNameFetched, navigation}) => 
 
     return (
         <>
-            <View style={styles.card}>
-                <Text style={styles.title_text}>CHILDREN</Text>
-                {student.map((student) => (
-                    <TouchableOpacity
-                        key={student.id}
-                        style={styles.family_details_card}
-                        onPress={() =>
-                            navigation.navigate('FamilyDetails', { familyId: student.family_id })
-                        }
-                    >
-                        <Text style={styles.family_details_text}>
-                            {student.firstname} {student.lastname}
-                        </Text>
-                        <Icon name="angle-right" style={styles.icon} />
-                    </TouchableOpacity>
-                ))}
+            { shimmerLoader ? (
+                    <View>
+                        <ShimmerPlaceholder style={styles.shimmerViewPlaceholder} />
+                    </View>
+                ) : (
+                    <View style={styles.card}>
+                        <Text style={styles.title_text}>CHILDREN</Text>
+                        {student.length > 0 ? student.map((student) => (
+                            <TouchableOpacity
+                                key={student.id}
+                                style={styles.family_details_card}
+                                onPress={() =>
+                                    navigation.navigate('FamilyDetails', { familyId: student.family_id })
+                                }
+                            >
+                                <Text style={styles.family_details_text}>
+                                    {student.firstname} {student.lastname}
+                                </Text>
+                                <Icon name="angle-right" style={styles.icon} />
+                            </TouchableOpacity>
+                        )) : <Text style={styles.title_text}>No Students Details Found.</Text> }
 
-                <View style={styles.divider} />
-                <TouchableOpacity onPress={() => setModalVisible(true)}>
-                    <Text style={styles.primary_title_text}>Add New Student</Text>
-                </TouchableOpacity>
-            </View>
+                        <View style={styles.divider} />
+                        <TouchableOpacity onPress={() => setModalVisible(true)}>
+                            <Text style={styles.primary_title_text}>Add New Student</Text>
+                        </TouchableOpacity>
+                    </View>
+                )
+                
+            }
+            
 
             {/* Modal for Adding New Student */}
             <Modal
@@ -570,5 +595,11 @@ const styles = StyleSheet.create({
         color: 'red',
         fontSize: 14,
         marginTop: 5
+    },
+    shimmerViewPlaceholder:{
+        height: 200,
+        marginBottom: 20,
+        borderRadius: 6,
+        width:'100%'
     },
 })

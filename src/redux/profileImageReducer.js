@@ -7,7 +7,7 @@ const initialState = defaultImage;
 export const profileImageReducer = (state = initialState, action) =>{
     switch (action.type) {
         case Profile_Image:
-            return action.data ? { uri: `${UrlProvider.asset_url_local}/${action.data}` } : initialState ;
+            return action.data ? { uri: `${UrlProvider.asset_url_staging}/${action.data}` } : initialState ;
         default:
             return state;
     }

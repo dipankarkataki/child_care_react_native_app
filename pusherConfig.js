@@ -1,5 +1,6 @@
 import Pusher from "pusher-js/react-native";
 import TokenManager from "./src/api/TokenManager";
+import UrlProvider from "./src/api/UrlProvider";
 
 
 // Enable pusher logging - disable in production
@@ -17,9 +18,10 @@ const initializePusher = async () => {
     }
   
     // Initialize Pusher with the retrieved token
-    const pusher = new Pusher('e380d37c497e588d96e1', {
+    const pusher = new Pusher('b6a8eb474c42d84fa408', {
       cluster: 'us2',
-      authEndpoint: 'http://192.168.31.99/api/broadcasting/auth', // Adjust as per your backend
+      // authEndpoint: UrlProvider.local_url+'/broadcasting/auth',
+      authEndpoint: UrlProvider.staging_url+'/broadcasting/auth', // Adjust as per your backend
       auth: {
         headers: {
           Authorization: `Bearer ${token}`,

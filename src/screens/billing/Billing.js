@@ -8,8 +8,15 @@ const backgroundImage = require('../../assets/images/background.png');
 
 const Billing = ({ navigation }) => {
 
-    const customerProfileId = TokenManager.getCustomerProfileId();
+    const [customerProfileId, setCustomerProfileId] = useState(null);
+    const getCustomerProfileId = async () => {
+        const profileId = await TokenManager.getCustomerProfileId();
+        setCustomerProfileId(profileId);
+    }
+    getCustomerProfileId();
     const userProfileImage = useSelector((state) => state.profileImageReducer)
+
+    console.log('Customer Profile Id ---', customerProfileId)
 
     return (
         <ImageBackground source={backgroundImage} style={styles.container}>

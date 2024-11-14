@@ -365,7 +365,7 @@ const SendMessageArea = ({navigation, route }) => {
                 description:'File download'
             }
         })
-        .fetch("GET", UrlProvider.asset_url_local+'/'+item.attachment, {
+        .fetch("GET", UrlProvider.asset_url_staging+'/'+item.attachment, {
             //some headers ..
         })
         .then((res) => {
@@ -424,7 +424,7 @@ const SendMessageArea = ({navigation, route }) => {
                                         {item.attachment && (
                                             isImage.includes(item.attachment_type) ? (
                                                 <Image
-                                                    source={{ uri: item.attachment.startsWith('content') ? item.attachment : `${UrlProvider.asset_url_local}/${item.attachment}` }}
+                                                    source={{ uri: item.attachment.startsWith('content') ? item.attachment : `${UrlProvider.asset_url_staging}/${item.attachment}` }}
                                                     style={{ width: 200, height: 200, borderRadius: 8 }}
                                                     resizeMode="cover"
                                                 />
@@ -463,7 +463,7 @@ const SendMessageArea = ({navigation, route }) => {
                                             isImage.includes(item.attachment_type) ? (
                                                 <TouchableOpacity onPress={ () => downloadFiles(item)}>
                                                     <Image
-                                                        source={{ uri: item.attachment.startsWith('content') ? item.attachment : `${UrlProvider.asset_url_local}/${item.attachment}` }}
+                                                        source={{ uri: item.attachment.startsWith('content') ? item.attachment : `${UrlProvider.asset_url_staging}/${item.attachment}` }}
                                                         style={{ width: 200, height: 200, borderRadius: 8 }}
                                                         resizeMode="cover"
                                                     />

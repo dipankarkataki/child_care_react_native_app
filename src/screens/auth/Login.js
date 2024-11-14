@@ -56,12 +56,14 @@ const Login = ({ navigation }) => {
                 'email': email.toLocaleLowerCase(),
                 'password': password
             }).then( async (result) => {
-                console.log('Login Details --- ', result.data.token);
+                console.log('Login Details --- ', result.data.data);
                 
                 if(result.data.status == 200){
                     await TokenManager.setToken(result.data.token);
                     await TokenManager.setUserId(result.data.data.user_id.toString());
-                    await TokenManager.setCustomerProfileId(result.data.data.aNet_customer_profile_id.toString())
+                    if(result.data.data.aNet_customer_profile_id != null){
+                        await TokenManager.setCustomerProfileId(result.data.data.aNet_customer_profile_id.toString())
+                    }
                     // await TokenManager.setUserProfileImage(result.data.data.profile_image)
                     if(result.data.data.profile_image != null){
                         dispatch(setGlobalProfileImage(result.data.data.profile_image))
