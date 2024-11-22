@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native'
+import { ImageBackground, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator, SafeAreaView } from 'react-native'
 import React, { useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ModalComponent from '../../components/ModalComponent';
@@ -67,81 +67,84 @@ const ChangePassword = ({ navigation }) => {
 
 
     return (
-        <ImageBackground source={background} style={styles.container}>
-            <ScrollView alwaysBounceVertical>
-                <View style={styles.logo_area}>
-                    <Image source={logo_large} style={styles.logo_large} />
-                </View>
-                <KeyboardAvoidingView behaviour={Platform.OS === 'ios' ? 'padding' : null} style={styles.change_password_container}>
-                    <View style={styles.form}>
-                        <View style={styles.password_area}>
-                            <Text style={styles.text_title}>Password</Text>
-                            <View style={[styles.input_container, { borderColor: errors.password ? 'red' : '#E1F3FB' }]}>
-                                <TextInput
-                                    style={styles.text_input}
-                                    placeholder='* * * * * * * * * * *'
-                                    placeholderTextColor='#b9b9b9'
-                                    secureTextEntry={passwordVisibilty}
-                                    value={password}
-                                    onChangeText={(text) => setPassword(text)}
-                                />
-                                {
-                                    passwordVisibilty ?
-                                        <TouchableOpacity onPress={() => setPasswordVisibility(false)}>
-                                            <Icon name="eye-slash" size={20} color="#888" style={styles.icon} />
-                                        </TouchableOpacity>
-                                        :
-                                        <TouchableOpacity onPress={() => setPasswordVisibility(true)}>
-                                            <Icon name="eye" size={20} color="#888" style={styles.icon} />
-                                        </TouchableOpacity>
-                                }
-                            </View>
-                            {errors.password ? <Text style={styles.error_text}>{errors.password}</Text> : null}
-                        </View>
-
-                        <View style={styles.password_area}>
-                            <Text style={styles.text_title}>Confirm Password</Text>
-                            <View style={[styles.input_container, { borderColor: errors.confirmPassword ? 'red' : '#E1F3FB' }]}>
-                                <TextInput
-                                    style={styles.text_input}
-                                    placeholder='* * * * * * * * * * *'
-                                    placeholderTextColor='#b9b9b9'
-                                    secureTextEntry={confirmPasswordVisibilty}
-                                    value={confirmPassword}
-                                    onChangeText={(text) => setConfirmPassword(text)}
-                                />
-                                {
-                                    confirmPasswordVisibilty ?
-                                        <TouchableOpacity onPress={() => setConfirmPasswordVisibility(false)}>
-                                            <Icon name="eye-slash" size={20} color="#888" style={styles.icon} />
-                                        </TouchableOpacity>
-                                        :
-                                        <TouchableOpacity onPress={() => setConfirmPasswordVisibility(true)}>
-                                            <Icon name="eye" size={20} color="#888" style={styles.icon} />
-                                        </TouchableOpacity>
-                                }
-                            </View>
-                            {errors.confirmPassword ? <Text style={styles.error_text}>{errors.confirmPassword}</Text> : null}
-                        </View>
-
+        <SafeAreaView style={styles.container}>
+            <ImageBackground source={background} style={styles.image_background}>
+                <ScrollView alwaysBounceVertical>
+                    <View style={styles.logo_area}>
+                        <Image source={logo_large} style={styles.logo_large} />
                     </View>
-                    <View style={styles.form_btn_container}>
-                        <TouchableOpacity style={styles.change_password} onPress={() => submitForm()} disabled={loader}>
-                            <Text style={styles.change_password_text}>{loader ? 'Please wait...' : 'Change Password'}</Text>
-                            <ActivityIndicator size="large" color='#2E78FF' style={styles.activity_indicator} animating={loader}/>
-                        </TouchableOpacity>
-                    </View>
-                </KeyboardAvoidingView>
-            </ScrollView>
-            <ModalComponent 
-                modalVisible={modalVisible}
-                setModalVisible={setModalVisible}
-                message="Password changed successfully"
-                onClose={handleOnClose}
-                icon="success"
-            
-            />
-        </ImageBackground>
+                    <KeyboardAvoidingView behaviour={Platform.OS === 'ios' ? 'padding' : null} style={styles.change_password_container}>
+                        <View style={styles.form}>
+                            <View style={styles.password_area}>
+                                <Text style={styles.text_title}>Password</Text>
+                                <View style={[styles.input_container, { borderColor: errors.password ? 'red' : '#E1F3FB' }]}>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder='* * * * * * * * * * *'
+                                        placeholderTextColor='#b9b9b9'
+                                        secureTextEntry={passwordVisibilty}
+                                        value={password}
+                                        onChangeText={(text) => setPassword(text)}
+                                    />
+                                    {
+                                        passwordVisibilty ?
+                                            <TouchableOpacity onPress={() => setPasswordVisibility(false)}>
+                                                <Icon name="eye-slash" size={20} color="#888" style={styles.icon} />
+                                            </TouchableOpacity>
+                                            :
+                                            <TouchableOpacity onPress={() => setPasswordVisibility(true)}>
+                                                <Icon name="eye" size={20} color="#888" style={styles.icon} />
+                                            </TouchableOpacity>
+                                    }
+                                </View>
+                                {errors.password ? <Text style={styles.error_text}>{errors.password}</Text> : null}
+                            </View>
+
+                            <View style={styles.password_area}>
+                                <Text style={styles.text_title}>Confirm Password</Text>
+                                <View style={[styles.input_container, { borderColor: errors.confirmPassword ? 'red' : '#E1F3FB' }]}>
+                                    <TextInput
+                                        style={styles.text_input}
+                                        placeholder='* * * * * * * * * * *'
+                                        placeholderTextColor='#b9b9b9'
+                                        secureTextEntry={confirmPasswordVisibilty}
+                                        value={confirmPassword}
+                                        onChangeText={(text) => setConfirmPassword(text)}
+                                    />
+                                    {
+                                        confirmPasswordVisibilty ?
+                                            <TouchableOpacity onPress={() => setConfirmPasswordVisibility(false)}>
+                                                <Icon name="eye-slash" size={20} color="#888" style={styles.icon} />
+                                            </TouchableOpacity>
+                                            :
+                                            <TouchableOpacity onPress={() => setConfirmPasswordVisibility(true)}>
+                                                <Icon name="eye" size={20} color="#888" style={styles.icon} />
+                                            </TouchableOpacity>
+                                    }
+                                </View>
+                                {errors.confirmPassword ? <Text style={styles.error_text}>{errors.confirmPassword}</Text> : null}
+                            </View>
+
+                        </View>
+                        <View style={styles.form_btn_container}>
+                            <TouchableOpacity style={styles.change_password} onPress={() => submitForm()} disabled={loader}>
+                                <Text style={styles.change_password_text}>{loader ? 'Please wait...' : 'Change Password'}</Text>
+                                <ActivityIndicator size="large" color='#2E78FF' style={styles.activity_indicator} animating={loader}/>
+                            </TouchableOpacity>
+                        </View>
+                    </KeyboardAvoidingView>
+                </ScrollView>
+                <ModalComponent 
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    message="Password changed successfully"
+                    onClose={handleOnClose}
+                    icon="success"
+                
+                />
+            </ImageBackground>
+        </SafeAreaView>
+        
     )
 }
 
@@ -150,8 +153,10 @@ export default ChangePassword
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingLeft:20,
-        paddingRight:20
+    },
+    image_background:{
+        flex:1,
+        paddingHorizontal:20,
     },
     logo_area: {
         flex: 1,

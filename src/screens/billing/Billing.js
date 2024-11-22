@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView } from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, SafeAreaView } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import TokenManager from '../../api/TokenManager';
@@ -19,147 +19,150 @@ const Billing = ({ navigation }) => {
     console.log('Customer Profile Id ---', customerProfileId)
 
     return (
-        <ImageBackground source={backgroundImage} style={styles.container}>
-            <View style={styles.header_container}>
-                <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
-                    <Icon name="long-arrow-alt-left" style={styles.header_icon} />
-                </TouchableOpacity>
-                <Text style={styles.header_text}>Billing</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
-                <Image  source={userProfileImage}  style={styles.user_avatar} />
-                </TouchableOpacity>
-            </View>
-            <View style={styles.billing_header}>
-                <View style={styles.billing_revenue_container}>
-                    <Icon name='plus' style={styles.icon}/>
-                    <Text style={styles.balance}>$2,2200.00</Text>
-                </View>
-                <Text style={styles.small_text}>Due Amount</Text>
-            </View>
-            <View style={styles.billing_content_container}>
-                <View style={styles.card}>
-                    <View style={styles.pay_now_header}>
-                        <View>
-                            <Text style={styles.title_text}>Due Date</Text>
-                            <Text style={styles.pay_now_header_text}>MM/DD/YYYY</Text>
-                        </View>
-                        <View>
-                            <Text style={styles.title_text}>Auto Pay</Text>
-                            <Text style={styles.pay_now_header_text}>OFF</Text>
-                        </View>
-                    </View>
-                    <TouchableOpacity style={styles.pay_now_btn}>
-                        <Text style={styles.pay_now_btn_text}>Pay Now</Text>
+        <SafeAreaView style={styles.container}>
+            <ImageBackground source={backgroundImage} style={styles.image_background}>
+                <View style={styles.header_container}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
+                        <Icon name="long-arrow-alt-left" style={styles.header_icon} />
                     </TouchableOpacity>
-                    <View style={styles.payment_method_container}>
-                        <Icon name='credit-card' style={styles.icon_large} />
-                        <TouchableOpacity onPress={() => navigation.navigate('AutoPay')}>
-                            {
-                                customerProfileId ? (
-                                    <View>
-                                        <Text style={[styles.payment_method_title, {color:'teal'}]}>Payment Method Available</Text>
-                                        <Text style={styles.payment_method_sub_title}>Tap here to check</Text>
-                                    </View>
-                                ) : (
-                                    <View>
-                                        <Text style={[styles.payment_method_title, {color:'crimson'}]}>No Payment method found!</Text>
-                                        <Text style={styles.payment_method_sub_title}>Tap here and add one</Text>
-                                    </View>
-                                )
-                            }
-                           
+                    <Text style={styles.header_text}>Billing</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
+                    <Image  source={userProfileImage}  style={styles.user_avatar} />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.billing_header}>
+                    <View style={styles.billing_revenue_container}>
+                        <Icon name='plus' style={styles.icon}/>
+                        <Text style={styles.balance}>$2,2200.00</Text>
+                    </View>
+                    <Text style={styles.small_text}>Due Amount</Text>
+                </View>
+                <View style={styles.billing_content_container}>
+                    <View style={styles.card}>
+                        <View style={styles.pay_now_header}>
+                            <View>
+                                <Text style={styles.title_text}>Due Date</Text>
+                                <Text style={styles.pay_now_header_text}>MM/DD/YYYY</Text>
+                            </View>
+                            <View>
+                                <Text style={styles.title_text}>Auto Pay</Text>
+                                <Text style={styles.pay_now_header_text}>OFF</Text>
+                            </View>
+                        </View>
+                        <TouchableOpacity style={styles.pay_now_btn}>
+                            <Text style={styles.pay_now_btn_text}>Pay Now</Text>
                         </TouchableOpacity>
-                        <Icon name='angle-right' style={styles.icon_small}/>
+                        <View style={styles.payment_method_container}>
+                            <Icon name='credit-card' style={styles.icon_large} />
+                            <TouchableOpacity onPress={() => navigation.navigate('AutoPay')}>
+                                {
+                                    customerProfileId ? (
+                                        <View>
+                                            <Text style={[styles.payment_method_title, {color:'teal'}]}>Payment Method Available</Text>
+                                            <Text style={styles.payment_method_sub_title}>Tap here to check</Text>
+                                        </View>
+                                    ) : (
+                                        <View>
+                                            <Text style={[styles.payment_method_title, {color:'crimson'}]}>No Payment method found!</Text>
+                                            <Text style={styles.payment_method_sub_title}>Tap here and add one</Text>
+                                        </View>
+                                    )
+                                }
+                            
+                            </TouchableOpacity>
+                            <Icon name='angle-right' style={styles.icon_small}/>
+                        </View>
                     </View>
                 </View>
-            </View>
-            <ScrollView style={styles.statements_container} alwaysBounceVertical>
-                <View style={styles.card}>
-                    <Text style={styles.title_text}>Account Summary</Text>
-                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
-                        <View>
-                            <Text style={styles.input_title}>Statement Balance (Aug 12)</Text>
-                            <TouchableOpacity>
-                                <Text style={styles.payment_method_sub_title}>Details</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <Text style={styles.input_title}>-$1500</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
-                        <View>
-                            <Text style={styles.input_title}>Payments And Credits</Text>
-                            <TouchableOpacity>
-                                <Text style={styles.payment_method_sub_title}>Details</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <Text style={styles.input_title}>$800</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
-                        <View>
-                            <Text style={styles.input_title}>Recent Charges</Text>
-                            <TouchableOpacity>
-                                <Text style={styles.payment_method_sub_title}>Details</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <Text style={styles.input_title}>$0</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.card}>
-                    <Text style={styles.title_text}>Recent Activity</Text>
-                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
-                        <Text style={styles.input_title}>No recent activity found.</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.card}>
-                    <Text style={styles.title_text}>Statements</Text>
-                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
-                        <View>
+                <ScrollView style={styles.statements_container} alwaysBounceVertical>
+                    <View style={styles.card}>
+                        <Text style={styles.title_text}>Account Summary</Text>
+                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
+                            <View>
+                                <Text style={styles.input_title}>Statement Balance (Aug 12)</Text>
+                                <TouchableOpacity>
+                                    <Text style={styles.payment_method_sub_title}>Details</Text>
+                                </TouchableOpacity>
+                            </View>
                             <Text style={styles.input_title}>-$1500</Text>
-                            <TouchableOpacity>
-                                <Text style={styles.payment_method_sub_title}>August 12, 2024</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <Icon name="angle-right" style={styles.input_title} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
-                        <View>
-                            <Text style={styles.input_title}>-$2000</Text>
-                            <TouchableOpacity>
-                                <Text style={styles.payment_method_sub_title}>August 13, 2024</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <Icon name="angle-right" style={styles.input_title} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
-                        <View>
-                            <Text style={styles.input_title}>-$100</Text>
-                            <TouchableOpacity>
-                                <Text style={styles.payment_method_sub_title}>August 14, 2024</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <Icon name="angle-right" style={styles.input_title} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
-                        <View>
-                            <Text style={styles.input_title}>-$25000</Text>
-                            <TouchableOpacity>
-                                <Text style={styles.payment_method_sub_title}>August 15, 2024</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <Icon name="angle-right" style={styles.input_title} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
-                        <View>
-                            <Text style={styles.input_title}>-$10000</Text>
-                            <TouchableOpacity>
-                                <Text style={styles.payment_method_sub_title}>August 16, 2024</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <Icon name="angle-right" style={styles.input_title} />
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
-        </ImageBackground>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
+                            <View>
+                                <Text style={styles.input_title}>Payments And Credits</Text>
+                                <TouchableOpacity>
+                                    <Text style={styles.payment_method_sub_title}>Details</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <Text style={styles.input_title}>$800</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
+                            <View>
+                                <Text style={styles.input_title}>Recent Charges</Text>
+                                <TouchableOpacity>
+                                    <Text style={styles.payment_method_sub_title}>Details</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <Text style={styles.input_title}>$0</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.card}>
+                        <Text style={styles.title_text}>Recent Activity</Text>
+                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
+                            <Text style={styles.input_title}>No recent activity found.</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.card}>
+                        <Text style={styles.title_text}>Statements</Text>
+                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
+                            <View>
+                                <Text style={styles.input_title}>-$1500</Text>
+                                <TouchableOpacity>
+                                    <Text style={styles.payment_method_sub_title}>August 12, 2024</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <Icon name="angle-right" style={styles.input_title} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
+                            <View>
+                                <Text style={styles.input_title}>-$2000</Text>
+                                <TouchableOpacity>
+                                    <Text style={styles.payment_method_sub_title}>August 13, 2024</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <Icon name="angle-right" style={styles.input_title} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
+                            <View>
+                                <Text style={styles.input_title}>-$100</Text>
+                                <TouchableOpacity>
+                                    <Text style={styles.payment_method_sub_title}>August 14, 2024</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <Icon name="angle-right" style={styles.input_title} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
+                            <View>
+                                <Text style={styles.input_title}>-$25000</Text>
+                                <TouchableOpacity>
+                                    <Text style={styles.payment_method_sub_title}>August 15, 2024</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <Icon name="angle-right" style={styles.input_title} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate('Billing')}>
+                            <View>
+                                <Text style={styles.input_title}>-$10000</Text>
+                                <TouchableOpacity>
+                                    <Text style={styles.payment_method_sub_title}>August 16, 2024</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <Icon name="angle-right" style={styles.input_title} />
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </ImageBackground>
+        </SafeAreaView>
+        
     );
 }
 
@@ -168,6 +171,9 @@ export default Billing;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    image_background:{
+        flex:1,
     },
     header_container:{
         height:60,

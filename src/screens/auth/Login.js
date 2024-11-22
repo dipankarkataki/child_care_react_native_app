@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, SafeAreaView, Alert } from 'react-native';
 import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LoginApi from '../../api/LoginApi';
@@ -93,74 +93,86 @@ const Login = ({ navigation }) => {
         setModalVisible(false)
     }
 
+    const comingSoonFeature = (destination) => {
+        "Feature Coming Soon! 🚀.", "We're working hard to bring this feature to you. Stay tuned for updates!"
+        Alert.alert('Feature Coming Soon! 🚀.', "We're working hard to bring this feature to you, but if you want to get the look and feel then click navigate otherwise click close.",[{
+            text :'Close',
+        },{
+            text : 'Navigate',
+            onPress:  () => navigation.navigate(destination)
+        }])
+    }
+
     return (
-        <ImageBackground source={background} style={styles.container}>
-            <ScrollView alwaysBounceVertical>
-                <View style={styles.logo_area}>
-                    <Image source={logo_large} style={styles.logo_large} />
-                </View>
-                <KeyboardAvoidingView behaviour={Platform.OS === 'ios' ? 'padding' : null} style={styles.form}>
-                    <View style={styles.email_area}>
-                        <Text style={styles.text_title}>Email</Text>
-                        <View style={[styles.input_container, { borderColor: errors.email ? 'red' : '#E1F3FB' }]}>
-                            <TextInput
-                                style={styles.text_input}
-                                placeholder="e.g jhondoe@xyz.com"
-                                placeholderTextColor="#b9b9b9"
-                                value={email}
-                                onChangeText={(text) => setEmail(text)}
-                            />
-                            <Icon name="envelope" size={20} color="#888" style={styles.icon} />
-                        </View>
-                        {errors.email ? <Text style={styles.error_text}>{errors.email}</Text> : null}
+        <SafeAreaView style={styles.container}>
+            <ImageBackground source={background} style={styles.image_background}>
+                <ScrollView alwaysBounceVertical>
+                    <View style={styles.logo_area}>
+                        <Image source={logo_large} style={styles.logo_large} />
                     </View>
-                    <View style={styles.password_area}>
-                        <Text style={styles.text_title}>Password</Text>
-                        <View style={[styles.input_container, { borderColor: errors.password ? 'red' : '#E1F3FB' }]}>
-                            <TextInput
-                                style={styles.text_input}
-                                placeholder='* * * * * * * * * * *'
-                                placeholderTextColor='#b9b9b9'
-                                secureTextEntry={passwordVisibilty}
-                                value={password}
-                                onChangeText={(text) => setPassword(text)}
-                            />
-                            {
-                                passwordVisibilty ?
-                                    <TouchableOpacity onPress={() => setPasswordVisibility(false)}>
-                                        <Icon name="eye-slash" size={20} color="#888" style={styles.icon} />
-                                    </TouchableOpacity>
-                                    :
-                                    <TouchableOpacity onPress={() => setPasswordVisibility(true)}>
-                                        <Icon name="eye" size={20} color="#888" style={styles.icon} />
-                                    </TouchableOpacity>
-                            }
+                    <KeyboardAvoidingView behaviour={Platform.OS === 'ios' ? 'padding' : null} style={styles.form}>
+                        <View style={styles.email_area}>
+                            <Text style={styles.text_title}>Email</Text>
+                            <View style={[styles.input_container, { borderColor: errors.email ? 'red' : '#E1F3FB' }]}>
+                                <TextInput
+                                    style={styles.text_input}
+                                    placeholder="e.g jhondoe@xyz.com"
+                                    placeholderTextColor="#b9b9b9"
+                                    value={email}
+                                    onChangeText={(text) => setEmail(text)}
+                                />
+                                <Icon name="envelope" size={20} color="#888" style={styles.icon} />
+                            </View>
+                            {errors.email ? <Text style={styles.error_text}>{errors.email}</Text> : null}
                         </View>
-                        {errors.password ? <Text style={styles.error_text}>{errors.password}</Text> : null}
+                        <View style={styles.password_area}>
+                            <Text style={styles.text_title}>Password</Text>
+                            <View style={[styles.input_container, { borderColor: errors.password ? 'red' : '#E1F3FB' }]}>
+                                <TextInput
+                                    style={styles.text_input}
+                                    placeholder='* * * * * * * * * * *'
+                                    placeholderTextColor='#b9b9b9'
+                                    secureTextEntry={passwordVisibilty}
+                                    value={password}
+                                    onChangeText={(text) => setPassword(text)}
+                                />
+                                {
+                                    passwordVisibilty ?
+                                        <TouchableOpacity onPress={() => setPasswordVisibility(false)}>
+                                            <Icon name="eye-slash" size={20} color="#888" style={styles.icon} />
+                                        </TouchableOpacity>
+                                        :
+                                        <TouchableOpacity onPress={() => setPasswordVisibility(true)}>
+                                            <Icon name="eye" size={20} color="#888" style={styles.icon} />
+                                        </TouchableOpacity>
+                                }
+                            </View>
+                            {errors.password ? <Text style={styles.error_text}>{errors.password}</Text> : null}
+                        </View>
+                    </KeyboardAvoidingView>
+                    <View style={styles.form_btn_container}>
+                        <TouchableOpacity style={styles.login_btn} onPress={submitForm} disabled={loader}>
+                            <Text style={styles.login_btn_text}>{loader ? 'Loging in...' : 'Login'}</Text>
+                            <ActivityIndicator size="large" color='#2E78FF' style={styles.activity_indicator} animating={loader}/>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.signup_btn} onPress={() => comingSoonFeature('SignUp')}>
+                            <Text style={styles.signup_btn_text}>Don't have an account? <Text style={styles.signup_text}>Sign Up</Text></Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.signup_btn} onPress={() => navigation.navigate('ForgotPassword')}>
+                            <Text style={styles.forgot_password}>Forgot Password?</Text>
+                        </TouchableOpacity>
                     </View>
-                </KeyboardAvoidingView>
-                <View style={styles.form_btn_container}>
-                    <TouchableOpacity style={styles.login_btn} onPress={submitForm} disabled={loader}>
-                        <Text style={styles.login_btn_text}>{loader ? 'Loging in...' : 'Login'}</Text>
-                        <ActivityIndicator size="large" color='#2E78FF' style={styles.activity_indicator} animating={loader}/>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.signup_btn} onPress={() => navigation.navigate('SignUp')}>
-                        <Text style={styles.signup_btn_text}>Don't have an account? <Text style={styles.signup_text}>Sign Up</Text></Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.signup_btn} onPress={() => navigation.navigate('ForgotPassword')}>
-                        <Text style={styles.forgot_password}>Forgot Password?</Text>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
-            <ModalComponent 
-                modalVisible={modalVisible}
-                setModalVisible={setModalVisible}
-                message={modalMessage}
-                onClose={handleOnClose}
-                icon={modalIcon}
-            
-            />
-        </ImageBackground>
+                </ScrollView>
+                <ModalComponent 
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    message={modalMessage}
+                    onClose={handleOnClose}
+                    icon={modalIcon}
+                />
+            </ImageBackground>
+        </SafeAreaView>
+        
     );
 };
 
@@ -169,11 +181,12 @@ export default Login;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingLeft:20,
-        paddingRight:20
+    },
+    image_background:{
+        flex:1,
+        paddingHorizontal:20,
     },
     logo_area: {
-        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 40,

@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Modal, Animated, Alert, ActivityIndicator } from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Modal, Animated, Alert, ActivityIndicator, SafeAreaView } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons'
@@ -295,7 +295,8 @@ const ProfileSettings = ({ navigation }) => {
     }
 
     return (
-        <ImageBackground source={backgroundImage} style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <ImageBackground source={backgroundImage} style={styles.image_background}>
             {loading ? (
                 <View style={styles.profile_header}>
                     <ShimmerPlaceholder ref={avatarRef} style={styles.profile_header_image} stopAutoRun />
@@ -420,7 +421,7 @@ const ProfileSettings = ({ navigation }) => {
                                     <SimpleIcon name="logout" style={styles.logout_icon}/>
                                     <Text style={styles.logout_btn_text}>{logoutActivityLoader ? 'Loging out...' : 'Log Out'}</Text>
                                     {
-                                        logoutActivityLoader && ( <ActivityIndicator size="large" color='#2E78FF' animating={logoutActivityLoader}/> )
+                                        logoutActivityLoader && ( <ActivityIndicator size="small" color='#2E78FF' animating={logoutActivityLoader}/> )
                                     }
                                 </View>
                             </TouchableOpacity>
@@ -551,7 +552,9 @@ const ProfileSettings = ({ navigation }) => {
                 icon={modalIcon}
             
             />
-        </ImageBackground>
+            </ImageBackground>
+        </SafeAreaView>
+        
     );
 }
 
@@ -560,6 +563,9 @@ export default ProfileSettings;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    image_background:{
+        flex:1,
     },
     profile_header: {
         justifyContent: 'center',

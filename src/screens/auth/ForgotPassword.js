@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, KeyboardAvoidingView, ActivityIndicator } from 'react-native'
+import { ImageBackground, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, KeyboardAvoidingView, ActivityIndicator, SafeAreaView } from 'react-native'
 import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ModalComponent from '../../components/ModalComponent';
@@ -49,7 +49,8 @@ const ForgotPassword = ({navigation}) => {
     }
 
     return (
-        <ImageBackground source={background} style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <ImageBackground source={background} style={styles.image_background}>
             <View style={styles.logo_area}>
                 <Image source={logo_large} style={styles.logo_large} />
             </View>
@@ -82,7 +83,9 @@ const ForgotPassword = ({navigation}) => {
                 onClose={handleOnClose}
                 icon="success"
             />
-        </ImageBackground>
+            </ImageBackground>
+        </SafeAreaView>
+        
     )
 }
 
@@ -91,8 +94,10 @@ export default ForgotPassword
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingLeft:20,
-        paddingRight:20
+    },
+    image_background:{
+        flex:1,
+        paddingHorizontal:20,
     },
     logo_area: {
         flex: 1,

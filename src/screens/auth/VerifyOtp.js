@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, KeyboardAvoidingView, TextInput, Platform, ActivityIndicator } from 'react-native'
+import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, KeyboardAvoidingView, TextInput, Platform, ActivityIndicator, SafeAreaView } from 'react-native'
 import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ModalComponent from '../../components/ModalComponent';
@@ -50,42 +50,45 @@ const VerifyOtp = ({navigation}) => {
     }
 
     return (
-        <ImageBackground source={backgroundImage} style={styles.container}>
-            <View style={styles.logo_area}>
-                <Image source={logo_large} style={styles.logo_large} />
-            </View>
-            <View style={styles.verify_otp_container}>
-                <KeyboardAvoidingView behaviour={Platform.OS === 'ios' ? 'padding' : null} style={styles.form} >
-                    <View style={styles.otp_area}>
-                        <Text style={styles.text_title}>Enter 6 Digit OTP</Text>
-                        <View style={[styles.input_container, { borderColor: errors.otp ? 'red' : '#E1F3FB' }]}>
-                            <TextInput
-                                style={styles.text_input}
-                                placeholder="e.g 012345"
-                                placeholderTextColor="#b9b9b9"
-                                value={otp}
-                                maxLength={6}
-                                keyboardType="number-pad"
-                                onChangeText={(text) => setOtp(text.replace(/[^0-9]/g, ''))}
-                            />
-                            <Icon name="mobile-phone" size={20} color="#888" style={styles.icon} />
+        <SafeAreaView style={styles.container}>
+            <ImageBackground source={backgroundImage} style={styles.image_background}>
+                <View style={styles.logo_area}>
+                    <Image source={logo_large} style={styles.logo_large} />
+                </View>
+                <View style={styles.verify_otp_container}>
+                    <KeyboardAvoidingView behaviour={Platform.OS === 'ios' ? 'padding' : null} style={styles.form} >
+                        <View style={styles.otp_area}>
+                            <Text style={styles.text_title}>Enter 6 Digit OTP</Text>
+                            <View style={[styles.input_container, { borderColor: errors.otp ? 'red' : '#E1F3FB' }]}>
+                                <TextInput
+                                    style={styles.text_input}
+                                    placeholder="e.g 012345"
+                                    placeholderTextColor="#b9b9b9"
+                                    value={otp}
+                                    maxLength={6}
+                                    keyboardType="number-pad"
+                                    onChangeText={(text) => setOtp(text.replace(/[^0-9]/g, ''))}
+                                />
+                                <Icon name="mobile-phone" size={20} color="#888" style={styles.icon} />
+                            </View>
+                            {errors.otp ? <Text style={styles.error_text}>{errors.otp}</Text> : null}
                         </View>
-                        {errors.otp ? <Text style={styles.error_text}>{errors.otp}</Text> : null}
-                    </View>
-                    <TouchableOpacity style={styles.verify_otp} onPress={() => submitForm()} disabled={loader}>
-                        <Text style={styles.verify_otp_text}>{loader ? 'Verifying...' : 'Verify OTP'}</Text>
-                        <ActivityIndicator size="large" color='#2E78FF' style={styles.activity_indicator} animating={loader}/>
-                    </TouchableOpacity>
-                </KeyboardAvoidingView>
-            </View>
-            <ModalComponent 
-                modalVisible={modalVisible}
-                setModalVisible={setModalVisible}
-                message="OTP verified successfully"
-                onClose={handleOnClose}
-                icon="success"
-            />
-        </ImageBackground>
+                        <TouchableOpacity style={styles.verify_otp} onPress={() => submitForm()} disabled={loader}>
+                            <Text style={styles.verify_otp_text}>{loader ? 'Verifying...' : 'Verify OTP'}</Text>
+                            <ActivityIndicator size="large" color='#2E78FF' style={styles.activity_indicator} animating={loader}/>
+                        </TouchableOpacity>
+                    </KeyboardAvoidingView>
+                </View>
+                <ModalComponent 
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    message="OTP verified successfully"
+                    onClose={handleOnClose}
+                    icon="success"
+                />
+            </ImageBackground>
+        </SafeAreaView>
+        
     )
 }
 
@@ -94,8 +97,10 @@ export default VerifyOtp
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingLeft:20,
-        paddingRight:20
+    },
+    image_background:{
+        flex:1,
+        paddingHorizontal:20,
     },
     logo_area: {
         flex: 1,

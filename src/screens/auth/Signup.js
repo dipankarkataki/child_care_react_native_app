@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native'
+import { ImageBackground, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator, SafeAreaView } from 'react-native'
 import React, { useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -98,7 +98,8 @@ const SignUp = ({ navigation }) => {
 
 
     return (
-        <ImageBackground source={background} style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <ImageBackground source={background} style={styles.image_background}>
             <ScrollView alwaysBounceVertical>
                 <View style={styles.logo_area}>
                     <Image source={logo_large} style={styles.logo_large} />
@@ -119,6 +120,9 @@ const SignUp = ({ navigation }) => {
                                 </View>
                                 {errors.firstName ? <Text style={styles.error_text}>{errors.firstName}</Text> : null}
                             </View>
+                        </View>
+
+                        <View style={styles.name_area}>
                             <View style={styles.lastname}>
                                 <Text style={styles.text_title}>Last Name</Text>
                                 <View style={[styles.input_container, { borderColor: errors.lastName ? 'red' : '#E1F3FB' }]}>
@@ -230,7 +234,9 @@ const SignUp = ({ navigation }) => {
                     </View>
                 </KeyboardAvoidingView>
             </ScrollView>
-        </ImageBackground>
+            </ImageBackground>
+        </SafeAreaView>
+        
     )
 }
 
@@ -239,8 +245,10 @@ export default SignUp
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingLeft:20,
-        paddingRight:20
+    },
+    image_background:{
+        flex: 1,
+        paddingHorizontal:20,
     },
     logo_area: {
         flex: 1,
@@ -264,7 +272,6 @@ const styles = StyleSheet.create({
     },
     firstname: {
         flex: 1,
-        marginRight: 10
     },
     lastname: {
         flex: 1,

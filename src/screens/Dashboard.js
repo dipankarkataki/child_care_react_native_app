@@ -1,4 +1,4 @@
-import { Alert, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Image, ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect } from 'react'
 import CheckTokenApi from '../api/CheckTokenApi/CheckTokenApi';
 import TokenManager from '../api/TokenManager';
@@ -60,55 +60,59 @@ const Dashboard = ({ navigation }) => {
     console.log('Profile Image from dashboard >>>>>>>>>>>>>>>', userProfileImage)
 
     return (
-        <ImageBackground source={background} style={styles.container}>
-            <View style={styles.header_container}>
-                <Text style={styles.header_text}>Dashboard</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
-                    <Image  source={userProfileImage}  style={styles.user_avatar} />
-                </TouchableOpacity>
-            </View>
-            <View style={styles.welcome_container}>
-                <Image source={welcome_smily} style={styles.welcome_image} />
-                <Text style={styles.welcome_text}>Welcome</Text>
-                <Text style={styles.welcome_content}>
-                    Effortlessly manage child care with tools for attendance tracking, 
-                    billing, secure chatting, daily reports, notices, family invites
-                    and event updates.
-                </Text>
-            </View>
-            <View style={styles.dashboard_items_container}>
-                <View style={styles.items_group}>
-                    <TouchableOpacity style={styles.item} onPress={comingSoon}>
-                        <Image source={attendance_user} style={styles.item_image} />
-                        <Text style={styles.item_text}>Attendance</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('Billing')}>
-                        <Image source={billing} style={styles.item_image} />
-                        <Text style={styles.item_text}>Billing</Text>
+
+        <SafeAreaView style={styles.container}>
+            <ImageBackground source={background} style={styles.image_background}>
+                <View style={styles.header_container}>
+                    <Text style={styles.header_text}>Dashboard</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('ProfileSettings')}>
+                        <Image  source={userProfileImage}  style={styles.user_avatar} />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.items_group}>
-                    <TouchableOpacity style={styles.item} onPress={comingSoon}>
-                        <Image source={reports} style={styles.item_image} />
-                        <Text style={styles.item_text}>Daily Reports</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('MessagingDashboard')}>
-                        <Image source={messaging} style={styles.item_image} />
-                        <Text style={styles.item_text}>Messaging</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.item} onPress={comingSoon}>
-                        <Image source={notice} style={styles.item_image} />
-                        <Text style={styles.item_text}>Notice & Events</Text>
-                    </TouchableOpacity>
+                <View style={styles.welcome_container}>
+                    <Image source={welcome_smily} style={styles.welcome_image} />
+                    <Text style={styles.welcome_text}>Welcome</Text>
+                    <Text style={styles.welcome_content}>
+                        Effortlessly manage child care with tools for attendance tracking, 
+                        billing, secure chatting, daily reports, notices, family invites
+                        and event updates.
+                    </Text>
                 </View>
-                <View style={styles.items_group}>
-                    <TouchableOpacity style={styles.item} onPress={comingSoon}>
-                        <Image source={invite} style={styles.item_image} />
-                        <Text style={styles.item_text}>Invite Family Member</Text>
-                    </TouchableOpacity>
+                <View style={styles.dashboard_items_container}>
+                    <View style={styles.items_group}>
+                        <TouchableOpacity style={styles.item} onPress={comingSoon}>
+                            <Image source={attendance_user} style={styles.item_image} />
+                            <Text style={styles.item_text}>Attendance</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('Billing')}>
+                            <Image source={billing} style={styles.item_image} />
+                            <Text style={styles.item_text}>Billing</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.items_group}>
+                        <TouchableOpacity style={styles.item} onPress={comingSoon}>
+                            <Image source={reports} style={styles.item_image} />
+                            <Text style={styles.item_text}>Daily Reports</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('MessagingDashboard')}>
+                            <Image source={messaging} style={styles.item_image} />
+                            <Text style={styles.item_text}>Messaging</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.item} onPress={comingSoon}>
+                            <Image source={notice} style={styles.item_image} />
+                            <Text style={styles.item_text}>Notice & Events</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.items_group}>
+                        <TouchableOpacity style={styles.item} onPress={comingSoon}>
+                            <Image source={invite} style={styles.item_image} />
+                            <Text style={styles.item_text}>Invite Family Member</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </View>
-        </ImageBackground>
+            </ImageBackground>
+        </SafeAreaView>
+        
     )
 }
 
@@ -117,6 +121,9 @@ export default Dashboard
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    image_background:{
+        flex:1,
     },
     header_container:{
         height:60,

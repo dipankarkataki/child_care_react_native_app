@@ -1,5 +1,5 @@
 // FamilyDetails.js
-import {ImageBackground, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView, Modal, Image} from 'react-native';
+import {ImageBackground, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView, Modal, Image, SafeAreaView} from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import StudentDetails from './StudentDetails';
 import MemberDetails from './MemberDetails';
@@ -17,23 +17,26 @@ const FamilyDetails = ({ navigation, route }) => {
     }, []);
 
     return (
-        <ImageBackground source={backgroundImage} style={styles.container}>
-            <View style={styles.header_container}>
-                <TouchableOpacity onPress={ () => navigation.navigate('ProfileSettings')}>
-                    <Icon name="long-arrow-alt-left" style={styles.header_icon}/>
-                </TouchableOpacity>
-                <View style={styles.header_text_container}>
-                    <Text style={styles.header_text}>Family Details</Text>
+        <SafeAreaView style={styles.container}>
+            <ImageBackground source={backgroundImage} style={styles.image_background}>
+                <View style={styles.header_container}>
+                    <TouchableOpacity onPress={ () => navigation.navigate('ProfileSettings')}>
+                        <Icon name="long-arrow-alt-left" style={styles.header_icon}/>
+                    </TouchableOpacity>
+                    <View style={styles.header_text_container}>
+                        <Text style={styles.header_text}>Family Details</Text>
+                    </View>
                 </View>
-            </View>
-            <View style={styles.family_content_container}>
-                <View style={styles.family_name_container}>
-                    <Text style={styles.family_name_text}>Family Name: {familyName}</Text>
+                <View style={styles.family_content_container}>
+                    <View style={styles.family_name_container}>
+                        <Text style={styles.family_name_text}>Family Name: {familyName}</Text>
+                    </View>
+                    <StudentDetails familyId={familyId} siteId={siteId} navigation={navigation} />
+                    <MemberDetails familyId={familyId} siteId={siteId} onFamilyNameFetched={handleFamilyNameFetched} navigation={navigation} />
                 </View>
-                <StudentDetails familyId={familyId} siteId={siteId} navigation={navigation} />
-                <MemberDetails familyId={familyId} siteId={siteId} onFamilyNameFetched={handleFamilyNameFetched} navigation={navigation} />
-            </View>
-        </ImageBackground>
+            </ImageBackground>
+        </SafeAreaView>
+        
     );
 };
 
@@ -42,6 +45,9 @@ export default FamilyDetails;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    image_background:{
+        flex:1,
     },
     header_container:{
         height:60,

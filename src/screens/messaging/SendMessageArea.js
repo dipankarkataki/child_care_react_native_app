@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, View, Image, TextInput, ScrollView, Alert, FlatList, PermissionsAndroid, Linking, Platform } from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, View, Image, TextInput, ScrollView, Alert, FlatList, PermissionsAndroid, Linking, KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native'
 import React, {useState, useRef, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
@@ -31,6 +31,8 @@ const SendMessageArea = ({navigation, route }) => {
     const [currentUserId, setCurrentUserId] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [sendingFile, setSendingFile] = useState(false);
+    const [inputHeight, setInputHeight] = useState(40);
+    const MAX_HEIGHT = 60;
     let channel;
 
     const { userId, userName, initials, type} = route.params;
@@ -385,203 +387,212 @@ const SendMessageArea = ({navigation, route }) => {
 
 
     return (
-        <ImageBackground source={background} style={styles.container}>
-            <TouchableOpacity style={styles.chat_header} onPress={ () => navigation.navigate('SenderProfile', {userId: userId, userName: userName, initials: initials, type: type})}>
-                <TouchableOpacity onPress={ () => navigation.navigate('MessagingDashboard')}>
-                    <Icon name="arrow-left" style={styles.back_button} />
-                </TouchableOpacity>
-                <View style={styles.chat_user_area}>
-                    {
-                        profileImage ? (
-                            <Image source={profileImage}  style={styles.chat_profile_image}/>
-                        ) : (
-                            <View style={styles.contact_initials_container}>
-                                <Text style={styles.contact_initials_text}>{initials}</Text>
-                            </View>
-                        )
-                    }
-                    <View style={styles.chat_title_area}>
-                        <Text style={styles.chat_user_title_text}>{userName}</Text>
-                        <Text style={styles.sub_title}>Account : {type}</Text>
-                        <Text style={[styles.chat_user_status]}>Active Now</Text>
-                    </View>
-                </View>
-            </TouchableOpacity>
-            <View style={styles.chat_body}>
-                <FlatList
-                    ref={scrollViewRef}
-                    data={messages}
-                    initialNumToRender={10}
-                    maxToRenderPerBatch={5}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => (
-                        <>
-                            {item.type === 'sent' && (
-                            // If item.type is 'sent', show the sender's message layout
-                                <View style={styles.sender_container}>
-                                    <View style={styles.sender_message_area}>
-                                        <View style={styles.sender_tail} />
-                                        
-                                        {item.text ? (
-                                            <Text style={styles.sender_text}>
-                                                {item.text}
-                                            </Text>
-                                        ) : null}
-
-                                        {item.attachment && (
-                                            isImage.includes(item.attachment_type) ? (
-                                                <Image
-                                                    source={{ uri: item.attachment.startsWith('content') ? item.attachment : `${UrlProvider.asset_url_staging}/${item.attachment}` }}
-                                                    style={{ width: 200, height: 200, borderRadius: 8 }}
-                                                    resizeMode="cover"
-                                                />
-                                            ) : (
-                                                <TouchableOpacity style={{ padding: 15, backgroundColor: '#f0f0f0', borderRadius: 8, marginBottom: 5 }} onPress={ () => downloadFiles(item)}>
-                                                    <View style={{justifyContent:'center', alignItems:'center', marginBottom:10}}>
-                                                        <Icon name="file-alt" style={styles.attachment_icon} />
-                                                    </View>
-                                                   
-                                                    <Text style={{ color: '#007AFF', textAlign:'center', textDecorationLine: 'underline' }}>
-                                                        Open {item.attachment_type} Document
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            )
-                                        )}
-                                        <Text style={styles.sender_message_time}>
-                                            <Icon name="clock" /> {item.time}
-                                        </Text>
-                                    </View>
+        <SafeAreaView style={styles.container}>
+            <ImageBackground source={background} style={styles.image_background}>
+                <TouchableOpacity style={styles.chat_header} onPress={ () => navigation.navigate('SenderProfile', {userId: userId, userName: userName, initials: initials, type: type})}>
+                    <TouchableOpacity onPress={ () => navigation.navigate('MessagingDashboard')}>
+                        <Icon name="arrow-left" style={styles.back_button} />
+                    </TouchableOpacity>
+                    <View style={styles.chat_user_area}>
+                        {
+                            profileImage ? (
+                                <Image source={profileImage}  style={styles.chat_profile_image}/>
+                            ) : (
+                                <View style={styles.contact_initials_container}>
+                                    <Text style={styles.contact_initials_text}>{initials}</Text>
                                 </View>
-                            )}
+                            )
+                        }
+                        <View style={styles.chat_title_area}>
+                            <Text style={styles.chat_user_title_text}>{userName}</Text>
+                            <Text style={styles.sub_title}>Account : {type}</Text>
+                            <Text style={[styles.chat_user_status]}>Active Now</Text>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+                <View style={styles.chat_body}>
+                    <FlatList
+                        ref={scrollViewRef}
+                        data={messages}
+                        initialNumToRender={10}
+                        maxToRenderPerBatch={5}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item }) => (
+                            <>
+                                {item.type === 'sent' && (
+                                // If item.type is 'sent', show the sender's message layout
+                                    <View style={styles.sender_container}>
+                                        <View style={styles.sender_message_area}>
+                                            <View style={styles.sender_tail} />
+                                            
+                                            {item.text ? (
+                                                <Text style={styles.sender_text}>
+                                                    {item.text}
+                                                </Text>
+                                            ) : null}
 
-
-                            {item.type === 'received' && (
-                                // If item.type is 'receive', show receiver's message layout
-                                <View style={styles.receiver_container}>
-                                    <View style={styles.receiver_message_area}>
-                                        <View style={styles.receiver_tail} />
-                                        {item.text ? (
-                                            <Text style={styles.receiver_text}>
-                                                {item.text}
-                                            </Text>
-                                        ) : null}
-
-                                        {item.attachment && (
-                                            isImage.includes(item.attachment_type) ? (
-                                                <TouchableOpacity onPress={ () => downloadFiles(item)}>
+                                            {item.attachment && (
+                                                isImage.includes(item.attachment_type) ? (
                                                     <Image
                                                         source={{ uri: item.attachment.startsWith('content') ? item.attachment : `${UrlProvider.asset_url_staging}/${item.attachment}` }}
                                                         style={{ width: 200, height: 200, borderRadius: 8 }}
                                                         resizeMode="cover"
                                                     />
-                                                </TouchableOpacity>
-                                                
-                                            ) : (
-                                                <TouchableOpacity style={{ padding: 15, backgroundColor: '#36454f', borderRadius: 8, marginBottom: 5 }} onPress={ () => downloadFiles(item)}>
-                                                    <View style={{justifyContent:'center', alignItems:'center', marginBottom:10}}>
-                                                        <Icon name="file-alt" style={[styles.attachment_icon, {color:'#f0f0f0'}]} />
-                                                    </View>
-                                                   
-                                                    <Text style={{ color: '#f0f0f0', textAlign:'center', textDecorationLine: 'underline' }}>
-                                                        Open {item.attachment_type} Document
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            )
-                                        )}
-                                        <Text style={styles.receiver_message_time}> 
-                                            <Icon name="clock" /> {item.time}
-                                        </Text>
-                                    </View>
-                                </View>
-                            )}
-                        </>
-                    )}
-
-                    onScrollBeginDrag={() => setUserScrolling(true)}
-                    onScrollEndDrag={() => setUserScrolling(false)}
-                />
-                
-                {/* Attachment Preview */}
-                {selectedFile && (
-                    <View style={styles.sender_container}>
-                        <View style={styles.sender_message_area}>
-                            <TouchableOpacity onPress={() => !sendingFile && setSelectedFile(null)}>
-                                <Text style={styles.removeAttachmentText}>
-                                    {!sendingFile   ? ( <Icon name="times-circle" style={{fontSize:30}} /> ) : 'Sending Wait ....'}
-                                </Text>
-                            </TouchableOpacity>
-                            <View style={styles.sender_tail} />
-                            
-                            <View style={styles.attachmentPreview}>
-                                {selectedFile.type?.startsWith('image/') && (
-                                    <Image
-                                        source={{ uri: selectedFile.uri }}
-                                        style={{ width: 200, height: 200, borderRadius: 8 }}
-                                        resizeMode="cover"
-                                    />
-                                )}
-
-                                {selectedFile.type?.startsWith('application/') && (
-
-                                    <TouchableOpacity style={{ padding: 15, backgroundColor: '#f0f0f0', borderRadius: 8, marginBottom: 5 }}>
-                                        <View style={{justifyContent:'center', alignItems:'center', marginBottom:10}}>
-                                            <Icon name="file-alt" style={[styles.attachment_icon, {color:'#36454f'}]} />
+                                                ) : (
+                                                    <TouchableOpacity style={{ padding: 15, backgroundColor: '#f0f0f0', borderRadius: 8, marginBottom: 5 }} onPress={ () => downloadFiles(item)}>
+                                                        <View style={{justifyContent:'center', alignItems:'center', marginBottom:10}}>
+                                                            <Icon name="file-alt" style={styles.attachment_icon} />
+                                                        </View>
+                                                    
+                                                        <Text style={{ color: '#007AFF', textAlign:'center', textDecorationLine: 'underline' }}>
+                                                            Open {item.attachment_type} Document
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                )
+                                            )}
+                                            <Text style={styles.sender_message_time}>
+                                                <Icon name="clock" /> {item.time}
+                                            </Text>
                                         </View>
-
-                                        <Text style={{ color: '#36454f', textAlign:'center', textDecorationLine: 'underline' }}>
-                                            Open Document - {selectedFile.name}
-                                        </Text>
-                                    </TouchableOpacity>
+                                    </View>
                                 )}
 
-                                {/* <TouchableOpacity onPress={() => !sendingFile && setSelectedFile(null)}>
+
+                                {item.type === 'received' && (
+                                    // If item.type is 'receive', show receiver's message layout
+                                    <View style={styles.receiver_container}>
+                                        <View style={styles.receiver_message_area}>
+                                            <View style={styles.receiver_tail} />
+                                            {item.text ? (
+                                                <Text style={styles.receiver_text}>
+                                                    {item.text}
+                                                </Text>
+                                            ) : null}
+
+                                            {item.attachment && (
+                                                isImage.includes(item.attachment_type) ? (
+                                                    <TouchableOpacity onPress={ () => downloadFiles(item)}>
+                                                        <Image
+                                                            source={{ uri: item.attachment.startsWith('content') ? item.attachment : `${UrlProvider.asset_url_staging}/${item.attachment}` }}
+                                                            style={{ width: 200, height: 200, borderRadius: 8 }}
+                                                            resizeMode="cover"
+                                                        />
+                                                    </TouchableOpacity>
+                                                    
+                                                ) : (
+                                                    <TouchableOpacity style={{ padding: 15, backgroundColor: '#36454f', borderRadius: 8, marginBottom: 5 }} onPress={ () => downloadFiles(item)}>
+                                                        <View style={{justifyContent:'center', alignItems:'center', marginBottom:10}}>
+                                                            <Icon name="file-alt" style={[styles.attachment_icon, {color:'#f0f0f0'}]} />
+                                                        </View>
+                                                    
+                                                        <Text style={{ color: '#f0f0f0', textAlign:'center', textDecorationLine: 'underline' }}>
+                                                            Open {item.attachment_type} Document
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                )
+                                            )}
+                                            <Text style={styles.receiver_message_time}> 
+                                                <Icon name="clock" /> {item.time}
+                                            </Text>
+                                        </View>
+                                    </View>
+                                )}
+                            </>
+                        )}
+
+                        onScrollBeginDrag={() => setUserScrolling(true)}
+                        onScrollEndDrag={() => setUserScrolling(false)}
+                    />
+                    
+                    {/* Attachment Preview */}
+                    {selectedFile && (
+                        <View style={styles.sender_container}>
+                            <View style={styles.sender_message_area}>
+                                <TouchableOpacity onPress={() => !sendingFile && setSelectedFile(null)}>
                                     <Text style={styles.removeAttachmentText}>
-                                        {!sendingFile   ? 'Remove Item' : 'Sending Wait ....'}
+                                        {!sendingFile   ? ( <Icon name="times-circle" style={{fontSize:30}} /> ) : 'Sending Wait ....'}
                                     </Text>
-                                </TouchableOpacity> */}
+                                </TouchableOpacity>
+                                <View style={styles.sender_tail} />
+                                
+                                <View style={styles.attachmentPreview}>
+                                    {selectedFile.type?.startsWith('image/') && (
+                                        <Image
+                                            source={{ uri: selectedFile.uri }}
+                                            style={{ width: 200, height: 200, borderRadius: 8 }}
+                                            resizeMode="cover"
+                                        />
+                                    )}
+
+                                    {selectedFile.type?.startsWith('application/') && (
+
+                                        <TouchableOpacity style={{ padding: 15, backgroundColor: '#f0f0f0', borderRadius: 8, marginBottom: 5 }}>
+                                            <View style={{justifyContent:'center', alignItems:'center', marginBottom:10}}>
+                                                <Icon name="file-alt" style={[styles.attachment_icon, {color:'#36454f'}]} />
+                                            </View>
+
+                                            <Text style={{ color: '#36454f', textAlign:'center', textDecorationLine: 'underline' }}>
+                                                Open Document - {selectedFile.name}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    )}
+
+                                    {/* <TouchableOpacity onPress={() => !sendingFile && setSelectedFile(null)}>
+                                        <Text style={styles.removeAttachmentText}>
+                                            {!sendingFile   ? 'Remove Item' : 'Sending Wait ....'}
+                                        </Text>
+                                    </TouchableOpacity> */}
+                                </View>
+                            </View>
+                        </View>
+                    )}
+                </View>
+
+                <View style={styles.send_message_btn_container}>
+                    <TouchableOpacity onPress={toggleBottomSheet}>
+                        <Icon name="paperclip" style={styles.attachment_icon}/>
+                    </TouchableOpacity>
+                    <KeyboardAvoidingView behaviour={Platform.OS === 'ios' ? 'padding' : null} style={styles.input_container}>
+                        <TextInput 
+                            style={[styles.text_input, { textAlignVertical: 'top', height: Math.min(inputHeight, MAX_HEIGHT) }]}
+                            placeholder="Write your message"
+                            placeholderTextColor="#b9b9b9"
+                            value={inputMessage}
+                            onChangeText={(text) => setInputMessage(text)}
+                            scrollEnabled={inputHeight > MAX_HEIGHT}
+                            multiline={true}
+                            returnKeyType="default"
+                            onContentSizeChange={(event) => 
+                                setInputHeight(event.nativeEvent.contentSize.height)
+                            } 
+                        />
+                    </KeyboardAvoidingView>
+                    <TouchableOpacity style={styles.send_message_btn} onPress={sendMessage}>
+                        <IonicIcon name="send" style={styles.send_message_icon}/>
+                    </TouchableOpacity>
+                </View>
+                
+                {bottomSheet && (
+                    <View style={styles.bottom_sheet_container}>
+                        <View style={styles.bottom_sheet_items}>
+                            <View style={{marginRight:20}}>
+                                <TouchableOpacity style={styles.item_outline} onPress={openGallery}>
+                                    <Icon name="images" style={styles.item_icon} />
+                                </TouchableOpacity>
+                                <Text style={styles.title_text}>Gallery</Text>
+                            </View>
+                            <View style={{marginRight:20}}>
+                                <TouchableOpacity style={styles.item_outline} onPress={openDocument}>
+                                    <Icon name="file-alt" style={styles.item_icon} />
+                                </TouchableOpacity>
+                                <Text style={styles.title_text}>Document</Text>
                             </View>
                         </View>
                     </View>
                 )}
-            </View>
-
-            <View style={styles.send_message_btn_container}>
-                <TouchableOpacity onPress={toggleBottomSheet}>
-                    <Icon name="paperclip" style={styles.attachment_icon}/>
-                </TouchableOpacity>
-                <View style={styles.input_container}>
-                    <TextInput 
-                        style={styles.text_input}
-                        placeholder="Write your message"
-                        placeholderTextColor="#b9b9b9"
-                        value={inputMessage}
-                        onChangeText={(text) => setInputMessage(text)}
-                    />
-                </View>
-                <TouchableOpacity style={styles.send_message_btn} onPress={sendMessage}>
-                    <IonicIcon name="send" style={styles.send_message_icon}/>
-                </TouchableOpacity>
-            </View>
-            
-            {bottomSheet && (
-                <View style={styles.bottom_sheet_container}>
-                    <View style={styles.bottom_sheet_items}>
-                        <View style={{marginRight:20}}>
-                            <TouchableOpacity style={styles.item_outline} onPress={openGallery}>
-                                <Icon name="images" style={styles.item_icon} />
-                            </TouchableOpacity>
-                            <Text style={styles.title_text}>Gallery</Text>
-                        </View>
-                        <View style={{marginRight:20}}>
-                            <TouchableOpacity style={styles.item_outline} onPress={openDocument}>
-                                <Icon name="file-alt" style={styles.item_icon} />
-                            </TouchableOpacity>
-                            <Text style={styles.title_text}>Document</Text>
-                        </View>
-                    </View>
-                </View>
-            )}
-        </ImageBackground>
+            </ImageBackground>
+        </SafeAreaView>
+       
     )
 }
 
@@ -589,7 +600,10 @@ export default SendMessageArea
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+    },
+    image_background:{
+        flex:1,
     },
     chat_header: {
         backgroundColor: '#E8F2F4',
@@ -745,9 +759,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'rgba(84, 84, 84, 0.44)',
         borderRadius: 10,
-        paddingHorizontal: 10,
+        marginHorizontal: 10,
+        marginVertical:20,
         backgroundColor: '#fff',
-        width: '70%'
+        width: '70%',
     },
     text_input: {
         fontSize: 17,
