@@ -133,7 +133,7 @@ const MessagingDashboard = ({navigation}) => {
                                                         }
                                                         <View style={styles.chat_user_area}>
                                                             <Text style={styles.chat_user_title_text}>{item.name}</Text>
-                                                            <Text style={styles.preview_user_chat}>
+                                                            <Text style={styles.preview_user_chat} numberOfLines={2}>
                                                                 {item.message}
                                                             </Text>
                                                         </View>
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
         backgroundColor:'#fff',
         paddingVertical:15,
         paddingHorizontal:5,
-        elevation:2
+        elevation:2,
     },
     card_content:{
         flexDirection:'row',
