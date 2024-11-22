@@ -1,4 +1,4 @@
-import { FlatList, ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
+import { FlatList, ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, SafeAreaView } from 'react-native'
 import React,{useState, useEffect} from 'react'
 import NewChatApi from '../../api/MessagingApi/NewChatApi';
 
@@ -46,7 +46,8 @@ const NewChat = ({navigation}) => {
     }
 
     return (
-        <ImageBackground source={background} style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <ImageBackground source={background} style={styles.image_background}>
             <Text style={[styles.header_title, styles.header_style]}>Contacts on ChildCareSoftware App</Text>
             <FlatList
                 data={contactList}
@@ -71,6 +72,8 @@ const NewChat = ({navigation}) => {
                 )}      
             />
         </ImageBackground>
+        </SafeAreaView>
+        
     )
 }
 
@@ -78,6 +81,9 @@ export default NewChat
 
 const styles = StyleSheet.create({
     container:{
+        flex:1
+    },
+    image_background:{
         flex:1
     },
     header_style:{

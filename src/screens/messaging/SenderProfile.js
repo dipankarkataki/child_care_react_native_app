@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, Animated } from 'react-native'
+import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, Animated, SafeAreaView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import GetSenderProfileAndMediaApi from '../../api/MessagingApi/GetSenderProfileAndMediaApi';
@@ -43,7 +43,8 @@ const SenderProfile = ({navigation, route}) => {
     
     console.log('Sender Profile Data ==> ', profileMedia)
     return (
-        <ImageBackground source={background} style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <ImageBackground source={background} style={styles.image_background}>
             <View style={styles.profile_header}>
                 <TouchableOpacity style={styles.profile_back_button} onPress={ () => navigation.navigate('SendMessageArea', {userId: userId, userName: userName, initials: initials, type: type}) }>
                     <Icon name="angle-left" style={styles.back_btn_icon} />
@@ -125,7 +126,9 @@ const SenderProfile = ({navigation, route}) => {
                 </View>
             </ScrollView>
             
-        </ImageBackground>
+            </ImageBackground>
+        </SafeAreaView>
+        
     )
 }
 
@@ -133,6 +136,9 @@ export default SenderProfile
 
 const styles = StyleSheet.create({
     container:{
+        flex:1
+    },
+    image_background:{
         flex:1
     },
     profile_header: {
