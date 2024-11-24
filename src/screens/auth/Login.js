@@ -56,9 +56,9 @@ const Login = ({ navigation }) => {
                 'email': email.toLocaleLowerCase(),
                 'password': password
             }).then( async (result) => {
-                console.log('Login Details --- ', result.data.data);
+                console.log('Login Details --- ', result);
                 
-                if(result.data.status == 200){
+                if(result.data && result.data.status == 200){
                     await TokenManager.setToken(result.data.token);
                     await TokenManager.setUserId(result.data.data.user_id.toString());
                     if(result.data.data.aNet_customer_profile_id != null){
@@ -70,6 +70,7 @@ const Login = ({ navigation }) => {
                     }
                     navigation.replace('Dashboard');
                 }else{
+                    console.log('Login Failed Err ---', result)
                     setLoader(false);
                     setModalVisible(true);
                     setModalIcon('error');
