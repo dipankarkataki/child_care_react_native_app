@@ -150,19 +150,17 @@ const styles = StyleSheet.create({
         borderColor: 'white'
     },
     welcome_container: {
-        flex: 1 / 4,
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100',
-        width: '100',
-        marginTop: 16,
-        marginLeft: 20,
-        marginRight: 20,
+        maxHeight: 150,
+        margin:15,
         borderWidth: 1,
         borderRadius: 10,
         borderColor: '#BAF1EF',
         borderStyle: 'solid',
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        paddingVertical:15,
+        overflow:'hidden'
     },
     welcome_image: {
         height: 38,

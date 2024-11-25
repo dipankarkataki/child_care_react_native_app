@@ -43,7 +43,7 @@ const CustomMonthYearPicker = ({ label, value, onChange }) => {
                             {/* Month Picker */}
                             <Picker
                                 style={{backgroundColor:'#696969', marginTop:10, marginBottom:20}}
-                                selectedValue={currentMonth}
+                                selectedValue={month}
                                 onValueChange={(itemValue) => setMonth(itemValue)}>
                                 {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                                     <Picker.Item key={m} label={m.toString()} value={m} />
