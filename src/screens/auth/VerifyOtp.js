@@ -1,6 +1,6 @@
 import { ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, KeyboardAvoidingView, TextInput, Platform, ActivityIndicator, SafeAreaView } from 'react-native'
 import React, {useState} from 'react'
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import ModalComponent from '../../components/ModalComponent';
 
 const backgroundImage = require('../../assets/images/background.png')
@@ -52,10 +52,18 @@ const VerifyOtp = ({navigation}) => {
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground source={backgroundImage} style={styles.image_background}>
+                <View style={styles.header_container}>
+                    <TouchableOpacity onPress={ () => navigation.navigate('ForgotPassword')}>
+                        <Icon name="long-arrow-alt-left" style={styles.header_icon}/>
+                    </TouchableOpacity>
+                    <View style={styles.header_text_container}>
+                        <Text style={styles.header_text}>Verify OTP</Text>
+                    </View>
+                </View>
                 <View style={styles.logo_area}>
                     <Image source={logo_large} style={styles.logo_large} />
                 </View>
-                <View style={styles.verify_otp_container}>
+                <View style={[styles.verify_otp_container, {paddingHorizontal:20}]}>
                     <KeyboardAvoidingView behaviour={Platform.OS === 'ios' ? 'padding' : null} style={styles.form} >
                         <View style={styles.otp_area}>
                             <Text style={styles.text_title}>Enter 6 Digit OTP</Text>
@@ -69,7 +77,7 @@ const VerifyOtp = ({navigation}) => {
                                     keyboardType="number-pad"
                                     onChangeText={(text) => setOtp(text.replace(/[^0-9]/g, ''))}
                                 />
-                                <Icon name="mobile-phone" size={20} color="#888" style={styles.icon} />
+                                <Icon name="mobile-alt" size={20} color="#888" style={styles.icon} />
                             </View>
                             {errors.otp ? <Text style={styles.error_text}>{errors.otp}</Text> : null}
                         </View>
@@ -100,7 +108,29 @@ const styles = StyleSheet.create({
     },
     image_background:{
         flex:1,
+    },
+    header_container:{
+        height:60,
+        backgroundColor:'#2CABE2',
         paddingHorizontal:20,
+        elevation:3,
+        paddingVertical:10,
+        flexDirection:'row',
+        alignItems:'center'
+    },
+    header_text_container:{
+        width:'92%',
+        justifyContent:'center',
+        alignItems:'center',
+    },
+    header_text:{
+        color:'#fff',
+        fontFamily:'Poppins Medium',
+        fontSize:20,
+    },
+    header_icon:{
+        fontSize: 20,
+        color: '#fff',
     },
     logo_area: {
         flex: 1,

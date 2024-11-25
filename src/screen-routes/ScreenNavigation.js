@@ -29,54 +29,17 @@ const ScreenNavigation = () => {
             <Stack.Navigator initialRouteName='Splash' >
                 <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
                 <Stack.Screen name="UserOption" component={UserOption} options={{ headerShown: false }} />
-                <Stack.Screen name="Login" component={Login}
-                    options={{
-                        title: 'Login',
-                        headerStyle: {
-                            backgroundColor: '#2CABE2',
-                        },
-                        headerTintColor: '#fff',
-                    }}
-                />
+                <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
 
                 <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }} />
 
-                <Stack.Screen name="SignUp" component={SignUp} options={{
-                    title: 'Sign Up',
-                    headerStyle: {
-                        backgroundColor: '#2CABE2',
-                        elevation: 0,
-                        shadowOpacity: 0,
-                    },
-                    headerTintColor: '#fff',
-                }} />
-                <Stack.Screen name="ForgotPassword" component={ForgotPassword}
-                    options={{
-                        title: 'Forgot Password',
-                        headerStyle: {
-                            backgroundColor: '#2CABE2',
-                            elevation: 0,
-                            shadowOpacity: 0,
-                        },
-                        headerTintColor: '#fff',
-                    }} />
+                <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }}/>
+                
+                <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }}/>
                 <Stack.Screen name="ProfileSettings" component={BottomTabNavigation} options={{ headerShown: false }} />
-                <Stack.Screen name="VerifyOtp" component={VerifyOtp} options={{
-                    title: 'Verify OTP',
-                    headerStyle: {
-                        backgroundColor: '#2CABE2',
-                        elevation: 0,
-                        shadowOpacity: 0,
-                    },
-                    headerTintColor: '#fff',
-                }} />
-                <Stack.Screen name="ChangePassword" component={ChangePassword} options={{
-                    title: 'Change Password',
-                    headerStyle: {
-                        backgroundColor: '#2CABE2',
-                    },
-                    headerTintColor: '#fff',
-                }} />
+                <Stack.Screen name="VerifyOtp" component={VerifyOtp} options={{ headerShown: false }}/>
+
+                <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false }} />
 
                 <Stack.Screen name="FamilyDetails" component={FamilyDetails} options={{headerShown:false}}/>
 
@@ -89,21 +52,7 @@ const ScreenNavigation = () => {
                 <Stack.Screen name="SendMessageArea" component={SendMessageArea} options={{ headerShown: false }}/>
                 <Stack.Screen name="SenderProfile" component={SenderProfile} options={{ headerShown: false }} />
 
-                <Stack.Screen name="NewChat" component={NewChat} options={({ navigation }) => ({
-                        title: 'Select Contact',
-                        headerStyle: {
-                            backgroundColor: '#2CABE2',
-                            elevation: 0,
-                            shadowOpacity: 0,
-                        },
-                        headerTitleAlign: 'center',
-                        headerTintColor: '#fff',
-                        headerTitleStyle:{
-                            fontSize:17,
-                            fontFamily:"Poppins Medium"
-                        },
-                    })}
-                />
+                <Stack.Screen name="NewChat" component={NewChat} options={{ headerShown: false }} />
             </Stack.Navigator>
 
         </NavigationContainer>

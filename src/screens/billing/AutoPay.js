@@ -1,6 +1,7 @@
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, Switch, Modal, ActivityIndicator, Alert, Animated, SafeAreaView } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import CustomMonthYearPicker from '../../components/CustomMonthYearPicker';
 import CreateCustomerProfileApi from '../../api/BillingApi/CreateCustomerProfileApi';
 import AddCreditCardApi from '../../api/BillingApi/AddCreditCardApi';
@@ -256,6 +257,9 @@ const AutoPay = ({ navigation }) => {
             <ImageBackground source={backgroundImage} style={styles.image_background}>
                 <View style={styles.auto_pay_header}></View>
                 <View style={styles.auto_pay_content_container}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Billing')} style={styles.back_button_container}>
+                        <FontAwesome name="long-arrow-alt-left" style={styles.header_icon} />
+                    </TouchableOpacity>
                     <View style={styles.card}>
                         <View style={styles.pay_now_header}>
                             <View>
@@ -566,7 +570,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         right: 0,
-        top:30,
+        top:0,
         paddingLeft: 10,
         paddingRight: 10,
         paddingTop: 10,
@@ -849,5 +853,12 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         width:120,
         marginRight:10
+    },
+    back_button_container:{
+        marginBottom:15
+    },
+    header_icon:{
+        fontSize: 20,
+        color: '#fff',
     },
 });

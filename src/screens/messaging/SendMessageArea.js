@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, View, Image, TextInput, ScrollView, Alert, FlatList, PermissionsAndroid, Linking, KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, View, Image, TextInput, ScrollView, Alert, FlatList, PermissionsAndroid, Linking, KeyboardAvoidingView, Platform, SafeAreaView, useWindowDimensions } from 'react-native'
 import React, {useState, useRef, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
@@ -14,6 +14,7 @@ import UrlProvider from '../../api/UrlProvider';
 import RNFetchBlob from 'rn-fetch-blob';
 import * as RNLocalize from 'react-native-localize';
 import moment from 'moment-timezone';
+
 
 const profileImage =  undefined;
 const background = require('../../assets/images/background.png');
@@ -31,11 +32,10 @@ const SendMessageArea = ({navigation, route }) => {
     const [currentUserId, setCurrentUserId] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [sendingFile, setSendingFile] = useState(false);
-    const [inputHeight, setInputHeight] = useState(40);
-    const MAX_HEIGHT = 60;
     let channel;
 
     const { userId, userName, initials, type} = route.params;
+
 
     const toggleBottomSheet = () =>{
         setBottomSheet(!bottomSheet);
@@ -115,7 +115,7 @@ const SendMessageArea = ({navigation, route }) => {
     const sendMessage = () => {
         console.log('My message ---', inputMessage.trim())
         if((inputMessage.trim().length == 0 && selectedFile == null)){
-            Alert.alert('Please type a message or select an attachment.');
+            Alert.alert('Oops! ', 'Please type a message or select an attachment.');
             return;
         }else{
             if (inputMessage.trim() || selectedFile != null) {
@@ -143,30 +143,6 @@ const SendMessageArea = ({navigation, route }) => {
                 }
                 
                 setSendingFile(true);
-                // try {
-                //     // Send FormData to your API
-                //     SendMessageApi(formData)
-                //     .then((result) => {
-                //         console.log('Send Message ==> ', result.data)
-                //         setSelectedFile('');
-                //         setSendingFile(false);
-                //     })
-                //     .catch((err) => {
-                //         console.log('Error', err);
-                //         setSendingFile(false);
-                //     });
-        
-                //     setMessages(prevMessages => [...prevMessages, newMessage]);
-                //     setInputMessage(''); // Clear the input field after sending the message
-            
-                //     // Scroll to the bottom after sending the message
-                //     setTimeout(() => {
-                //         scrollViewRef.current?.scrollToEnd({ animated: true });
-                //     }, 100);
-    
-                // } catch (error) {
-                //     console.error('Error sending message:', error);
-                // }
 
                 const send = async (retries = 3) => {
                     try {
@@ -554,17 +530,14 @@ const SendMessageArea = ({navigation, route }) => {
                     </TouchableOpacity>
                     <KeyboardAvoidingView behaviour={Platform.OS === 'ios' ? 'padding' : null} style={styles.input_container}>
                         <TextInput 
-                            style={[styles.text_input, { textAlignVertical: 'top', height: Math.min(inputHeight, MAX_HEIGHT) }]}
+                            style={[styles.text_input, { textAlignVertical: 'top', maxHeight: 130, overflow:'scroll' }]}
                             placeholder="Write your message"
                             placeholderTextColor="#b9b9b9"
                             value={inputMessage}
                             onChangeText={(text) => setInputMessage(text)}
-                            scrollEnabled={inputHeight > MAX_HEIGHT}
+                            scrollEnabled={true}
                             multiline={true}
                             returnKeyType="default"
-                            onContentSizeChange={(event) => 
-                                setInputHeight(event.nativeEvent.contentSize.height)
-                            } 
                         />
                     </KeyboardAvoidingView>
                     <TouchableOpacity style={styles.send_message_btn} onPress={sendMessage}>
@@ -671,7 +644,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     chat_body: {
-        flex: 3,
+        flex: 1,
         marginBottom: 5
     },
     chat_time_badge_container: {
@@ -746,7 +719,6 @@ const styles = StyleSheet.create({
         marginTop:10
     },
     send_message_btn_container: {
-        flex: 1 / 3,
         backgroundColor: '#E8F2F4',
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -842,7 +814,7 @@ const styles = StyleSheet.create({
         display: 'none'
     },
     bottom_sheet_container: {
-        height: 250,
+        height: 150,
         backgroundColor: "#fff",
         padding: 20
     },

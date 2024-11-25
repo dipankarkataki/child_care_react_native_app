@@ -1,6 +1,7 @@
 import { FlatList, ImageBackground, StyleSheet, Text, View, Image, TouchableOpacity, SafeAreaView } from 'react-native'
 import React,{useState, useEffect} from 'react'
 import NewChatApi from '../../api/MessagingApi/NewChatApi';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const background = require('../../assets/images/background.png');
 const contact1_image = require('../../assets/images/contact1.jpg');
@@ -48,28 +49,36 @@ const NewChat = ({navigation}) => {
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground source={background} style={styles.image_background}>
-            <Text style={[styles.header_title, styles.header_style]}>Contacts on ChildCareSoftware App</Text>
-            <FlatList
-                data={contactList}
-                keyExtractor={(item) => item.id}
-                renderItem={({item}) => (
-                    <TouchableOpacity style={styles.contact_container} onPress={ () => navigation.navigate('SendMessageArea', {userId : item.id, userName: item.firstname + ' ' + item.lastname, initials : getInitials(item.firstname, item.lastname), type : getAccountType(item.user_type) })}>
-                        <View style={styles.contact_initials_container}>
-                            <Text style={styles.contact_initials_text}>{getInitials(item.firstname, item.lastname)}</Text>
-                        </View>
-                        {
-                            item.profile_image ? (
-                                <Image source={item.profile_image}  style={styles.contact_image}/>
-                            ) : (
-                                <View style={styles.contact_info_container}>
-                                    <Text style={styles.main_title}>{item.firstname} {item.lastname}</Text>
-                                    <Text style={styles.sub_title}>Account : {getAccountType(item.user_type)} </Text>
-                                </View>
-                            )
-                        }
-                        
+                <View style={styles.header_container}>
+                    <TouchableOpacity onPress={ () => navigation.navigate('MessagingDashboard')}>
+                        <Icon name="long-arrow-alt-left" style={styles.header_icon}/>
                     </TouchableOpacity>
-                )}      
+                    <View style={styles.header_text_container}>
+                        <Text style={styles.header_text}>Start New Chat</Text>
+                    </View>
+                </View>
+                <Text style={[styles.header_title, styles.header_style]}>Contacts on ChildCareSoftware App</Text>
+                <FlatList
+                    data={contactList}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({item}) => (
+                        <TouchableOpacity style={styles.contact_container} onPress={ () => navigation.navigate('SendMessageArea', {userId : item.id, userName: item.firstname + ' ' + item.lastname, initials : getInitials(item.firstname, item.lastname), type : getAccountType(item.user_type) })}>
+                            <View style={styles.contact_initials_container}>
+                                <Text style={styles.contact_initials_text}>{getInitials(item.firstname, item.lastname)}</Text>
+                            </View>
+                            {
+                                item.profile_image ? (
+                                    <Image source={item.profile_image}  style={styles.contact_image}/>
+                                ) : (
+                                    <View style={styles.contact_info_container}>
+                                        <Text style={styles.main_title}>{item.firstname} {item.lastname}</Text>
+                                        <Text style={styles.sub_title}>Account : {getAccountType(item.user_type)} </Text>
+                                    </View>
+                                )
+                            }
+                            
+                        </TouchableOpacity>
+                    )}      
             />
         </ImageBackground>
         </SafeAreaView>
@@ -85,6 +94,29 @@ const styles = StyleSheet.create({
     },
     image_background:{
         flex:1
+    },
+    header_container:{
+        height:60,
+        backgroundColor:'#2CABE2',
+        paddingHorizontal:20,
+        elevation:3,
+        paddingVertical:10,
+        flexDirection:'row',
+        alignItems:'center'
+    },
+    header_text_container:{
+        width:'92%',
+        justifyContent:'center',
+        alignItems:'center',
+    },
+    header_text:{
+        color:'#fff',
+        fontFamily:'Poppins Medium',
+        fontSize:20,
+    },
+    header_icon:{
+        fontSize: 20,
+        color: '#fff',
     },
     header_style:{
         marginLeft:15,

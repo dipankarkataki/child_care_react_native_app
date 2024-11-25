@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, SafeAreaView, Alert } from 'react-native';
 import React, { useState } from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import LoginApi from '../../api/LoginApi';
 import ModalComponent from '../../components/ModalComponent';
 import TokenManager from '../../api/TokenManager';
@@ -56,7 +56,6 @@ const Login = ({ navigation }) => {
                 'email': email.toLocaleLowerCase(),
                 'password': password
             }).then( async (result) => {
-                console.log('Login Details --- ', result);
                 
                 if(result.data && result.data.status == 200){
                     await TokenManager.setToken(result.data.token);
@@ -107,7 +106,10 @@ const Login = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground source={background} style={styles.image_background}>
-                <ScrollView alwaysBounceVertical>
+                <View style={styles.header_container}>
+                    <Text style={styles.header_text}>Login</Text>
+                </View>
+                <ScrollView alwaysBounceVertical style={{paddingHorizontal:20}}>
                     <View style={styles.logo_area}>
                         <Image source={logo_large} style={styles.logo_large} />
                     </View>
@@ -185,12 +187,34 @@ const styles = StyleSheet.create({
     },
     image_background:{
         flex:1,
+    },
+    header_container:{
+        height:60,
+        backgroundColor:'#2CABE2',
         paddingHorizontal:20,
+        elevation:3,
+        paddingVertical:10,
+        flexDirection:'row',
+        alignItems:'center'
+    },
+    header_text_container:{
+        width:'92%',
+        justifyContent:'center',
+        alignItems:'center',
+    },
+    header_text:{
+        color:'#fff',
+        fontFamily:'Poppins Medium',
+        fontSize:20,
+    },
+    header_icon:{
+        fontSize: 20,
+        color: '#fff',
     },
     logo_area: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 40,
+        marginTop: 60,
     },
     logo_large: {
         height: 80,
