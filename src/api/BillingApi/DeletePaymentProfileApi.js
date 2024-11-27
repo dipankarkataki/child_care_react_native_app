@@ -1,8 +1,9 @@
 import ApiManager from "../ApiManager";
 
-export default AddCreditCardApi = async (data) => {
+export default DeletePaymentProfileApi = async (data) => {
     try {
-        const result = await ApiManager('/billing/add-credit-card', {
+        console.log('Delete payment profile Data ---->', data)
+        const result = await ApiManager('/billing/delete-customer-payment-profile', {
             method: "POST",
             data: data,
         });

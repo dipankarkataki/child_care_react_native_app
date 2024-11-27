@@ -648,13 +648,13 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     text_input:{
-        flex:1,
         backgroundColor:'#F1F6F6',
         fontSize:17,
         fontFamily:'Poppins Regular',
         borderRadius:6,
         paddingLeft:12,
-        color:'#797979'
+        color:'#797979',
+        height:60
     },
     input_title:{
         color:'black',

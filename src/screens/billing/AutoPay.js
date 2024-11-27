@@ -9,9 +9,11 @@ import GetCustomerProfileApi from '../../api/BillingApi/GetCustomerProfileApi';
 import TokenManager from '../../api/TokenManager';
 import LinearGradient from 'react-native-linear-gradient';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
+import ModalComponent from '../../components/ModalComponent';
+import DeletePaymentProfileApi from '../../api/BillingApi/DeletePaymentProfileApi';
 
 const backgroundImage = require('../../assets/images/background.png');
-const dollarImage = require('../../assets/images/dollar-autopay.png');
+const warningImage = require('../../assets/images/warning.png');
 const crediCardBg = require('../../assets/images/map-bg.jpg');
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
@@ -36,6 +38,12 @@ const AutoPay = ({ navigation }) => {
     const [selectedPaymentProfile, setSelectedPaymentProfile] = useState(null);
     const savedCardRef = React.createRef();
     const [shimmerLoading, setShimmerLoading] = useState(true);
+    const [messageModalVisible, setMessageModalVisible] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalIcon, setModalIcon] = useState(null); 
+    const [deletePayMethodModalVisible, setDeletePayMethodModalVisible] = useState(false);
+    const [isPaymentMethodDeleted, setIsPaymentMethodDeleted] = useState(false);
+    const [deletePaymentMethodLoader, setDeletePaymentMethodLoader] = useState(false);
 
     const toggleSwitch = () =>{
         setIsEnabled(previousState => !previousState)
@@ -46,7 +54,6 @@ const AutoPay = ({ navigation }) => {
         if(profileId){
             try{
                 const customerProfile = await GetCustomerProfileApi({'customer_profile_id' : profileId})
-                console.log('Fetch Customer Profile ----', customerProfile);
                 if (customerProfile.data && customerProfile.data.data && customerProfile.data.data.profile) {
                     const profileData = customerProfile.data.data.profile;
                     return profileData;
@@ -71,12 +78,17 @@ const AutoPay = ({ navigation }) => {
 
         const getProfileData = async () => {
             const profileData = await fetchCustomerProfile();
-            console.log('Profile Data -----', profileData)
             if(profileData){
+                if(profileData.paymentProfiles.length > 0){
+                    setPaymentMethod(true);
+                }else{
+                    setPaymentMethod(false);
+                }
                 setProfileData(profileData)
-                setPaymentMethod(true);
                 setCreditCard(true);
                 setShimmerLoading(false);
+                setIsPaymentMethodDeleted(false);
+                
             }else{
                 setShimmerLoading(false);
             }
@@ -85,7 +97,7 @@ const AutoPay = ({ navigation }) => {
 
         getProfileData();
         
-    }, [aNetCustomerProfileId, aNetPaymentProfileId, savedCardRef.current]);
+    }, [aNetCustomerProfileId, aNetPaymentProfileId, savedCardRef.current, isPaymentMethodDeleted]);
 
     const [errors, setErrors] = useState({
         cardNumber: '',
@@ -137,7 +149,6 @@ const AutoPay = ({ navigation }) => {
 
             try{
                 const createProfileResult = await CreateCustomerProfileApi();
-                console.log('Create Customer Profile Result ----', createProfileResult)
                 if (createProfileResult.data.status && createProfileResult.data.data) {
                     const customerProfileId = createProfileResult.data.data;
                     setANetCustomerProfileId(customerProfileId)
@@ -153,49 +164,65 @@ const AutoPay = ({ navigation }) => {
                     if (addCardResult.status) {
                         console.log('addCardResult ---> ', addCardResult.data)
                         setANetPaymentProfileId( addCardResult.data.data);
-                        Alert.alert('Success', 'Card Added Successfully', [{
-                            text: 'OK',
-                            onPress: () => {
-                                setShowTab(false);
-                                setPaymentMethod(true);
-                                setCreditCard(true);
-                                setLoader(false);
-                                setCardNumber('');
-                                setCardName('');
-                                setCardCVV('');
-                                setCardExpiry('');
-                            }
-                        }]);
+                        setMessageModalVisible(true);
+                        setModalIcon('success');
+                        setModalMessage('Card Added Successfully');
+                        setShowTab(false);
+                        setPaymentMethod(true);
+                        setCreditCard(true);
+                        setLoader(false);
+                        setCardNumber('');
+                        setCardName('');
+                        setCardCVV('');
+                        setCardExpiry('');
+                    }else{
+                        setMessageModalVisible(true);
+                        setModalIcon('error');
+                        setModalMessage('Oops! Failed to add credit card. Please try again later.');
+                        setLoader(false);
                     }
                 }else{
                     const customerProfileId = await TokenManager.getCustomerProfileId();
-                    const addCardResult = await AddCreditCardApi({
-                        'customer_profile_id': customerProfileId,
-                        'card_number': cardNumber.replace(/\s+/g, ''),
-                        'expiration_date': cardExpiry,
-                        'card_code': cardCVV,
-                    });
-    
-                    if (addCardResult.status) {
-                        console.log('addCardResult ---> ', addCardResult.data)
-                        setANetPaymentProfileId( addCardResult.data.data);
-                        Alert.alert('Success', 'Card Added Successfully', [{
-                            text: 'OK',
-                            onPress: () => {
-                                setShowTab(false);
-                                setPaymentMethod(true);
-                                setCreditCard(true);
-                                setLoader(false);
-                                setCardNumber('');
-                                setCardName('');
-                                setCardCVV('');
-                                setCardExpiry('');
-                            }
-                        }]);
+                    if(customerProfileId){
+                        const addCardResult = await AddCreditCardApi({
+                            'customer_profile_id': customerProfileId,
+                            'card_number': cardNumber.replace(/\s+/g, ''),
+                            'expiration_date': cardExpiry,
+                            'card_code': cardCVV,
+                        });
+        
+                        if (addCardResult.status) {
+                            setANetPaymentProfileId( addCardResult.data.data);
+                            setMessageModalVisible(true);
+                            setModalIcon('success');
+                            setModalMessage('Card Added Successfully');
+                            setShowTab(false);
+                            setPaymentMethod(true);
+                            setCreditCard(true);
+                            setLoader(false);
+                            setCardNumber('');
+                            setCardName('');
+                            setCardCVV('');
+                            setCardExpiry('');
+                        }else{
+                            setLoader(false); 
+                            setMessageModalVisible(true);
+                            setModalIcon('error');
+                            setModalMessage('Oops! Failed to add credit card. Please try again later.');
+                        }
+                    }else{
+                        setLoader(false); 
+                        setMessageModalVisible(true);
+                        setModalIcon('error');
+                        setModalMessage('Oops! Failed to add credit card. No customer profile found.');
                     }
+                    
                 }
             }catch(error){
                 console.log('Response Error --> ', error);
+                setMessageModalVisible(true);
+                setModalIcon('error');
+                setModalMessage('Oops! An error occurred while creating the payment method.');
                 setLoader(false); 
             }
             
@@ -251,6 +278,48 @@ const AutoPay = ({ navigation }) => {
         setSelectedPaymentProfile(paymentProfile);
         setModalVisible(true); // Show modal
     };
+
+    const closeDeletePayMethodModal = () => {
+        setDeletePayMethodModalVisible(false)
+    };
+
+    const deletePaymentMethod = async () => {
+        try{
+            setDeletePaymentMethodLoader(true);
+            const result = await DeletePaymentProfileApi({
+                'customer_profile_id' : profileData.customerProfileId,
+                'payment_profile_id' : selectedPaymentProfile.paymentProfileId
+            });
+
+            if(result.data && result.data.status){
+                setMessageModalVisible(true);
+                setModalIcon('success');
+                setModalMessage('Payment method deleted successfully');
+                setIsPaymentMethodDeleted(true);
+                setDeletePaymentMethodLoader(false);
+                setDeletePayMethodModalVisible(false);
+                handleModalClose();
+            }else{
+                setMessageModalVisible(true);
+                setModalIcon('error');
+                setModalMessage(result.data.message);
+                setDeletePaymentMethodLoader(false);
+            }
+        }catch(err){
+            setMessageModalVisible(true);
+            setModalIcon('error');
+            setModalMessage('Oops! An error occurred while deleting the payment method.')
+            setDeletePaymentMethodLoader(false);
+        }
+    }
+
+    const deletePaymentMethodAlert = () =>{
+       setDeletePayMethodModalVisible(true)
+    }
+
+    const handleMessageModalOnClose = () => {
+        setMessageModalVisible(false)
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -329,7 +398,7 @@ const AutoPay = ({ navigation }) => {
                                         <ShimmerPlaceholder ref={savedCardRef} style={styles.shimmerInputPlaceholder} />
                                     </View>
                                 ) : (
-                                    <>
+                                    <ScrollView horizontal>
                                         {isCrediCard && profileData?.paymentProfiles && profileData.paymentProfiles.length > 0 && (
                                             profileData.paymentProfiles.map((paymentProfile, index) => (
                                                 <TouchableOpacity
@@ -340,7 +409,7 @@ const AutoPay = ({ navigation }) => {
                                                     <ImageBackground source={crediCardBg} style={{ flex: 1 }}>
                                                         <Icon name="credit-card" style={[styles.icon_medium, styles.available_payment_method_icon, { color: 'white' }]} />
                                                         <Text style={[styles.available_payment_method_text, { color: 'white' }]}>
-                                                            {paymentProfile.accountType} {paymentProfile.cardNumber.slice(-4)}
+                                                            {paymentProfile.accountType ?? 'Card'} {paymentProfile.cardNumber.slice(-4)}
                                                         </Text>
                                                     </ImageBackground>
                                                 </TouchableOpacity>
@@ -353,7 +422,7 @@ const AutoPay = ({ navigation }) => {
                                                 <Text style={styles.available_payment_method_text}>ACH</Text>
                                             </TouchableOpacity>
                                         )}
-                                    </>
+                                    </ScrollView>
                                         
                                 )
                             }
@@ -459,8 +528,6 @@ const AutoPay = ({ navigation }) => {
                         )
                     }
                 </ScrollView>
-                
-
 
                 <Modal  
                     animationType="fade"
@@ -478,11 +545,6 @@ const AutoPay = ({ navigation }) => {
                                             <Text style={styles.credit_card_header}>CREDIT</Text>
                                             <Text style={styles.credit_card_header}>CARD</Text>
                                         </View>
-
-                                        {/* Display payment profile details */}
-                                        <Text style={styles.credit_card_name}>
-                                            {profileData.description.split('--')[1].trim() || 'No Name Available'} {/* You can use profile description or cardholder name */}
-                                        </Text>
                                         <Text style={styles.credit_card_number}>
                                             XXXX XXXX XXXX {selectedPaymentProfile.cardNumber.slice(-4)} {/* Display last 4 digits */}
                                         </Text>
@@ -494,16 +556,54 @@ const AutoPay = ({ navigation }) => {
                                 </View>
                             )}
                             <View style={styles.modal_button_container}>
-                                <TouchableOpacity style={[styles.button, styles.button_delete]} onPress={handleModalClose}>
-                                    <Text style={styles.button_delete_text}>Delete</Text>
-                                </TouchableOpacity>
                                 <TouchableOpacity style={[styles.button, styles.button_close]} onPress={handleModalClose}>
                                     <Text style={styles.button_close_text}>Close</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={[styles.button, styles.button_delete]} onPress={deletePaymentMethodAlert}>
+                                    <Text style={styles.button_delete_text}>Delete</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
                     </View>
                 </Modal>
+
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={deletePayMethodModalVisible}
+                    onRequestClose={closeDeletePayMethodModal}
+                >
+                    <View style={styles.backdrop}>
+                        <View style={styles.modal_view}>
+                            <View  style={styles.modal_image}>
+                                <Image source={warningImage} style={{maxWidth:60, maxHeight:60}}/>
+                            </View>
+                            <Text style={styles.modal_text}>Are you sure you want to delete this payment method? This action cannot be undone.</Text>
+                            <View style={styles.modal_button_container}>
+                                <TouchableOpacity style={[styles.button, styles.button_close]} onPress={closeDeletePayMethodModal}>
+                                    <Text style={styles.button_close_text}>Close</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={[styles.button, styles.button_delete, {flexDirection:'row', alignItems:'center', justifyContent:'center'}]} onPress={deletePaymentMethod}>
+                                    <Text style={styles.button_delete_text}>{deletePaymentMethodLoader ? 'Please wait...' : 'Delete'}</Text>
+                                    {
+                                        deletePaymentMethodLoader && (
+                                            <ActivityIndicator size="small" color='#2E78FF' animating={deletePaymentMethodLoader}/>
+                                        )
+                                    }
+                                </TouchableOpacity>
+                                
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+
+                <ModalComponent 
+                    modalVisible={messageModalVisible}
+                    setModalVisible={setMessageModalVisible}
+                    message={modalMessage}
+                    onClose={handleMessageModalOnClose}
+                    icon={modalIcon}
+                />
                 
             </ImageBackground>
         </SafeAreaView>
@@ -762,6 +862,12 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
     },
+    modal_image:{
+        alignItems:'center',
+        justifyContent:'center',
+        maxHeight:100,
+        overflow:'hidden'
+    },  
     modal_text: {
         marginBottom: 30,
         color: '#000',
@@ -781,7 +887,7 @@ const styles = StyleSheet.create({
     },
     button_delete: {
         backgroundColor: 'crimson',
-        marginRight:10
+        marginHorizontal:10
     },
     button_delete_text: {
         fontFamily:'Poppins Medium',

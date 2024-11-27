@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     balance: {
-        fontSize: 50,
+        fontSize: 35,
         fontFamily: 'Poppins Medium',
         color: 'white',
     },
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     icon: {
-        fontSize: 30,
+        fontSize: 20,
         fontWeight: 'bold',
         color: '#27ce2f',
         marginRight: 10,
