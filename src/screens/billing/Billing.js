@@ -180,12 +180,12 @@ const styles = StyleSheet.create({
         backgroundColor:'#2CABE2',
         elevation:5,
         borderWidth:1,
-        borderBottomColor:'#87ceeb',
+        borderColor:'#2CABE2',
         paddingHorizontal:20,
         paddingVertical:10,
         flexDirection:'row',
         justifyContent:'space-between',
-        alignItems:'center'
+        alignItems:'center',
     },
     header_text:{
         color:'#fff',

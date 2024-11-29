@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Image, StatusBar } from 'react-native'
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -26,6 +26,7 @@ const userAvatar = require('../assets/images/profile-image.png')
 const ScreenNavigation = () => {
     return (
         <NavigationContainer>
+            <StatusBar backgroundColor="#2CABE2"  barStyle="default"/>
             <Stack.Navigator initialRouteName='Splash' >
                 <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
                 <Stack.Screen name="UserOption" component={UserOption} options={{ headerShown: false }} />
