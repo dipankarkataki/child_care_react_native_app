@@ -83,7 +83,7 @@ const NewChat = ({navigation}) => {
                         </View>
                     ) : (
                         <>
-                            <Text style={[styles.header_title, styles.header_style]}>Contacts on ChildCareSoftware App</Text>
+                            <Text style={[styles.header_title, styles.header_style]}>Contact List</Text>
                             <FlatList
                                 data={contactList}
                                 keyExtractor={(item) => item.id}
