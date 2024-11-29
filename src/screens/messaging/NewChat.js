@@ -6,10 +6,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 
 const background = require('../../assets/images/background.png');
-const contact1_image = require('../../assets/images/contact1.jpg');
-const contact2_image = require('../../assets/images/contact2.jpg');
-const contact3_image = require('../../assets/images/contact3.jpg');
-const contact4_image = require('../../assets/images/contact4.png');
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
 
@@ -48,19 +44,6 @@ const NewChat = ({navigation}) => {
 
         getContactList();
 
-        // NewChatApi()
-        // .then((result) => {
-        //     if(result.data.status == true){
-        //         console.log('Contact List ==> ', result.data)
-        //         setContactList(result.data.data)
-        //     }else{
-        //         console.log('Oops! Something went wrong')
-        //     }
-            
-        // })
-        // .catch((err) => {
-        //     console.log('Error', err);
-        // });
     }, [contactListRef.current]);
 
     const getInitials = (firstname, lastname) => {
