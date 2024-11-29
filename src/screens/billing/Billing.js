@@ -14,6 +14,8 @@ const Billing = ({ navigation }) => {
         setCustomerProfileId(profileId);
     }
     getCustomerProfileId();
+
+    const [showBottomSheet, setShowBottomSheet] = useState(true)
     const userProfileImage = useSelector((state) => state.profileImageReducer)
 
     console.log('Customer Profile Id ---', customerProfileId)
@@ -160,6 +162,57 @@ const Billing = ({ navigation }) => {
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
+                {
+                    showBottomSheet && (
+                        <View style={styles.pay_now_bottom_sheet_container}>
+                        <View style={styles.bottom_sheet_card}>
+                                <Text style={styles.pay_now_header_text}> Select payment method to complete the transaction</Text>
+                                <View style={styles.select_invoice_container}>
+                                    <View style={styles.text_input_container}>
+                                        <Text style={styles.title_text}>Select Invoice</Text>
+                                        <View style={[styles.text_input, { borderColor: '#E1F3FB', flexDirection:'row', justifyContent:'space-between', alignItems:'center' }]}>
+                                            <TextInput
+                                                placeholder="Invoice No - 12F8"
+                                                placeholderTextColor="#b9b9b9"
+                                                readOnly
+                                            />
+                                            <Icon name="caret-down" size={20} color="#888" style={[styles.icon, {color:'#000'}]} />
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.text_input_container}>
+                                        <Text style={styles.title_text}>Enter Amount</Text>
+                                        <View style={[styles.text_input, { borderColor: '#E1F3FB'}]}>
+                                            <TextInput
+                                                placeholder="$300"
+                                                placeholderTextColor="#b9b9b9"
+                                                readOnly
+                                            />
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.text_input_container}>
+                                        <Text style={styles.title_text}>Select Payment Type</Text>
+                                        <View style={[styles.text_input, { borderColor: '#E1F3FB', flexDirection:'row', justifyContent:'space-between', alignItems:'center' }]}>
+                                            <TextInput
+                                                placeholder="Credit Card"
+                                                placeholderTextColor="#b9b9b9"
+                                                readOnly
+                                            />
+                                            <Icon name="caret-down" size={20} color="#888" style={[styles.icon, {color:'#000'}]} />
+                                        </View>
+                                    </View>
+
+                                    <TouchableOpacity style={[styles.pay_now_btn, {marginVertical:10}]}>
+                                        <Text style={styles.pay_now_btn_text}>Complete Transaction</Text>
+                                    </TouchableOpacity>
+                                    
+                                </View>
+                            </View>
+                        </View>
+                    )
+                }
+                
             </ImageBackground>
         </SafeAreaView>
         
@@ -351,4 +404,26 @@ const styles = StyleSheet.create({
         paddingTop:10,
         marginBottom:10
     },
+    pay_now_bottom_sheet_container:{
+        flex:1,
+        position:'absolute',
+        top:0,
+        zIndex:3,
+        height:'100%',
+        width:'100%',
+        backgroundColor:'rgba(0,0,0,0.4)'
+    },
+    bottom_sheet_card:{
+        position:'absolute',
+        zIndex:4,
+        bottom:0,
+        left:0,
+        right:0,
+        maxHeight:550,
+        backgroundColor:'#fff',
+        borderTopLeftRadius:40,
+        borderTopRightRadius:40,
+        paddingHorizontal:20,
+        paddingVertical:20,
+    }
 });
