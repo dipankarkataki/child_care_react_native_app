@@ -1,5 +1,5 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, SafeAreaView } from 'react-native'
-import React, {useEffect, useState} from 'react'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, SafeAreaView, Animated, Dimensions} from 'react-native'
+import React, {useEffect, useState, useRef} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import TokenManager from '../../api/TokenManager';
 import { useSelector } from 'react-redux';
@@ -15,8 +15,48 @@ const Billing = ({ navigation }) => {
     }
     getCustomerProfileId();
 
-    const [showBottomSheet, setShowBottomSheet] = useState(true)
+    const [showBottomSheet, setShowBottomSheet] = useState(false)
+    const translateY = useRef(new Animated.Value(Dimensions.get('window').height)).current;
+    const opacity = useRef(new Animated.Value(0)).current;
+
     const userProfileImage = useSelector((state) => state.profileImageReducer)
+
+    // const togglePayNowBottomSheet = () => {
+    //     setShowBottomSheet( (previousState) => !previousState)
+    // }
+
+    const togglePayNowBottomSheet = () => {
+        if (showBottomSheet) {
+          // Close the bottom sheet
+          Animated.parallel([
+            Animated.timing(translateY, {
+              toValue: Dimensions.get('window').height, // Slide to bottom
+              duration: 300,
+              useNativeDriver: true,
+            }),
+            Animated.timing(opacity, {
+              toValue: 0, // Fade out
+              duration: 300,
+              useNativeDriver: true,
+            }),
+          ]).start(() => setShowBottomSheet(false));
+        } else {
+          setShowBottomSheet(true);
+          // Open the bottom sheet
+          Animated.parallel([
+            Animated.timing(translateY, {
+              toValue: 0, // Slide to top
+              duration: 300,
+              useNativeDriver: true,
+            }),
+            Animated.timing(opacity, {
+              toValue: 1, // Fade in
+              duration: 300,
+              useNativeDriver: true,
+            }),
+          ]).start();
+        }
+      };
 
     console.log('Customer Profile Id ---', customerProfileId)
 
@@ -51,7 +91,7 @@ const Billing = ({ navigation }) => {
                                 <Text style={styles.pay_now_header_text}>OFF</Text>
                             </View>
                         </View>
-                        <TouchableOpacity style={styles.pay_now_btn}>
+                        <TouchableOpacity style={styles.pay_now_btn} onPress={togglePayNowBottomSheet}>
                             <Text style={styles.pay_now_btn_text}>Pay Now</Text>
                         </TouchableOpacity>
                         <View style={styles.payment_method_container}>
@@ -164,9 +204,9 @@ const Billing = ({ navigation }) => {
                 </ScrollView>
                 {
                     showBottomSheet && (
-                        <View style={styles.pay_now_bottom_sheet_container}>
-                        <View style={styles.bottom_sheet_card}>
-                                <Text style={styles.pay_now_header_text}> Select payment method to complete the transaction</Text>
+                        <Animated.View style={[styles.pay_now_bottom_sheet_container, { opacity }]}>
+                            <Animated.View style={[styles.bottom_sheet_card, { transform: [{ translateY }] }]}>
+                                <Text style={styles.pay_now_header_text}> Select invoice and make payment</Text>
                                 <View style={styles.select_invoice_container}>
                                     <View style={styles.text_input_container}>
                                         <Text style={styles.title_text}>Select Invoice</Text>
@@ -207,9 +247,12 @@ const Billing = ({ navigation }) => {
                                         <Text style={styles.pay_now_btn_text}>Complete Transaction</Text>
                                     </TouchableOpacity>
                                     
+                                    <TouchableOpacity style={{marginVertical:5}} onPress={togglePayNowBottomSheet}>
+                                        <Text style={[styles.title_text, {textAlign:'center'}]}>Close</Text>
+                                    </TouchableOpacity>
                                 </View>
-                            </View>
-                        </View>
+                            </Animated.View>
+                        </Animated.View>
                     )
                 }
                 
@@ -419,7 +462,7 @@ const styles = StyleSheet.create({
         bottom:0,
         left:0,
         right:0,
-        maxHeight:550,
+        maxHeight:600,
         backgroundColor:'#fff',
         borderTopLeftRadius:40,
         borderTopRightRadius:40,
