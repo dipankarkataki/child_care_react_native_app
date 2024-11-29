@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, SafeAreaView, Animated, Dimensions} from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, SafeAreaView, Animated, Dimensions, Alert} from 'react-native'
 import React, {useEffect, useState, useRef} from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import TokenManager from '../../api/TokenManager';
@@ -57,6 +57,10 @@ const Billing = ({ navigation }) => {
           ]).start();
         }
       };
+
+    const comingSoon = () => {
+        Alert.alert("Feature Coming Soon! 🚀.", "We're working hard to bring this feature to you. Stay tuned for updates!")
+    }
 
     console.log('Customer Profile Id ---', customerProfileId)
 
@@ -243,7 +247,7 @@ const Billing = ({ navigation }) => {
                                         </View>
                                     </View>
 
-                                    <TouchableOpacity style={[styles.pay_now_btn, {marginVertical:10}]}>
+                                    <TouchableOpacity style={[styles.pay_now_btn, {marginVertical:10}]} onPress={comingSoon}>
                                         <Text style={styles.pay_now_btn_text}>Complete Transaction</Text>
                                     </TouchableOpacity>
                                     
