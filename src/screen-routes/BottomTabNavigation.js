@@ -3,10 +3,10 @@ import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from  'react-native-vector-icons/FontAwesome'
 
-import Notification from '../screens/Notification';
-import ProfileSettings from '../screens/ProfileSettings';
-import Calendar from '../screens/Calendar';
-import UploadDocs from '../screens/UploadDocs';
+import Notification from '../screens/Notifications/Notification';
+import ProfileSettings from '../screens/ProfileSettings/ProfileSettings';
+import Calendar from '../screens/Calendar/Calendar';
+import UploadDocs from '../screens/UploadDocs/UploadDocs';
 
 const Tab = createBottomTabNavigator();
 

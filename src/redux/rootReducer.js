@@ -1,6 +1,8 @@
 import { combineReducers } from "redux";
-import { profileImageReducer } from "./profileImageReducer";
+import { profileImageReducer } from "./reducer/profileImageReducer";
+import { userAuthLoginReducer } from "./reducer/userAuthLoginReducer";
 
 export default combineReducers({
-    profileImageReducer
+    profileImageReducer,
+    userAuthLoginReducer
 }) 

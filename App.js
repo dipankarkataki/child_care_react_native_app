@@ -1,15 +1,9 @@
-import {StyleSheet } from 'react-native'
-import React, { useEffect } from 'react'
-import ScreenNavigation from './src/screen-routes/ScreenNavigation';
+import React from 'react';
+import Routes from './src/Navigation/Routes';
 
 const App = () => {
-  
   return (
-    <ScreenNavigation/>
+    <Routes />
   )
-}
-
-const styles = StyleSheet.create({
-});
-
-export default App
+};
+export default App;
