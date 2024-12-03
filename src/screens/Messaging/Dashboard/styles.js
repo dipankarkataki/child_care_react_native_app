@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 export default styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -7,44 +8,44 @@ export default styles = StyleSheet.create({
         flex: 1,
     },
     header_container: {
-        height: 60,
+        justifyContent:'space-between',
+        height: moderateScale(60),
         backgroundColor: '#2CABE2',
         elevation: 3,
-        paddingHorizontal: 20,
-        paddingVertical: 10,
+        paddingHorizontal: moderateScale(20),
+        paddingVertical: moderateVerticalScale(10),
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center'
     },
     header_text: {
         color: '#fff',
         fontFamily: 'Poppins Medium',
-        fontSize: 18
+        fontSize: scale(18),
     },
     header_icon: {
-        fontSize: 20,
+        fontSize: scale(20),
         color: '#fff',
     },
     user_avatar: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: moderateScale(38),
+        height: moderateScale(38),
+        borderRadius: moderateScale(20),
         backgroundColor: '#fff',
         borderWidth: 2,
         borderStyle: 'solid',
         borderColor: 'white'
     },
     chat_container: {
-        padding: 8,
+        padding: moderateScale(8),
     },
     card: {
         borderWidth: 1,
         borderStyle: 'solid',
         borderColor: '#fff',
-        borderRadius: 10,
+        borderRadius: moderateScale(10),
         backgroundColor: '#fff',
-        paddingVertical: 15,
-        paddingHorizontal: 5,
+        paddingVertical: moderateVerticalScale(15),
+        paddingHorizontal: moderateScale(5),
         elevation: 2,
     },
     card_content: {
@@ -53,30 +54,28 @@ export default styles = StyleSheet.create({
         overflow: 'hidden'
     },
     chat_profile_image: {
-        height: 60,
-        width: 60,
+        height: moderateScale(60),
+        width: moderateScale(60),
         borderWidth: 1,
         borderStyle: 'solid',
         borderColor: '#fff',
-        borderRadius: 70,
-        padding: 5,
+        borderRadius: moderateScale(70),
+        padding: moderateScale(5),
         elevation: 3,
     },
     chat_user_area: {
-        marginLeft: 10,
-        marginRight: 10,
+        marginHorizontal: moderateScale(10),
         width: '60%'
     },
     preview_user_chat: {
-        fontSize: 13,
+        fontSize: scale(10),
         fontFamily: 'Poppins Regular',
         color: '#797979',
         textAlign: 'justify'
-
     },
     chat_user_title_text: {
-        fontSize: 14,
-        color: '#000000',
+        fontSize: scale(14),
+        color: 'rgba(0,0,0,0.8)',
         fontFamily: 'Poppins Medium'
     },
     chat_notification_area: {
@@ -85,10 +84,10 @@ export default styles = StyleSheet.create({
         alignItems: 'center'
     },
     chat_time_text: {
-        fontSize: 14,
-        color: '#000000',
+        fontSize: scale(12),
+        color: 'rgba(0,0,0,0.8)',
         fontFamily: 'Poppins Medium',
-        marginBottom: 24
+        marginVertical: moderateVerticalScale(14)
     },
     notification_count_container: {
         flexDirection: 'row',
@@ -96,55 +95,55 @@ export default styles = StyleSheet.create({
         alignItems: 'center'
     },
     notification_count_text: {
-        height: 25,
-        width: 25,
+        height: moderateScale(25),
+        width: moderateScale(25),
         borderWidth: 1,
         borderStyle: 'solid',
         borderColor: '#f2f2f2',
-        borderRadius: 40,
+        borderRadius: moderateScale(40),
         backgroundColor: '#797979',
         color: '#fff',
-        fontSize: 12,
+        fontSize: scale(12),
         fontFamily: 'Poppins Medium',
-        padding: 5,
+        padding: moderateScale(5),
         textAlign: 'center',
-        marginRight: 5
+        marginRight: moderateScale(5)
     },
     notification_icon: {
-        fontSize: 17,
+        fontSize: scale(15),
         color: '#FFBF00',
         elevation: 2
     },
     floating_new_chat_btn_container: {
         position: 'absolute',
-        right: 30,
-        bottom: 40
+        right: moderateScale(30),
+        bottom: moderateVerticalScale(40)
     },
     floating_new_chat_btn: {
         justifyContent: 'center',
         alignItems: 'center',
-        height: 60,
-        width: 60,
+        height: moderateScale(60),
+        width: moderateScale(60),
         borderColor: '#20A090',
         backgroundColor: '#20A090',
         borderWidth: 1,
         borderStyle: 'solid',
-        borderRadius: 20,
+        borderRadius: moderateScale(20),
     },
     new_chat_icon: {
-        fontSize: 30,
+        fontSize: scale(30),
         color: '#fff'
     },
     select_contact_to_start_chat_container: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginVertical: 20
+        marginVertical: moderateVerticalScale(20)
     },
     select_contact_to_start_chat_btn: {
-        height: 120,
+        height: moderateScale(100),
         width: '80%',
-        padding: 20,
-        borderRadius: 2,
+        padding: moderateScale(20),
+        borderRadius: moderateScale(2),
         borderStyle: 'dashed',
         borderWidth: 1,
         borderColor: '#a9a9a9',
@@ -152,33 +151,33 @@ export default styles = StyleSheet.create({
         alignItems: 'center',
     },
     heading_title: {
-        fontSize: 17,
+        fontSize: scale(15),
         color: '#757575',
         fontFamily: 'Poppins Medium',
         textAlign: 'center'
     },
     contact_initials_container: {
-        height: 60,
-        width: 60,
-        borderRadius: 60,
+        height: moderateScale(60),
+        width: moderateScale(60),
+        borderRadius: moderateScale(60),
         borderWidth: 1,
         borderStyle: 'dashed',
         borderColor: '#fff',
         elevation: 1,
-        padding: 5,
+        padding: moderateScale(5),
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#6a5acd'
     }, contact_initials_text: {
-        fontSize: 18,
+        fontSize: scale(16),
         fontFamily: 'Poppins Medium',
         color: '#fff'
     },
     shimmerViewPlaceholder: {
-        height: 100,
-        borderRadius: 6,
+        height: moderateScale(100),
+        borderRadius: moderateScale(6),
         width: 'auto',
-        marginHorizontal: 20,
-        marginVertical: 10,
+        marginHorizontal: moderateScale(20),
+        marginVertical: moderateVerticalScale(10),
     },
 });

@@ -13,6 +13,7 @@ import * as RNLocalize from 'react-native-localize';
 import moment from 'moment-timezone';
 import styles from './styles';
 import Constants from '../../../Navigation/Constants';
+import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 
 
 const profileImage =  undefined;
@@ -485,7 +486,7 @@ const SendMessageArea = ({navigation, route }) => {
                             <View style={styles.sender_message_area}>
                                 <TouchableOpacity onPress={() => !sendingFile && setSelectedFile(null)}>
                                     <Text style={styles.removeAttachmentText}>
-                                        {!sendingFile   ? ( <Icon name="times-circle" style={{fontSize:30}} /> ) : 'Sending Wait ....'}
+                                        {!sendingFile   ? ( <Icon name="times-circle" style={{fontSize:scale(15)}} /> ) : 'Sending Wait ....'}
                                     </Text>
                                 </TouchableOpacity>
                                 <View style={styles.sender_tail} />
@@ -524,12 +525,12 @@ const SendMessageArea = ({navigation, route }) => {
                 </View>
 
                 <View style={styles.send_message_btn_container}>
-                    <TouchableOpacity onPress={toggleBottomSheet}>
+                    <TouchableOpacity onPress={toggleBottomSheet} activeOpacity={0.8}>
                         <Icon name="paperclip" style={styles.attachment_icon}/>
                     </TouchableOpacity>
                     <KeyboardAvoidingView behaviour={Platform.OS === 'ios' ? 'padding' : null} style={styles.input_container}>
                         <TextInput 
-                            style={[styles.text_input, { textAlignVertical: 'top', maxHeight: 130, overflow:'scroll' }]}
+                            style={[styles.text_input, { textAlignVertical: 'top', maxHeight: moderateScale(130), overflow:'scroll' }]}
                             placeholder="Write your message"
                             placeholderTextColor="#b9b9b9"
                             value={inputMessage}
@@ -547,13 +548,13 @@ const SendMessageArea = ({navigation, route }) => {
                 {bottomSheet && (
                     <View style={styles.bottom_sheet_container}>
                         <View style={styles.bottom_sheet_items}>
-                            <View style={{marginRight:20}}>
+                            <View style={{marginRight: moderateScale(20)}}>
                                 <TouchableOpacity style={styles.item_outline} onPress={openGallery}>
                                     <Icon name="images" style={styles.item_icon} />
                                 </TouchableOpacity>
                                 <Text style={styles.title_text}>Gallery</Text>
                             </View>
-                            <View style={{marginRight:20}}>
+                            <View style={{marginRight: moderateScale(20)}}>
                                 <TouchableOpacity style={styles.item_outline} onPress={openDocument}>
                                     <Icon name="file-alt" style={styles.item_icon} />
                                 </TouchableOpacity>

@@ -7,6 +7,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 import styles from './styles';
 import Constants from '../../../Navigation/Constants';
+import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
@@ -70,7 +71,7 @@ const SenderProfile = ({navigation, route}) => {
                     <TouchableOpacity style={styles.chat_media_header}>
                         <View style={styles.media_info_container}>
                             <Icon name="photo-video" style={styles.icon}/>
-                            <Text style={[styles.main_title, {marginLeft:10}]}>Chat Media</Text>
+                            <Text style={[styles.main_title, {marginLeft:moderateScale(10)}]}>Chat Media</Text>
                         </View>
                         <Icon name="angle-right" style={styles.icon}/>
                     </TouchableOpacity>
@@ -115,7 +116,7 @@ const SenderProfile = ({navigation, route}) => {
                 <View style={styles.account_creator_details}>
                     <View style={styles.account_details_header}>
                         <Icon name="address-card"style={styles.icon}/>
-                        <Text style={[styles.main_title, {marginLeft:10}]}>Account Details</Text>
+                        <Text style={[styles.main_title, {marginLeft:moderateScale(10)}]}>Account Details</Text>
                     </View>
                     <View style={styles.form_group}>
                         <Text style={styles.main_title2}>Phone Number:</Text>

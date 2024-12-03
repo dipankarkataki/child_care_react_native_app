@@ -11,6 +11,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 import styles from './styles';
 import Constants from '../../../Navigation/Constants';
+import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
@@ -160,9 +161,9 @@ const StudentDetails = ({familyId, siteId, navigation}) => {
     const tuitionPlans= tuitionPlanItems.map(plan => ({
         label: ( 
             <View style={[{ flexDirection: 'row', alignItems: 'center', justifyContent:'space-between' }]}>
-                <Text style={[styles.dropdown_list_item,{marginTop:0, marginRight:5}]}>{plan.plan_name} - Amount :</Text>
+                <Text style={[styles.dropdown_list_item,{marginTop:moderateVerticalScale(0), marginRight: moderateScale(5)}]}>{plan.plan_name} - Amount :</Text>
                 <Text><Icon name="dollar" style={[styles.currencyIcon]} /></Text>
-                <Text style={[styles.dropdown_list_item, {marginTop:3, marginLeft:2}]}>{plan.plan_amount}</Text>
+                <Text style={[styles.dropdown_list_item, {marginTop:moderateVerticalScale(3), marginLeft:moderateScale(2)}]}>{plan.plan_amount}</Text>
             </View>
         ),
         value: plan.id 
@@ -171,7 +172,7 @@ const StudentDetails = ({familyId, siteId, navigation}) => {
     const classRooms = classRoomItems.map(room => ({
         label: ( 
             <View style={[{ flexDirection: 'row', alignItems: 'center', justifyContent:'space-between' }]}>
-                <Text style={[styles.dropdown_list_item,{marginTop:0, marginRight:5}]}>{room.name}</Text>
+                <Text style={[styles.dropdown_list_item,{marginTop:moderateVerticalScale(0), marginRight:moderateScale(5)}]}>{room.name}</Text>
             </View>
         ),
         value: room.id 
@@ -295,9 +296,8 @@ const StudentDetails = ({familyId, siteId, navigation}) => {
                 <View style={styles.backdrop}>
                     <View style={styles.modal_view}>
                         <Text style={styles.modal_text}>Add Student</Text>
-                        <ScrollView style={{ maxHeight: '80%' }}>
+                        <ScrollView>
                             <View style={styles.form}>
-
                                 <View style={styles.form_group}>
                                     <Text style={styles.input_label}>
                                         First Name<Text style={styles.asterics}>*</Text>
@@ -447,8 +447,12 @@ const StudentDetails = ({familyId, siteId, navigation}) => {
                         {/* Modal Buttons */}
                         <View style={styles.modal_button_container}>
                             <TouchableOpacity style={[styles.button, styles.button_save_details]} onPress={handleSaveDetails} disabled={loader}>
-                                <Text style={[styles.textStyle, {marginLeft:20}]}>{loader ? 'Adding Student...' : 'Save Details'}</Text>
-                                <ActivityIndicator size="large" color='#2E78FF' animating={loader}/>
+                                <Text style={[styles.textStyle]}>{loader ? 'Adding Student...' : 'Save Details'}</Text>
+                                {
+                                    loader && (
+                                        <ActivityIndicator size="large" color='#2E78FF' animating={loader}/>
+                                    )
+                                }
                             </TouchableOpacity>
 
                             <TouchableOpacity style={[styles.button, styles.button_close]} onPress={handleModalClose}>

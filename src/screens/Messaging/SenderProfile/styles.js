@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 export default styles = StyleSheet.create({
     container: {
         flex: 1
@@ -12,10 +13,10 @@ export default styles = StyleSheet.create({
         borderColor: '#7393B3',
         borderStyle: 'solid',
         backgroundColor: '#7393B3',
-        padding: 20,
+        padding: moderateScale(20),
     },
     profile_back_button: {
-        marginBottom: 10,
+        marginBottom: moderateVerticalScale(10),
     },
     profile_image_container: {
         position: 'relative',
@@ -23,58 +24,57 @@ export default styles = StyleSheet.create({
         alignItems: 'center',
     },
     profile_header_image: {
-        height: 140,
-        width: 140,
+        height: moderateScale(140),
+        width: moderateScale(140),
         borderWidth: 2,
         borderStyle: 'solid',
         borderColor: 'white',
-        borderRadius: 80,
+        borderRadius: moderateScale(80),
         objectFit: 'fill'
     },
     profile_header_name: {
-        fontSize: 20,
+        fontSize: scale(18),
         fontFamily: 'Poppins Medium',
         color: 'white',
-        marginBottom: 5,
-        marginTop: 10,
+        marginVertical: moderateVerticalScale(10),
         textAlign: 'center'
     },
     profile_header_email: {
-        fontSize: 16,
+        fontSize: scale(14),
         fontFamily: 'Poppins Regular',
         color: '#fff',
         textAlign: 'center',
-        marginBottom: 5,
+        marginBottom: moderateVerticalScale(5),
     },
     back_btn_icon: {
-        fontSize: 24,
+        fontSize: scale(20),
     },
     icon: {
-        fontSize: 18,
+        fontSize: scale(18),
         fontWeight: 'bold',
         color: '#36454F',
     },
     main_title2: {
         color: '#36454F',
-        fontSize: 15,
+        fontSize: scale(14),
         fontFamily: 'Poppins Regular',
     },
     main_title: {
         color: '#36454F',
-        fontSize: 17,
+        fontSize: scale(14),
         fontFamily: 'Poppins Medium',
         fontWeight: 'bold'
     },
     sub_title: {
         color: '#36454F',
-        fontSize: 12,
-        marginBottom: 8,
+        fontSize: scale(12),
+        marginBottom: moderateVerticalScale(8),
         fontFamily: 'Poppins Medium'
     },
     sub_title2: {
         color: '#36454F',
-        fontSize: 12,
-        marginBottom: 8,
+        fontSize: scale(12),
+        marginBottom: moderateVerticalScale(8),
         fontFamily: 'Poppins Medium',
         fontWeight: 'bold'
     },
@@ -82,29 +82,27 @@ export default styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        marginTop: 20,
-        paddingHorizontal: 20,
-        paddingVertical: 10,
+        marginTop: moderateVerticalScale(20),
+        paddingHorizontal: moderateScale(20),
+        paddingVertical: moderateVerticalScale(10),
         backgroundColor: '#fff',
-        marginLeft: 10,
-        marginRight: 10,
-        borderRadius: 10,
+        marginHorizontal: moderateScale(10),
+        borderRadius: moderateScale(10),
         borderColor: '#343434',
         borderStyle: 'solid',
         elevation: 2
     },
     account_info_container: {
-        marginLeft: 15,
-        marginTop: 10
+        marginLeft: moderateScale(15),
+        marginTop: moderateVerticalScale(10)
     },
     chat_media: {
-        marginTop: 20,
-        paddingHorizontal: 20,
-        paddingVertical: 20,
+        marginTop: moderateVerticalScale(20),
+        paddingHorizontal: moderateScale(20),
+        paddingVertical: moderateVerticalScale(20),
         backgroundColor: '#fff',
-        marginLeft: 10,
-        marginRight: 10,
-        borderRadius: 10,
+        marginHorizontal: moderateScale(10),
+        borderRadius: moderateScale(10),
         borderColor: '#343434',
         borderStyle: 'solid',
         elevation: 2
@@ -118,27 +116,27 @@ export default styles = StyleSheet.create({
         flexDirection: 'row',
     },
     chat_media_content: {
-        marginTop: 20,
+        marginTop: moderateVerticalScale(20),
         flexDirection: 'row',
         flexWrap: 'wrap',
     },
     chat_media_items: {
-        height: 80,
-        width: 80,
-        borderRadius: 10,
-        marginHorizontal: 4,
-        marginBottom: 10,
+        height: moderateScale(80),
+        width: moderateScale(80),
+        borderRadius: moderateScale(10),
+        marginHorizontal: moderateScale(2),
+        marginBottom: moderateVerticalScale(10),
         borderWidth: 1,
         borderColor: '#dcdcdc',
         borderStyle: 'solid',
         backgroundColor: '#f8f8ff'
     },
     chat_doc_items: {
-        height: 80,
-        width: 80,
-        borderRadius: 10,
-        marginHorizontal: 4,
-        marginBottom: 10,
+        height: moderateScale(80),
+        width: moderateScale(80),
+        borderRadius: moderateScale(10),
+        marginHorizontal: moderateScale(2),
+        marginBottom: moderateVerticalScale(10),
         borderWidth: 1,
         borderColor: '#dcdcdc',
         borderStyle: 'solid',
@@ -147,43 +145,42 @@ export default styles = StyleSheet.create({
         alignItems: 'center'
     },
     doc_icon_style: {
-        fontSize: 40,
+        fontSize: scale(40),
         color: 'teal',
-        marginBottom: 5
+        marginBottom: moderateVerticalScale(5)
     },
     account_creator_details: {
-        marginTop: 20,
-        paddingHorizontal: 20,
-        paddingVertical: 20,
+        marginTop: moderateVerticalScale(20),
+        paddingHorizontal: moderateScale(20),
+        paddingVertical: moderateVerticalScale(20),
         backgroundColor: '#fff',
-        marginLeft: 10,
-        marginRight: 10,
-        borderRadius: 10,
+        marginHorizontal: moderateScale(5),
+        borderRadius: moderateScale(10),
         borderColor: '#343434',
         borderStyle: 'solid',
         elevation: 2,
-        marginBottom: 20
+        marginBottom: moderateVerticalScale(10)
     },
     account_details_header: {
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        marginBottom: 20
+        marginBottom: moderateVerticalScale(20)
     },
     form_group: {
-        marginBottom: 2
+        marginBottom: moderateVerticalScale(2)
     },
     shimmerContainer: {
-        marginTop: 30,
+        marginTop: moderateVerticalScale(30),
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
     },
     shimmerInputPlaceholder: {
-        height: 60,
-        marginBottom: 20,
-        borderRadius: 6,
-        width: 80,
-        marginRight: 10
+        height: moderateScale(60),
+        marginBottom: moderateVerticalScale(20),
+        borderRadius: moderateScale(6),
+        width: moderateScale(80),
+        marginRight: moderateScale(10)
     },
 });
