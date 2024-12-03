@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 export default styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -7,11 +8,11 @@ export default styles = StyleSheet.create({
         flex:1,
     },
     header_container:{
-        height:60,
+        height:moderateScale(60),
         backgroundColor:'#2CABE2',
-        paddingHorizontal:20,
+        paddingHorizontal:moderateScale(20),
         elevation:3,
-        paddingVertical:10,
+        paddingVertical:moderateVerticalScale(10),
         flexDirection:'row',
         alignItems:'center'
     },
@@ -23,10 +24,10 @@ export default styles = StyleSheet.create({
     header_text:{
         color:'#fff',
         fontFamily:'Poppins Medium',
-        fontSize:20,
+        fontSize:scale(18),
     },
     header_icon:{
-        fontSize: 20,
+        fontSize: scale(20),
         color: '#fff',
     },
     logo_area: {
@@ -35,29 +36,29 @@ export default styles = StyleSheet.create({
         alignItems: 'center'
     },
     logo_large: {
-        height: 80,
+        
     },
     forgot_password_container: {
         flex: 3,
-        marginTop: 125,
+        marginTop: moderateVerticalScale(125),
     },
     form: {
         flex: 1,
     },
     email_area: {
-        marginBottom: 34
+        marginBottom: moderateVerticalScale(34)
     },
     text_title: {
         color: '#535353',
-        fontSize: 17,
-        marginBottom: 8,
+        fontSize: scale(15),
+        marginBottom: moderateVerticalScale(8),
         fontFamily:'Poppins Medium'
     },
     text_input: {
         flex: 1,
-        fontSize: 17,
+        fontSize: scale(15),
         color: '#535353',
-        padding: 12,
+        padding: moderateScale(10),
         fontFamily:'Poppins Regular'
     },
     input_container: {
@@ -65,35 +66,35 @@ export default styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 1,
         borderColor: '#E1F3FB',
-        borderRadius: 10,
-        paddingHorizontal: 10,
+        borderRadius: moderateScale(10),
+        paddingHorizontal: moderateScale(10),
         backgroundColor: '#fff'
     },
     icon: {
-        marginRight: 10,
+        marginRight: moderateScale(10),
         color: 'black'
     },
     forgot_password: {
         flexDirection:'row',
         backgroundColor: '#FFB52E',
-        borderRadius: 10,
+        borderRadius: moderateScale(10),
         width: '100%',
-        height: 60,
+        height: moderateScale(60),
         justifyContent: 'center',
         alignItems: 'center'
     },
     forgot_password_text: {
         color: '#000000',
-        fontSize: 18,
-        marginLeft:40,
+        fontSize: scale(16),
+        marginLeft: moderateScale(40),
         fontFamily:'Poppins Medium',
     },
     error_text: {
         color: 'red',
-        fontSize: 14,
-        marginTop: 5
+        fontSize: scale(12),
+        marginTop: moderateVerticalScale(5)
     },
     activity_indicator:{
-        marginLeft:10, 
+        marginLeft: moderateScale(10), 
     },  
 });
