@@ -4,6 +4,7 @@ import CheckTokenApi from '../../api/CheckTokenApi/CheckTokenApi';
 import TokenManager from '../../api/TokenManager';
 import { useDispatch, useSelector } from 'react-redux';
 import { setGlobalProfileImage } from '../../redux/action/profileImageAction';
+import { removeUserAuthToken } from '../../redux/action/userAuthLogoutAction';
 import ProfileDetailsApi from '../../api/ProfileApi/ProfileDetailsApi';
 import styles from './styles';
 import Constants from '../../Navigation/Constants';
@@ -21,6 +22,7 @@ const invite = require('../../assets/images/invite.png');
 const Dashboard = ({ navigation }) => {
     const dispatch = useDispatch();
     const revokeToken = async () => {
+        dispatch(removeUserAuthToken());
         await TokenManager.removeToken();
         await TokenManager.removeUserId();
         navigation.replace(Constants.LOGIN)

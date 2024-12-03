@@ -110,7 +110,7 @@ const SignUp = ({ navigation }) => {
                     <Text style={styles.header_text}>Sign Up</Text>
                 </View>
             </View>
-            <ScrollView alwaysBounceVertical style={{paddingHorizontal:20}}>
+            <ScrollView alwaysBounceVertical style={styles.scrollView_container}>
                 <View style={styles.logo_area}>
                     <Image source={logo_large} style={styles.logo_large} />
                 </View>

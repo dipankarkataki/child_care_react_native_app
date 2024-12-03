@@ -9,6 +9,7 @@ import { setGlobalProfileImage } from '../../../redux/action/profileImageAction'
 import { setUserAuthToken } from '../../../redux/action/userAuthLoginAction';
 import styles from './styles';
 import Constants from '../../../Navigation/Constants';
+import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 
 const background = require('../../../assets/images/background.png');
 const logo_large = require('../../../assets/images/child-care-logo-large.png');
@@ -115,7 +116,7 @@ const Login = ({ navigation }) => {
                 <View style={styles.header_container}>
                     <Text style={styles.header_text}>Login</Text>
                 </View>
-                <ScrollView alwaysBounceVertical style={{paddingHorizontal:20}}>
+                <ScrollView alwaysBounceVertical style={styles.scrollView_container}>
                     <View style={styles.logo_area}>
                         <Image source={logo_large} style={styles.logo_large} />
                     </View>

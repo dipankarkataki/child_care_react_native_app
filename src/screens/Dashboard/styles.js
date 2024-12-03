@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 export default styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -7,11 +8,11 @@ export default styles = StyleSheet.create({
         flex:1,
     },
     header_container:{
-        height:60,
+        height:moderateScale(60),
         backgroundColor:'#2CABE2',
         elevation:3,
-        paddingHorizontal:20,
-        paddingVertical:10,
+        paddingHorizontal:moderateScale(20),
+        paddingVertical:moderateVerticalScale(10),
         flexDirection:'row',
         justifyContent:'space-between',
         alignItems:'center'
@@ -19,12 +20,12 @@ export default styles = StyleSheet.create({
     header_text:{
         color:'#fff',
         fontFamily:'Poppins Medium',
-        fontSize:20
+        fontSize:scale(18)
     },
     user_avatar: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: moderateScale(38),
+        height: moderateScale(38),
+        borderRadius: moderateScale(20),
         backgroundColor: '#fff',
         borderWidth: 2,
         borderStyle: 'solid',
@@ -33,20 +34,20 @@ export default styles = StyleSheet.create({
     welcome_container: {
         justifyContent: 'center',
         alignItems: 'center',
-        maxHeight: 150,
-        margin:15,
+        maxHeight: moderateScale(150),
+        margin:moderateScale(15),
         borderWidth: 1,
-        borderRadius: 10,
+        borderRadius: moderateScale(10),
         borderColor: '#BAF1EF',
         borderStyle: 'solid',
         backgroundColor: '#fff',
-        paddingVertical:15,
+        paddingVertical:moderateVerticalScale(15),
         overflow:'hidden'
     },
     welcome_image: {
-        height: 38,
-        width: 50,
-        borderRadius: 5
+        height: moderateScale(38),
+        width: moderateScale(50),
+        borderRadius: moderateScale(5)
     },
     welcome_text: {
         color: "#000000",
@@ -55,41 +56,40 @@ export default styles = StyleSheet.create({
     },
     welcome_content: {
         color: "#535353",
-        fontSize: 14,
+        fontSize: scale(12),
         fontWeight: '400',
-        paddingTop: 12,
-        paddingLeft: 30,
-        paddingRight: 30,
+        paddingVertical: moderateVerticalScale(6),
+        paddingHorizontal: moderateScale(30),
         textAlign: 'center'
     },
     dashboard_items_container: {
         flex: 1,
-        marginTop: 20
+        marginVertical: moderateVerticalScale(10)
     },
     items_group: {
         flexDirection: 'row',
-        padding: 15,
+        padding: moderateScale(10),
     },
     item: {
-        height: 100,
-        width: 100,
+        height: moderateScale(100),
+        width: moderateScale(100),
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 5,
+        borderRadius: moderateScale(5),
         borderWidth: 1,
         borderColor: '#E1F3FB',
         borderStyle: 'solid',
-        marginRight: 15,
+        marginHorizontal: moderateScale(5),
         backgroundColor: 'white'
     },
     item_image: {
-        height: 32,
-        width: 32
+        height: moderateScale(28),
+        width: moderateScale(28)
     },
     item_text: {
-        marginTop: 13,
+        marginVertical: moderateVerticalScale(10),
         color: "#535353",
-        fontSize: 12,
+        fontSize: scale(12),
         textAlign: 'center',
         fontFamily: 'Poppins Medium'
     }

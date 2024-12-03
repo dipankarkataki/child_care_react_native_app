@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 export default styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -13,7 +14,7 @@ export default styles = StyleSheet.create({
         borderColor: '#2CABE2',
         borderStyle: 'solid',
         backgroundColor: '#2CABE2',
-        padding: 20,
+        padding: moderateScale(20),
     },
     profile_image_container: {
         position: 'relative',
@@ -21,95 +22,96 @@ export default styles = StyleSheet.create({
         alignItems: 'center',
     },
     profile_header_image: {
-        height: 156,
-        width: 156,
+        height: moderateScale(145),
+        width: moderateScale(145),
         borderWidth: 2,
         borderStyle: 'solid',
         borderColor: 'white',
-        borderRadius: 80,
-        marginBottom: 20,
+        borderRadius: moderateScale(80),
+        marginVertical: moderateVerticalScale(10),
     },
     edit_image_btn: {
         position: 'absolute',
-        bottom: 20,
-        right: 10,
-        height: 35,
-        width: 35,
+        bottom: moderateVerticalScale(10),
+        right: moderateScale(5),
+        height: moderateScale(30),
+        width: moderateScale(30),
         borderWidth: 2,
         borderStyle: 'solid',
         borderColor: '#dcdcdc',
-        borderRadius: 80,
+        borderRadius: moderateScale(80),
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'white',
     },
     profile_header_name: {
-        fontSize: 18,
+        fontSize: scale(16),
         fontFamily: 'Poppins Medium',
         color: 'white',
-        marginBottom: 5,
+        marginVertical: moderateVerticalScale(5),
     },
     profile_header_email: {
-        fontSize: 14,
+        fontSize: scale(14),
         fontFamily: 'Poppins Regular',
         color: '#C6D0DE'
     },
     back_btn_icon: {
-        fontSize: 30,
+        fontSize: scale(30),
         fontWeight: 'bold',
         color: '#fff'
     },
     icon: {
-        fontSize: 20,
+        fontSize: scale(16),
         fontWeight: 'bold',
         color: '#2CABE2',
     },
     profile_back_button: {
-        marginBottom: 20,
+        marginVertical: moderateVerticalScale(10),
     },
     profile_content_container: {
-        paddingLeft: 10,
-        paddingRight: 15,
-        paddingTop: 10,
-        marginBottom: 80
+        paddingHorizontal: moderateScale(10),
+        paddingVertical: moderateVerticalScale(5),
+        marginVertical: moderateVerticalScale(5),
     },
     card: {
-        borderRadius: 10,
+        borderRadius: moderateScale(10),
         backgroundColor: '#fff',
-        padding: 15,
+        paddingHorizontal: moderateScale(10),
+        paddingVertical:moderateVerticalScale(15),
         elevation: 2,
-        marginBottom: 20
+        marginBottom: moderateVerticalScale(15),
     },
     text_input_container: {
-        marginBottom: 20
+        marginBottom: moderateVerticalScale(10),
     },
     form_group: {
-        marginBottom: 16,
+        marginBottom: moderateVerticalScale(20),
     },
     text_input: {
+        flex:1,
         backgroundColor: '#F1F6F6',
-        fontSize: 17,
+        fontSize: scale(14),
         fontFamily: 'Poppins Regular',
-        borderRadius: 6,
-        paddingLeft: 12,
+        borderRadius: moderateScale(6),
+        paddingHorizontal: moderateScale(10),
         color: '#797979',
-        height: 60
+        height: moderateScale(50)
     },
     input_title: {
-        color: 'black',
-        fontSize: 17,
+        color: 'rgba(0,0,0,0.8)',
+        fontSize: scale(14),
         fontFamily: 'Poppins Medium',
-        marginBottom: 8
+        marginBottom: moderateVerticalScale(5)
     },
     medium_text: {
-        color: 'black',
-        fontSize: 14,
+        color: 'rgba(0,0,0,0.8)',
+        fontSize: scale(12),
         fontFamily: 'Poppins Medium',
     },
     input_label: {
-        marginBottom: 8,
+        marginBottom: moderateVerticalScale(8),
         color: '#797979',
-        fontSize: 17,
+        fontSize: scale(14),
         fontFamily: 'Poppins Medium',
     },
     family_details_card: {
@@ -118,41 +120,41 @@ export default styles = StyleSheet.create({
         alignItems: 'center',
     },
     family_details_text: {
-        color: 'black',
-        fontSize: 17,
+        color: 'rgba(0,0,0,0.8)',
+        fontSize: scale(14),
         fontFamily: 'Poppins Medium',
     },
     title_text: {
         color: '#797979',
-        fontSize: 17,
+        fontSize: scale(14),
         fontFamily: 'Poppins Medium',
-        marginBottom: 16
+        marginBottom: moderateVerticalScale(10)
     },
     change_password_text: {
-        color: 'black',
-        fontSize: 17,
+        color: 'rgba(0,0,0,0.8)',
+        fontSize: scale(14),
         fontFamily: 'Poppins Medium',
-        paddingBottom: 10
+        paddingBottom: moderateVerticalScale(10)
     },
     kiosk_container: {
         flexDirection: 'row',
         alignItems: 'center'
     },
     kiosk_input: {
-        height: 40,
-        width: 100,
+        height: moderateScale(40),
+        width: moderateScale(100),
         backgroundColor: '#F1F6F6',
-        fontSize: 17,
+        fontSize: scale(14),
         fontFamily: 'Poppins Regular',
-        borderRadius: 6,
-        marginRight: 20,
+        borderRadius: moderateScale(6),
+        marginRight: moderateScale(20),
         color: '#797979',
         textAlign: 'center',
-        paddingBottom: 5
+        paddingBottom: moderateVerticalScale(5)
     },
     show_kiosk_pin_text: {
         color: '#2CABE2',
-        fontSize: 17,
+        fontSize: scale(14),
         fontFamily: 'Poppins Medium',
     },
     asterics: {
@@ -162,44 +164,44 @@ export default styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
     },
     modal_view: {
         width: '90%',
         backgroundColor: 'white',
-        borderRadius: 10,
-        padding: 18,
+        borderRadius: moderateScale(10),
+        padding: moderateScale(18),
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
-            height: 2,
+            height: moderateScale(2),
         },
         shadowOpacity: 0.25,
-        shadowRadius: 4,
+        shadowRadius: moderateScale(4),
         elevation: 5,
     },
     modal_text: {
-        marginBottom: 30,
-        color: '#000',
-        fontSize: 17,
+        marginBottom: moderateVerticalScale(20),
+        color: 'rgba(0,0,0,0.8)',
+        fontSize: scale(16),
         fontFamily: 'Poppins Medium',
     },
     modal_button_container: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
         alignItems: 'center',
-        marginTop: 10,
+        marginTop: moderateVerticalScale(10),
     },
     button_save_details: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: '#FFB52E',
-        marginRight: 10,
+        marginRight: moderateScale(10),
     },
     button: {
-        borderRadius: 5,
-        padding: 10,
+        borderRadius: moderateScale(5),
+        padding: moderateScale(10),
         elevation: 2,
     },
     button_close: {
@@ -210,35 +212,35 @@ export default styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 1,
         borderColor: '#E1F3FB',
-        borderRadius: 10,
-        paddingHorizontal: 10,
+        borderRadius: moderateScale(10),
+        paddingHorizontal: moderateScale(10),
         backgroundColor: '#fff'
     },
     shimmerInputPlaceholder: {
-        height: 50,
-        marginBottom: 20,
-        borderRadius: 6,
+        height: moderateScale(50),
+        marginBottom: moderateVerticalScale(20),
+        borderRadius: moderateScale(6),
         width: '100%'
     },
     shimmerViewPlaceholder: {
-        height: 200,
-        marginBottom: 20,
-        borderRadius: 6,
+        height: moderateScale(200),
+        marginBottom: moderateVerticalScale(20),
+        borderRadius: moderateScale(6),
         width: '100%'
     },
     error_text: {
         color: 'red',
-        fontSize: 14,
-        marginTop: 5
+        fontSize: scale(12),
+        marginTop: moderateVerticalScale(5)
     },
     logout_btn: {
         backgroundColor: '#FFB52E',
-        padding: 10,
+        padding: moderateScale(10),
         justifyContent: 'center',
         alignItems: 'center',
         width: '60%',
         borderWidth: 1,
-        borderRadius: 5,
+        borderRadius: moderateScale(5),
         borderStyle: 'solid',
         borderColor: '#FFB52E',
         elevation: 1
@@ -249,14 +251,15 @@ export default styles = StyleSheet.create({
         alignItems: 'center'
     },
     logout_btn_text: {
-        fontSize: 18,
-        color: 'black',
-        marginRight: 10
+        fontSize: scale(16),
+        color: 'rgba(0,0,0,0.8)',
+        fontFamilyL:'Poppins Medium',
+        marginRight: moderateScale(10)
     },
     logout_icon: {
-        fontSize: 18,
+        fontSize: scale(16),
         color: 'black',
         fontWeight: 'bold',
-        marginRight: 10
+        marginRight: moderateScale(10)
     }
 });

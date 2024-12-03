@@ -262,7 +262,7 @@ const MemberDetails = ({familyId, siteId, navigation, onFamilyNameFetched}) => {
                 <View style={styles.backdrop}>
                     <View style={styles.modal_view}>
                         <Text style={styles.modal_text}>Add Contact</Text>
-                        <ScrollView style={{ maxHeight: '80%' }}>
+                        <ScrollView>
                             <KeyboardAvoidingView>
                                 <View style={styles.form}>
                                     {/* First Name */}
@@ -400,7 +400,12 @@ const MemberDetails = ({familyId, siteId, navigation, onFamilyNameFetched}) => {
                         <View style={styles.modal_button_container}>
                             <TouchableOpacity style={[styles.button, styles.button_save_details]} onPress={() => submitForm()} disabled={loader}>
                                 <Text style={[styles.textStyle, styles.save_details_text]}>{loader ? 'Please wait...' : 'Save Details'}</Text>
-                                <ActivityIndicator size="large" color='#2E78FF' animating={loader}/>
+                                {
+                                    loader && (
+                                        <ActivityIndicator size="small" color='#2E78FF' animating={loader}/>
+                                    )
+                                }
+                                
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.button, styles.button_close]} onPress={handleModalClose}>
                                 <Text style={styles.textStyle}>Close</Text>

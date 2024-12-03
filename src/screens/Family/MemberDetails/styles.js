@@ -1,39 +1,34 @@
 import { StyleSheet } from "react-native";
+import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 export default styles = StyleSheet.create({
     icon: {
-        fontSize: 20,
+        fontSize: scale(18),
         fontWeight: 'bold',
-        color: 'black',
-    },
-    family_content_container: {
-        paddingLeft: 10,
-        paddingRight: 15,
-        paddingTop: 10,
-        marginBottom: 20,
+        color: 'rgba(0,0,0,0.8)',
     },
     card: {
-        borderRadius: 10,
+        borderRadius: moderateScale(10),
         backgroundColor: '#fff',
-        padding: 15,
+        padding: moderateScale(15),
         elevation: 2,
-        marginBottom: 20,
+        marginBottom: moderateVerticalScale(20),
     },
     form_group: {
-        marginBottom: 16,
+        marginBottom: moderateScale(16),
     },
     input_label: {
-        marginBottom: 8,
+        marginBottom: moderateVerticalScale(8),
         color: '#797979',
-        fontSize: 17,
+        fontSize: scale(14),
         fontFamily: 'Poppins Medium',
     },
     text_input: {
         borderWidth: 1,
         borderColor: '#E1F3FB',
-        borderRadius: 10,
-        paddingHorizontal: 10,
+        borderRadius: moderateScale(10),
+        paddingHorizontal: moderateScale(10),
         backgroundColor: '#fff',
-        fontSize: 17,
+        fontSize: scale(14),
         color: '#535353',
         fontFamily: 'Poppins Regular',
     },
@@ -44,102 +39,105 @@ export default styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: moderateVerticalScale(10),
     },
     family_details_text: {
-        color: 'black',
-        fontSize: 17,
+        color: 'rgba(0,0,0,0.8)',
+        fontSize: scale(14),
         fontFamily: 'Poppins Medium',
     },
     title_text: {
         color: '#797979',
-        fontSize: 17,
+        fontSize: scale(14),
         fontFamily: 'Poppins Medium',
-        marginBottom: 16,
+        marginBottom: moderateVerticalScale(16),
     },
     divider: {
         height: 1,
         backgroundColor: '#E8F2F4',
         width: '100%',
-        marginVertical: 10,
+        marginVertical: moderateVerticalScale(10),
     },
     primary_title_text: {
         color: '#2CABE2',
-        fontSize: 18,
+        fontSize: scale(15),
         fontFamily: 'Poppins Medium',
-        marginBottom: 16,
+        marginBottom: moderateVerticalScale(5),
     },
     backdrop: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
     },
     modal_view: {
         width: '90%',
+
         backgroundColor: 'white',
-        borderRadius: 10,
-        padding: 15,
+        borderRadius: moderateScale(10),
+        padding: moderateScale(15),
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
-            height: 2,
+            height: moderateScale(2),
         },
         shadowOpacity: 0.25,
-        shadowRadius: 4,
+        shadowRadius: moderateScale(4),
         elevation: 5,
+        marginVertical: moderateVerticalScale(60)
     },
     modal_button_container: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
         alignItems: 'center',
-        marginTop: 10,
+        marginTop: moderateVerticalScale(10)
     },
     button: {
-        borderRadius: 5,
-        padding: 10,
+        borderRadius: moderateScale(5),
+        padding: moderateScale(5),
         elevation: 2,
     },
     button_close: {
         backgroundColor: '#cdcdcd',
-        marginTop: 20,
-        paddingHorizontal: 30,
+        paddingHorizontal: moderateScale(16),
+        paddingVertical: moderateVerticalScale(8)
     },
     button_save_details: {
         flexDirection: 'row',
         backgroundColor: '#FFB52E',
         justifyContent: 'center',
         alignItems: 'center',
-        paddingLeft: 36,
-        marginRight: 10,
-        marginTop: 20
+        paddingHorizontal: moderateScale(16),
+        paddingVertical:moderateVerticalScale(8),
+        marginHorizontal: moderateScale(10)
 
     },
     save_details_text: {
-
-        marginBotoom: 0
+        fontSize: scale(14),
+        fontFamily:'Poppins Medium',
+        color:'rgba(0,0,0,0.8)'
     },
     textStyle: {
-        color: '#000',
+        color: 'rgba(0,0,0,0.8)',
         textAlign: 'center',
-        fontSize: 17,
+        fontSize: scale(14),
         fontFamily: 'Poppins Medium',
     },
     modal_text: {
-        marginBottom: 30,
-        color: '#000',
-        fontSize: 17,
+        marginBottom: moderateVerticalScale(10),
+        color: 'rgba(0,0,0,0.8)',
+        fontSize: scale(16),
         fontFamily: 'Poppins Medium',
     },
     error_text: {
         color: 'red',
-        fontSize: 14,
-        marginTop: 5,
+        fontSize: scale(12),
+        marginTop: moderateVerticalScale(2),
     },
     shimmerViewPlaceholder: {
-        height: 200,
-        marginBottom: 20,
-        borderRadius: 6,
+        height: moderateScale(200),
+        marginBottom: moderateVerticalScale(20),
+        borderRadius: moderateScale(6),
         width: '100%'
     },
 });

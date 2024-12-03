@@ -348,6 +348,7 @@ const ProfileSettings = ({ navigation }) => {
                                     placeholderTextColor='#b9b9b9' 
                                     value={firstName}
                                     onChangeText={(text) => setFirstName(text)}
+                                    readOnly
                                 />
                             </View>
                             <View style={styles.text_input_container}>
@@ -358,6 +359,7 @@ const ProfileSettings = ({ navigation }) => {
                                     placeholderTextColor='#b9b9b9'
                                     value={lastName}
                                     onChangeText={(text) => setLastName(text)} 
+                                    readOnly
                                 />
                             </View>
                             <View style={styles.text_input_container}>
@@ -369,6 +371,7 @@ const ProfileSettings = ({ navigation }) => {
                                     placeholderTextColor='#b9b9b9'
                                     value={phone}
                                     onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ''))} 
+                                    readOnly
                                 />
                             </View>
                         </View>
