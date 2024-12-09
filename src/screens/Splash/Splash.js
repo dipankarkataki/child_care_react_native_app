@@ -13,7 +13,6 @@ const Splash = ({navigation}) => {
   const userAuthToken = useSelector((state) => state.userAuth);
 
   useEffect(() =>{
-    console.log('User Auth Token from Splash.js --->', userAuthToken);
     setTimeout(() => {
       if(!!userAuthToken){
         navigation.navigate(Constants.DASHBOARD)

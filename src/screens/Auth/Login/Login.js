@@ -9,7 +9,6 @@ import { setGlobalProfileImage } from '../../../redux/action/profileImageAction'
 import { setUserAuthToken } from '../../../redux/action/userAuthLoginAction';
 import styles from './styles';
 import Constants from '../../../Navigation/Constants';
-import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 
 const background = require('../../../assets/images/background.png');
 const logo_large = require('../../../assets/images/child-care-logo-large.png');
@@ -76,7 +75,6 @@ const Login = ({ navigation }) => {
 
                     navigation.replace(Constants.DASHBOARD);
                 }else{
-                    console.log('Login Failed Err ---', result)
                     setLoader(false);
                     setModalVisible(true);
                     setModalIcon('error');
