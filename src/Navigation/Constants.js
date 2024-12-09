@@ -21,7 +21,4 @@ export default {
     CALENDAR : 'Calendar',
     NOTIFICATION : 'Notifications',
     UPLOAD_DOCS : 'Upload Documents'
-
-    
-
 }

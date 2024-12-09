@@ -10,14 +10,15 @@ const logoWhite = require('../../assets/images/child-care-logo-white.png');
 
 const Splash = ({navigation}) => {
 
-  const userAuthToken = useSelector((state) => state.userAuthLoginReducer);
+  const userAuthToken = useSelector((state) => state.userAuth);
 
   useEffect(() =>{
+    console.log('User Auth Token from Splash.js --->', userAuthToken);
     setTimeout(() => {
       if(!!userAuthToken){
-        navigation.replace(Constants.DASHBOARD)
+        navigation.navigate(Constants.DASHBOARD)
       }else{
-        navigation.replace(Constants.USER_OPTION)
+        navigation.navigate(Constants.USER_OPTION)
       }
     }, 2000);
   },[]);

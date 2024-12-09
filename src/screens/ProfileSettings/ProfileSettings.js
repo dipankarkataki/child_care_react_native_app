@@ -180,7 +180,7 @@ const ProfileSettings = ({ navigation }) => {
         }
     }
 
-    const userProfileImage = useSelector((state) => state.profileImageReducer)
+    const userProfileImage = useSelector((state) => state.profileImage)
 
     useEffect( () => {
         if(avatarRef.current){

@@ -21,7 +21,7 @@ const Billing = ({ navigation }) => {
     const translateY = useRef(new Animated.Value(Dimensions.get('window').height)).current;
     const opacity = useRef(new Animated.Value(0)).current;
 
-    const userProfileImage = useSelector((state) => state.profileImageReducer)
+    const userProfileImage = useSelector((state) => state.profileImage)
 
     // const togglePayNowBottomSheet = () => {
     //     setShowBottomSheet( (previousState) => !previousState)

@@ -23,7 +23,7 @@ const MessagingDashboard = ({ navigation }) => {
 
     const [chatUserList, setChatUserList] = useState([]);
 
-    const userProfileImage = useSelector((state) => state.profileImageReducer)
+    const userProfileImage = useSelector((state) => state.profileImage)
     const [shimmerLoader, setShimmerLoader] = useState(false);
 
     useEffect(() => {

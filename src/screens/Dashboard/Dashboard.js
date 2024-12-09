@@ -28,7 +28,7 @@ const Dashboard = ({ navigation }) => {
         navigation.replace(Constants.LOGIN)
     };
 
-    const userProfileImage = useSelector((state) => state.profileImageReducer);
+    const userProfileImage = useSelector((state) => state.profileImage);
 
     useEffect(() => {
         CheckTokenApi()

@@ -1,5 +1,4 @@
-import { User_Auth_Login } from "../constants";
-import { User_Auth_Logout } from "../constants";
+import { User_Auth_Login, User_Auth_Logout } from "../constants";
 
 const initialState = null;
 
