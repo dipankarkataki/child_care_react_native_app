@@ -28,3 +28,4 @@ export {default as AutoPay} from '../screens/Billing/AutoPay/AutoPay';
 export {default as Calender} from '../screens/Calendar/Calendar';
 export {default as Notification} from '../screens/Notifications/Notification';
 export {default as UploadDocs} from '../screens/UploadDocs/UploadDocs';
+export {default as Attendance} from '../screens/Attendance/Attendance';

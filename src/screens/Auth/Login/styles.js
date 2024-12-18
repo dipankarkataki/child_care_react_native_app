@@ -11,7 +11,7 @@ export default styles = StyleSheet.create({
         paddingHorizontal:moderateScale(20),
     },
     header_container:{
-        height:moderateScale(60),
+        height:moderateScale(40),
         backgroundColor:'#2CABE2',
         paddingHorizontal:moderateScale(20),
         elevation:3,

@@ -112,7 +112,7 @@ const Login = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <ImageBackground source={background} style={styles.image_background}>
                 <View style={styles.header_container}>
-                    <Text style={styles.header_text}>Login</Text>
+                    {/* <Text style={styles.header_text}>Login</Text> */}
                 </View>
                 <ScrollView alwaysBounceVertical style={styles.scrollView_container}>
                     <View style={styles.logo_area}>

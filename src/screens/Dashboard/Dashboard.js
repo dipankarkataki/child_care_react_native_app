@@ -83,7 +83,7 @@ const Dashboard = ({ navigation }) => {
                 </View>
                 <View style={styles.dashboard_items_container}>
                     <View style={styles.items_group}>
-                        <TouchableOpacity style={styles.item} onPress={comingSoon}>
+                        <TouchableOpacity style={styles.item} onPress={ () => navigation.navigate(Constants.Attendance)}>
                             <Image source={attendance_user} style={styles.item_image} />
                             <Text style={styles.item_text}>Attendance</Text>
                         </TouchableOpacity>

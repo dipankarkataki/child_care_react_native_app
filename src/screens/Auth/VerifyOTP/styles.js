@@ -16,9 +16,9 @@ export default styles = StyleSheet.create({
         alignItems:'center'
     },
     header_text_container:{
-        width:'92%',
+        flex: 1,
         justifyContent:'center',
-        alignItems:'center',
+        alignItems:'center'
     },
     header_text:{
         color:'#fff',

@@ -1,5 +1,6 @@
 import React from "react";
-import { Splash, Dashboard, ProfileSettings, FamilyDetails, MemberDetails, StudentDetails, ChatDashboard, NewChat, ChatProfile, ChatArea, Billing, AutoPay} from "../../screens";
+import { Splash, Dashboard, ProfileSettings, FamilyDetails, MemberDetails, StudentDetails, 
+    ChatDashboard, NewChat, ChatProfile, ChatArea, Billing, AutoPay, Attendance} from "../../screens";
 import Constants from "../Constants";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -20,6 +21,7 @@ const AuthRoutes = () => {
             <Stack.Screen name={Constants.CHAT_PROFILE} component={ChatProfile} />
             <Stack.Screen name={Constants.BILLING} component={Billing} />
             <Stack.Screen name={Constants.AUTO_PAY} component={AutoPay} />
+            <Stack.Screen name={Constants.Attendance} component={Attendance} />
         </Stack.Navigator>
     )
 };

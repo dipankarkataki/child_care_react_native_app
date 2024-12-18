@@ -20,5 +20,6 @@ export default {
     AUTO_PAY : 'Auto Pay',
     CALENDAR : 'Calendar',
     NOTIFICATION : 'Notifications',
-    UPLOAD_DOCS : 'Upload Documents'
+    UPLOAD_DOCS : 'Upload Documents',
+    Attendance: 'Attendance'
 }
