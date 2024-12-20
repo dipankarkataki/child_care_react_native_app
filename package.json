@@ -24,6 +24,7 @@
     "pusher-js": "^8.4.0-rc2",
     "react": "18.3.1",
     "react-native": "0.75.3",
+    "react-native-calendars": "^1.1307.0",
     "react-native-document-picker": "^9.3.1",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-file-viewer": "^2.1.5",
