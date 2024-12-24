@@ -19,16 +19,18 @@ const Attendance = ({ navigation }) => {
 
   // Function to check and update arrow states
   const checkArrowState = (year, month) => {
-    if (year > currentYear) {
+    const minYear = currentYear - 3; // Allow up to 3 years back
+
+    if (year > currentYear || (year === currentYear && month > currentMonth)) {
       setDisableRightArrow(true);
-      setDisableLeftArrow(false); // Allow going back to the current year
-    } else if (year < currentYear) {
+      setDisableLeftArrow(false); // Allow going back
+    } else if (year < minYear) {
       setDisableLeftArrow(true);
-      setDisableRightArrow(false); // Allow going forward to the current year
+      setDisableRightArrow(false); // Allow going forward
     } else {
-      // Current year: enable both arrows within the year's bounds
-      setDisableRightArrow(month === 12);
-      setDisableLeftArrow(month === 1);
+      // Within the allowed range, enable/disable arrows based on the month
+      setDisableRightArrow(year === currentYear && month === currentMonth);
+      setDisableLeftArrow(year === minYear && month === 1);
     }
   };
 
