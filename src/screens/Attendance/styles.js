@@ -140,7 +140,7 @@ export default styles = StyleSheet.create({
         elevation: 4,
         marginHorizontal: moderateScale(10),
         paddingVertical: moderateVerticalScale(10),
-        maxHeight: 600
+        maxHeight: 650
     },
     history_card_header: {
         flexDirection: 'row',
@@ -162,7 +162,10 @@ export default styles = StyleSheet.create({
         borderRightColor: 'rgba(0,0,0,0.2)',
         borderTopColor: 'rgba(0,0,0,0.1)',
         borderBottomColor: 'rgba(0,0,0,0.1)',
-        textAlign: 'center'
+        textAlign: 'center',
+        textAlignVertical: 'center',
+        paddingVertical: moderateVerticalScale(5),
+        backgroundColor:'#dcdcdc'
     },
     history_card_body: {
         marginHorizontal: moderateScale(10),
@@ -172,13 +175,13 @@ export default styles = StyleSheet.create({
         borderStyle: 'solid',
         borderWidth: 1,
         borderColor: 'rgba(0,0,0,0)',
-       paddingBottom: moderateVerticalScale(15),
+       paddingBottom: moderateVerticalScale(30),
     },
     history_card_body_text: {
         flex: 1,
         fontFamily: 'Poppins Medium',
         fontSize: scale(12),
-        color: 'rgba(0,0,0,0.5)',
+        color: 'rgba(0,0,0,0.6)',
         textAlign: 'center',
         borderStyle: 'solid',
         borderWidth: 1,
@@ -186,6 +189,14 @@ export default styles = StyleSheet.create({
         borderRightColor: 'rgba(0,0,0,0.2)',
         borderTopColor: 'rgba(0,0,0,0.1)',
         borderBottomColor: 'rgba(0,0,0,0.1)',
-        marginBottom: moderateVerticalScale(2),
+        marginBottom: moderateVerticalScale(5),
+        textAlignVertical: 'center',
+        paddingVertical: moderateVerticalScale(4)
+    },
+    history_note_text: {
+        fontFamily: 'Poppins Medium',
+        fontSize: scale(12),
+        color: '#FFFFFF',
+        marginHorizontal: moderateScale(10)
     }
 });

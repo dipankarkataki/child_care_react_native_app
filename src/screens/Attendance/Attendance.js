@@ -12,6 +12,17 @@ const Attendance = ({ navigation }) => {
 
   const [activeTab, setActiveTab] = useState('calendar'); // 'calendar' or 'history'
   const [attendanceStatus, setAttendanceStatus] = useState('present'); // 'present' or 'absent'
+  const [markedDates, setMarkedDates] = useState({});
+
+  const absentDates = [
+    '2024-09-05', '2024-09-06', '2024-09-07', '2024-09-08', '2024-09-09', '2024-09-10',
+    '2024-10-05', '2024-10-06', '2024-10-07', '2024-10-08', '2024-10-09', '2024-10-10'
+  ];
+
+  const presentDates = [
+    '2024-11-05', '2024-11-06', '2024-11-07', '2024-11-08', '2024-11-09', '2024-11-10',
+    '2024-12-05', '2024-12-06', '2024-12-07', '2024-12-08', '2024-12-09', '2024-12-10'
+  ];
 
   const toggleTab = (tab) => {
     setActiveTab(tab);
@@ -19,6 +30,25 @@ const Attendance = ({ navigation }) => {
 
   const toggleAttendance = (status) => {
     setAttendanceStatus(status);
+    if (status === 'present') {
+      // Update calendar with 'present' dates
+      setMarkedDates((prevMarkedDates) => {
+        const newMarkedDates = {};
+        presentDates.forEach((date) => {
+          newMarkedDates[date] = { color: 'rgba(68,196,94,100)', textColor: 'white' };
+        });
+        return newMarkedDates;
+      });
+    } else if (status === 'absent') {
+      // Update calendar with 'absent' dates
+      setMarkedDates((prevMarkedDates) => {
+        const newMarkedDates = {};
+        absentDates.forEach((date) => {
+          newMarkedDates[date] = { color: 'rgba(255,40,40,100)', textColor: 'white' };
+        });
+        return newMarkedDates;
+      });
+    }
   };
 
   const currentDate = new Date();
@@ -47,6 +77,7 @@ const Attendance = ({ navigation }) => {
 
   useEffect(() => {
     checkArrowState(currentYear, currentMonth);
+    toggleAttendance('present');
   }, []);
 
   const handleMonthChange = (data) => {
@@ -54,39 +85,38 @@ const Attendance = ({ navigation }) => {
     checkArrowState(year, month);
   };
 
-  const attendanceHistory = 
-    [
-      { "date": "01-12-2024", "inTime": "11:51 AM", "outTime": "06:09 PM", "totalHours": "6 Hrs" },
-      { "date": "02-12-2024", "inTime": "10:42 AM", "outTime": "04:00 PM", "totalHours": "5 Hrs" },
-      { "date": "03-12-2024", "inTime": "09:29 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs" },
-      { "date": "04-12-2024", "inTime": "11:14 AM", "outTime": "05:13 PM", "totalHours": "5 Hrs" },
-      { "date": "05-12-2024", "inTime": "10:33 AM", "outTime": "06:44 PM", "totalHours": "8 Hrs" },
-      { "date": "06-12-2024", "inTime": "09:00 AM", "outTime": "05:00 PM", "totalHours": "8 Hrs" },
-      { "date": "07-12-2024", "inTime": "08:45 AM", "outTime": "04:45 PM", "totalHours": "8 Hrs" },
-      { "date": "08-12-2024", "inTime": "10:00 AM", "outTime": "05:30 PM", "totalHours": "7 Hrs 30 Min" },
-      { "date": "09-12-2024", "inTime": "09:15 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs 45 Min" },
-      { "date": "10-12-2024", "inTime": "10:00 AM", "outTime": "05:00 PM", "totalHours": "7 Hrs" },
-      { "date": "11-12-2024", "inTime": "08:30 AM", "outTime": "04:30 PM", "totalHours": "8 Hrs" },
-      { "date": "12-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
-      { "date": "13-12-2024", "inTime": "10:15 AM", "outTime": "06:00 PM", "totalHours": "7 Hrs 45 Min" },
-      { "date": "14-12-2024", "inTime": "09:10 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 20 Min" },
-      { "date": "15-12-2024", "inTime": "09:30 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs 30 Min" },
-      { "date": "16-12-2024", "inTime": "10:00 AM", "outTime": "05:45 PM", "totalHours": "7 Hrs 45 Min" },
-      { "date": "17-12-2024", "inTime": "08:40 AM", "outTime": "04:50 PM", "totalHours": "8 Hrs 10 Min" },
-      { "date": "18-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
-      { "date": "19-12-2024", "inTime": "10:15 AM", "outTime": "06:30 PM", "totalHours": "8 Hrs 15 Min" },
-      { "date": "20-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
-      { "date": "21-12-2024", "inTime": "08:50 AM", "outTime": "05:00 PM", "totalHours": "8 Hrs 10 Min" },
-      { "date": "22-12-2024", "inTime": "10:00 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs" },
-      { "date": "23-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
-      { "date": "24-12-2024", "inTime": "09:10 AM", "outTime": "05:40 PM", "totalHours": "8 Hrs 30 Min" },
-      { "date": "25-12-2024", "inTime": "10:00 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs" },
-      { "date": "26-12-2024", "inTime": "09:30 AM", "outTime": "05:00 PM", "totalHours": "7 Hrs 30 Min" },
-      { "date": "27-12-2024", "inTime": "08:30 AM", "outTime": "05:00 PM", "totalHours": "8 Hrs 30 Min" },
-      { "date": "28-12-2024", "inTime": "09:15 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 15 Min" },
-      { "date": "29-12-2024", "inTime": "10:00 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs" },
-      { "date": "30-12-2024", "inTime": "08:45 AM", "outTime": "04:45 PM", "totalHours": "8 Hrs" }
-    ];
+  const attendanceHistory = [
+    { "date": "01-12-2024", "inTime": "11:51 AM", "outTime": "06:09 PM", "totalHours": "6 Hrs" },
+    { "date": "02-12-2024", "inTime": "10:42 AM", "outTime": "04:00 PM", "totalHours": "5 Hrs" },
+    { "date": "03-12-2024", "inTime": "09:29 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs" },
+    { "date": "04-12-2024", "inTime": "11:14 AM", "outTime": "05:13 PM", "totalHours": "5 Hrs" },
+    { "date": "05-12-2024", "inTime": "10:33 AM", "outTime": "06:44 PM", "totalHours": "8 Hrs" },
+    { "date": "06-12-2024", "inTime": "09:00 AM", "outTime": "05:00 PM", "totalHours": "8 Hrs" },
+    { "date": "07-12-2024", "inTime": "08:45 AM", "outTime": "04:45 PM", "totalHours": "8 Hrs" },
+    { "date": "08-12-2024", "inTime": "10:00 AM", "outTime": "05:30 PM", "totalHours": "7 Hrs 30 Min" },
+    { "date": "09-12-2024", "inTime": "09:15 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs 45 Min" },
+    { "date": "10-12-2024", "inTime": "10:00 AM", "outTime": "05:00 PM", "totalHours": "7 Hrs" },
+    { "date": "11-12-2024", "inTime": "08:30 AM", "outTime": "04:30 PM", "totalHours": "8 Hrs" },
+    { "date": "12-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
+    { "date": "13-12-2024", "inTime": "10:15 AM", "outTime": "06:00 PM", "totalHours": "7 Hrs 45 Min" },
+    { "date": "14-12-2024", "inTime": "09:10 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 20 Min" },
+    { "date": "15-12-2024", "inTime": "09:30 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs 30 Min" },
+    { "date": "16-12-2024", "inTime": "10:00 AM", "outTime": "05:45 PM", "totalHours": "7 Hrs 45 Min" },
+    { "date": "17-12-2024", "inTime": "08:40 AM", "outTime": "04:50 PM", "totalHours": "8 Hrs 10 Min" },
+    { "date": "18-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
+    { "date": "19-12-2024", "inTime": "10:15 AM", "outTime": "06:30 PM", "totalHours": "8 Hrs 15 Min" },
+    { "date": "20-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
+    { "date": "21-12-2024", "inTime": "08:50 AM", "outTime": "05:00 PM", "totalHours": "8 Hrs 10 Min" },
+    { "date": "22-12-2024", "inTime": "10:00 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs" },
+    { "date": "23-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
+    { "date": "24-12-2024", "inTime": "09:10 AM", "outTime": "05:40 PM", "totalHours": "8 Hrs 30 Min" },
+    { "date": "25-12-2024", "inTime": "10:00 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs" },
+    { "date": "26-12-2024", "inTime": "09:30 AM", "outTime": "05:00 PM", "totalHours": "7 Hrs 30 Min" },
+    { "date": "27-12-2024", "inTime": "08:30 AM", "outTime": "05:00 PM", "totalHours": "8 Hrs 30 Min" },
+    { "date": "28-12-2024", "inTime": "09:15 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 15 Min" },
+    { "date": "29-12-2024", "inTime": "10:00 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs" },
+    { "date": "30-12-2024", "inTime": "08:45 AM", "outTime": "04:45 PM", "totalHours": "8 Hrs" }
+  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -112,14 +142,19 @@ const Attendance = ({ navigation }) => {
                 <Text style={styles.calendar_btn_text}>History</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.attendance_btn_container}>
-              <TouchableOpacity style={[styles.attendance_btn, attendanceStatus === 'present' ? styles.attendance_btn_active : styles.attendance_btn_inactive]} onPress={() => toggleAttendance('present')} activeOpacity={0.8}>
-                <Text style={styles.attendance_btn_text}>Present</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.attendance_btn, attendanceStatus === 'absent' ? styles.attendance_btn_active : styles.attendance_btn_inactive]} onPress={() => toggleAttendance('absent')} activeOpacity={0.8}>
-                <Text style={styles.attendance_btn_text}>Absent</Text>
-              </TouchableOpacity>
-            </View>
+            {
+              activeTab === 'calendar' && (
+                <View style={styles.attendance_btn_container}>
+                  <TouchableOpacity style={[styles.attendance_btn, attendanceStatus === 'present' ? styles.attendance_btn_active : styles.attendance_btn_inactive]} onPress={() => toggleAttendance('present')} activeOpacity={0.8}>
+                    <Text style={styles.attendance_btn_text}>Present</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.attendance_btn, attendanceStatus === 'absent' ? styles.attendance_btn_active : styles.attendance_btn_inactive]} onPress={() => toggleAttendance('absent')} activeOpacity={0.8}>
+                    <Text style={styles.attendance_btn_text}>Absent</Text>
+                  </TouchableOpacity>
+                </View>
+              )
+            }
+
           </View>
           {
             activeTab === 'calendar' && (
@@ -132,32 +167,7 @@ const Attendance = ({ navigation }) => {
                   disableArrowLeft={disableLeftArrow}
                   disableArrowRight={disableRightArrow}
                   markingType="period"
-                  markedDates={{
-                    '2024-11-05': { startingDay: true, color: 'rgba(255,40,40,100)', textColor: 'white' },
-                    '2024-11-06': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
-                    '2024-11-07': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
-                    '2024-11-08': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
-                    '2024-11-09': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
-                    '2024-11-10': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
-                    '2024-11-11': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
-                    '2024-11-12': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
-                    '2024-11-13': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
-                    '2024-11-14': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
-                    '2024-11-15': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
-                    '2024-11-16': { endingDay: true, color: 'rgba(255,40,40,100)', textColor: 'white' },
-                    '2024-12-05': { startingDay: true, color: 'rgba(68,196,94,100)', textColor: 'white' },
-                    '2024-12-06': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
-                    '2024-12-07': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
-                    '2024-12-08': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
-                    '2024-12-09': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
-                    '2024-12-10': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
-                    '2024-12-11': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
-                    '2024-12-12': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
-                    '2024-12-13': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
-                    '2024-12-14': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
-                    '2024-12-15': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
-                    '2024-12-16': { endingDay: true, color: 'rgba(68,196,94,100)', textColor: 'white' },
-                  }}
+                  markedDates={markedDates}
                   horizontal={true} // Enable horizontal scrolling
                   showScrollIndicator={true}
                   calendarWidth={380}
@@ -180,27 +190,30 @@ const Attendance = ({ navigation }) => {
 
           {
             activeTab === 'history' && (
-              <View style={styles.history_tab_container}>
-                <View style={styles.history_card}>
-                  <View style={styles.history_card_header}>
-                    <Text style={styles.history_header_text}>Date</Text>
-                    <Text style={styles.history_header_text}>In Time</Text>
-                    <Text style={styles.history_header_text}>Out Time</Text>
-                    <Text style={styles.history_header_text}>Total Hrs</Text>
-                  </View>
-                  <View  style={styles.history_card_body} >
-                    <FlatList data={attendanceHistory} keyExtractor={(item) => item.date} renderItem={({item}) => (
-                      <View style={{flexDirection: 'row'}}>
-                        <Text style={styles.history_card_body_text}>{item.date}</Text>
-                        <Text style={styles.history_card_body_text}>{item.inTime}</Text>
-                        <Text style={styles.history_card_body_text}>{item.outTime}</Text>
-                        <Text style={styles.history_card_body_text}>{item.totalHours}</Text>
-                      </View>
-                    )} />
-                    
+              <>
+                <Text style={styles.history_note_text}>Note: Last 30 days attendance history.</Text>
+                <View style={styles.history_tab_container}>
+                  <View style={styles.history_card}>
+                    <View style={styles.history_card_header}>
+                      <Text style={styles.history_header_text}>Date</Text>
+                      <Text style={styles.history_header_text}>In Time</Text>
+                      <Text style={styles.history_header_text}>Out Time</Text>
+                      <Text style={styles.history_header_text}>Total Hrs</Text>
+                    </View>
+                    <View style={styles.history_card_body} >
+                      <FlatList data={attendanceHistory} keyExtractor={(item) => item.date} renderItem={({ item }) => (
+                        <View style={{ flexDirection: 'row' }}>
+                          <Text style={styles.history_card_body_text}>{item.date}</Text>
+                          <Text style={styles.history_card_body_text}>{item.inTime}</Text>
+                          <Text style={styles.history_card_body_text}>{item.outTime}</Text>
+                          <Text style={styles.history_card_body_text}>{item.totalHours}</Text>
+                        </View>
+                      )} />
+                    </View>
                   </View>
                 </View>
-              </View>
+              </>
+
             )
           }
         </View>
