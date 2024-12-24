@@ -1,9 +1,9 @@
-import { View, Text, SafeAreaView, ImageBackground, TouchableOpacity } from 'react-native';
-import React from 'react';
+import { View, Text, SafeAreaView, ImageBackground, TouchableOpacity, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import styles from './styles';
 import Constants from '../../Navigation/Constants';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { CalendarList } from 'react-native-calendars';
+import { Calendar } from 'react-native-calendars';
 import { moderateScale } from 'react-native-size-matters';
 
 const background = require('../../assets/images/background.png');
@@ -12,7 +12,35 @@ const Attendance = ({ navigation }) => {
 
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth();
+  const currentMonth = currentDate.getMonth() + 1; // Get 1-based month
+
+  const [disableRightArrow, setDisableRightArrow] = useState(false);
+  const [disableLeftArrow, setDisableLeftArrow] = useState(false);
+
+  // Function to check and update arrow states
+  const checkArrowState = (year, month) => {
+    if (year > currentYear) {
+      setDisableRightArrow(true);
+      setDisableLeftArrow(false); // Allow going back to the current year
+    } else if (year < currentYear) {
+      setDisableLeftArrow(true);
+      setDisableRightArrow(false); // Allow going forward to the current year
+    } else {
+      // Current year: enable both arrows within the year's bounds
+      setDisableRightArrow(month === 12);
+      setDisableLeftArrow(month === 1);
+    }
+  };
+
+  useEffect(() => {
+    checkArrowState(currentYear, currentMonth);
+  }, []);
+
+  const handleMonthChange = (data) => {
+    const { year, month } = data;
+    checkArrowState(year, month);
+  };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -38,37 +66,39 @@ const Attendance = ({ navigation }) => {
             </View>
           </View>
           <View style={styles.calendar_with_dates_container}>
-            <CalendarList
+            <Calendar
+              disableMonthChange={true} //Works only when hideExtraDays={false}
               style={styles.calendar_list}
-              current={`${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-01`} // Set to the first day of the current month
-              pastScrollRange={currentMonth} // Allow scrolling only to past months within the current year
-              futureScrollRange={0} // Restrict scrolling beyond the current month
-              markingType="period" // Use period marking type
+              current={`${currentYear}-${(currentMonth).toString().padStart(2, '0')}-01`} // Set to the first day of the current month
+              onMonthChange={(data) => handleMonthChange(data)}
+              disableArrowLeft={disableLeftArrow}
+              disableArrowRight={disableRightArrow}
+              markingType="period"
               markedDates={{
-                '2024-11-05': {startingDay: true, color: 'rgba(255,40,40,100)', textColor: 'white'},
-                '2024-11-06': {color: 'rgba(255,40,40,0.4)', textColor: 'white'},
-                '2024-11-07': {color: 'rgba(255,40,40,0.4)', textColor: 'white'},
-                '2024-11-08': {color: 'rgba(255,40,40,0.4)', textColor: 'white'},
-                '2024-11-09': {color: 'rgba(255,40,40,0.4)', textColor: 'white'},
-                '2024-11-10': {color: 'rgba(255,40,40,0.4)', textColor: 'white'},
-                '2024-11-11': {color: 'rgba(255,40,40,0.4)', textColor: 'white'},
-                '2024-11-12': {color: 'rgba(255,40,40,0.4)', textColor: 'white'},
-                '2024-11-13': {color: 'rgba(255,40,40,0.4)', textColor: 'white'},
-                '2024-11-14': {color: 'rgba(255,40,40,0.4)', textColor: 'white'},
-                '2024-11-15': {color: 'rgba(255,40,40,0.4)', textColor: 'white'},
-                '2024-11-16': {endingDay: true, color: 'rgba(255,40,40,100)', textColor: 'white'},
-                '2024-12-05': {startingDay: true, color: 'rgba(68,196,94,100)', textColor: 'white'},
-                '2024-12-06': {color: 'rgba(68,196,94,0.4)', textColor: 'white'},
-                '2024-12-07': {color: 'rgba(68,196,94,0.4)', textColor: 'white'},
-                '2024-12-08': {color: 'rgba(68,196,94,0.4)', textColor: 'white'},
-                '2024-12-09': {color: 'rgba(68,196,94,0.4)', textColor: 'white'},
-                '2024-12-10': {color: 'rgba(68,196,94,0.4)', textColor: 'white'},
-                '2024-12-11': {color: 'rgba(68,196,94,0.4)', textColor: 'white'},
-                '2024-12-12': {color: 'rgba(68,196,94,0.4)', textColor: 'white'},
-                '2024-12-13': {color: 'rgba(68,196,94,0.4)', textColor: 'white'},
-                '2024-12-14': {color: 'rgba(68,196,94,0.4)', textColor: 'white'},
-                '2024-12-15': {color: 'rgba(68,196,94,0.4)', textColor: 'white'},
-                '2024-12-16': {endingDay: true, color: 'rgba(68,196,94,100)', textColor: 'white'},
+                '2024-11-05': { startingDay: true, color: 'rgba(255,40,40,100)', textColor: 'white' },
+                '2024-11-06': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
+                '2024-11-07': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
+                '2024-11-08': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
+                '2024-11-09': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
+                '2024-11-10': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
+                '2024-11-11': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
+                '2024-11-12': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
+                '2024-11-13': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
+                '2024-11-14': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
+                '2024-11-15': { color: 'rgba(255,40,40,0.4)', textColor: 'white' },
+                '2024-11-16': { endingDay: true, color: 'rgba(255,40,40,100)', textColor: 'white' },
+                '2024-12-05': { startingDay: true, color: 'rgba(68,196,94,100)', textColor: 'white' },
+                '2024-12-06': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
+                '2024-12-07': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
+                '2024-12-08': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
+                '2024-12-09': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
+                '2024-12-10': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
+                '2024-12-11': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
+                '2024-12-12': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
+                '2024-12-13': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
+                '2024-12-14': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
+                '2024-12-15': { color: 'rgba(68,196,94,0.4)', textColor: 'white' },
+                '2024-12-16': { endingDay: true, color: 'rgba(68,196,94,100)', textColor: 'white' },
               }}
               horizontal={true} // Enable horizontal scrolling
               showScrollIndicator={true}
