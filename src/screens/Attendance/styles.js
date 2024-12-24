@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { moderateScale, moderateVerticalScale, scale } from "react-native-size-matters";
+import { moderateScale, moderateVerticalScale, s, scale } from "react-native-size-matters";
 
 export default styles = StyleSheet.create({
     container: {
@@ -42,8 +42,8 @@ export default styles = StyleSheet.create({
     attendance_content_container: {
         position: 'absolute',
         top: 100,
-        left: 10,
-        right: 10
+        left: 5,
+        right: 5
     },
     calendar_btn_container: {
         marginBottom: moderateVerticalScale(20)
@@ -52,26 +52,35 @@ export default styles = StyleSheet.create({
         flexDirection: 'row'
     },
     calendar_btn: {
-        backgroundColor: '#FFFFFF',
+        flexDirection: 'row',
         borderWidth: 1,
         borderStyle: 'solid',
         borderRadius: moderateScale(7),
         borderColor: 'rgb(218, 218, 218)',
         marginHorizontal: moderateScale(10),
         paddingHorizontal: moderateScale(20),
-        paddingVertical: moderateVerticalScale(5)
+        paddingVertical: moderateVerticalScale(5),
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    calendar_btn_active: {
+        backgroundColor: '#FFFFFF',
+    },
+    calendar_btn_inactive: {
+        backgroundColor: 'rgba(255,255,255,0.2)',
     },
     calendar_btn_text: {
+        marginTop: moderateVerticalScale(2),
         fontFamily: 'Poppins Medium',
-        fontSize: scale(16),
+        fontSize: scale(14),
         color: 'rgba(0,0,0,0.8)'
     },
     calendar_with_dates_container: {
         flex: 1,
-        backgroundColor: 'white', // Changed to white for better appearance
-        borderRadius: 10,
-        overflow: 'hidden', // Ensures the calendar does not overflow the container
-        shadowColor: 'rgba(0,0,0,0.8)', // Optional shadow for better visual appeal
+        backgroundColor: 'white',
+        borderRadius: moderateScale(10),
+        overflow: 'hidden',
+        shadowColor: 'rgba(0,0,0,0.8)',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.8,
         shadowRadius: 5,
@@ -83,4 +92,100 @@ export default styles = StyleSheet.create({
         width: '100%',
         borderRadius: moderateScale(10)
     },
+    attendance_btn_container: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        marginHorizontal: moderateScale(10),
+        marginVertical: moderateVerticalScale(10)
+    },
+    attendance_btn: {
+        borderWidth: 1,
+        borderRadius: moderateScale(7),
+        borderStyle: 'solid',
+        borderColor: '#FFFFFF',
+        marginRight: moderateScale(10),
+        paddingHorizontal: moderateScale(10),
+        paddingVertical: moderateVerticalScale(5)
+    },
+    attendance_btn_text: {
+        fontFamily: 'Poppins Medium',
+        fontSize: scale(12),
+        color: 'rgba(0,0,0,0.8)'
+    },
+    attendance_btn_active: {
+        backgroundColor: '#FFFFFF',
+    },
+    attendance_btn_inactive: {
+        backgroundColor: 'rgba(255,255,255,0.2)',
+    },
+    calendar_btn_icon: {
+        fontSize: scale(14),
+        color: 'rgba(0,0,0,0.8)',
+        marginRight: moderateScale(5)
+    },
+    history_tab_container: {
+        flex: 1,
+        paddingVertical: moderateVerticalScale(10)
+    },
+    history_card: {
+        flex: 1,
+        backgroundColor: '#FFFFFF',
+        borderRadius: moderateScale(10),
+        overflow: 'hidden',
+        shadowColor: 'rgba(0,0,0,0.8)',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 5,
+        elevation: 4,
+        marginHorizontal: moderateScale(10),
+        paddingVertical: moderateVerticalScale(10),
+        maxHeight: 600
+    },
+    history_card_header: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderStyle: 'solid',
+        borderColor: 'rgba(0,0,0,0)',
+        marginHorizontal: moderateScale(10),
+    },
+    history_header_text: {
+        flex: 1,
+        fontFamily: 'Poppins Medium',
+        fontSize: scale(12),
+        color: 'rgba(0,0,0,0.8)',
+        borderStyle: 'solid',
+        borderWidth: 1,
+        borderLeftColor: 'rgba(0,0,0,0.1)',
+        borderRightColor: 'rgba(0,0,0,0.2)',
+        borderTopColor: 'rgba(0,0,0,0.1)',
+        borderBottomColor: 'rgba(0,0,0,0.1)',
+        textAlign: 'center'
+    },
+    history_card_body: {
+        marginHorizontal: moderateScale(10),
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        borderStyle: 'solid',
+        borderWidth: 1,
+        borderColor: 'rgba(0,0,0,0)',
+       paddingBottom: moderateVerticalScale(15),
+    },
+    history_card_body_text: {
+        flex: 1,
+        fontFamily: 'Poppins Medium',
+        fontSize: scale(12),
+        color: 'rgba(0,0,0,0.5)',
+        textAlign: 'center',
+        borderStyle: 'solid',
+        borderWidth: 1,
+        borderLeftColor: 'rgba(0,0,0,0.1)',
+        borderRightColor: 'rgba(0,0,0,0.2)',
+        borderTopColor: 'rgba(0,0,0,0.1)',
+        borderBottomColor: 'rgba(0,0,0,0.1)',
+        marginBottom: moderateVerticalScale(2),
+    }
 });
