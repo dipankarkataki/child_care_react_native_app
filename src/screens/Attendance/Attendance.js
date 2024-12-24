@@ -5,6 +5,7 @@ import Constants from '../../Navigation/Constants';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import { Calendar } from 'react-native-calendars';
+import { Dropdown } from 'react-native-element-dropdown';
 
 const background = require('../../assets/images/background.png');
 
@@ -13,6 +14,8 @@ const Attendance = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('calendar'); // 'calendar' or 'history'
   const [attendanceStatus, setAttendanceStatus] = useState('present'); // 'present' or 'absent'
   const [markedDates, setMarkedDates] = useState({});
+  const [dropdownValue, setDropdownValue] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
 
   const absentDates = [
     '2024-09-05', '2024-09-06', '2024-09-07', '2024-09-08', '2024-09-09', '2024-09-10',
@@ -118,6 +121,30 @@ const Attendance = ({ navigation }) => {
     { "date": "30-12-2024", "inTime": "08:45 AM", "outTime": "04:45 PM", "totalHours": "8 Hrs" }
   ];
 
+
+  const dropdownData = [
+    { label: 'Student 1', value: '1' },
+    { label: 'Student 2', value: '2' },
+    { label: 'Student 3', value: '3' }
+  ];
+
+  const renderLabel = () => {
+    if (dropdownValue || isFocus) {
+      return (
+        <Text style={[styles.label, isFocus && { color: 'blue' }]}>
+          Students
+        </Text>
+      );
+    }
+    return null;
+  };
+
+  const handleDropdownValue = (item) => {
+    console.log('Dropdown item', item);
+    setDropdownValue(item.value);
+    setIsFocus(false)
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground source={background} style={styles.image_background}>
@@ -155,6 +182,28 @@ const Attendance = ({ navigation }) => {
               )
             }
 
+          </View>
+
+          <View style={styles.dropdown_container}>
+            {renderLabel()}
+            <Dropdown
+              style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={dropdownData}
+              itemTextStyle={{color: 'rgba(0,0,0,0.8)'}}
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isFocus ? 'Select Student' : '...'}
+              searchPlaceholder="Search..."
+              value={dropdownValue}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => handleDropdownValue(item)}
+            />
           </View>
           {
             activeTab === 'calendar' && (

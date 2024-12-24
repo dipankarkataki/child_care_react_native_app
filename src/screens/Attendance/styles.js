@@ -140,7 +140,7 @@ export default styles = StyleSheet.create({
         elevation: 4,
         marginHorizontal: moderateScale(10),
         paddingVertical: moderateVerticalScale(10),
-        maxHeight: 650
+        maxHeight: 550
     },
     history_card_header: {
         flexDirection: 'row',
@@ -165,7 +165,7 @@ export default styles = StyleSheet.create({
         textAlign: 'center',
         textAlignVertical: 'center',
         paddingVertical: moderateVerticalScale(5),
-        backgroundColor:'#dcdcdc'
+        backgroundColor: '#dcdcdc'
     },
     history_card_body: {
         marginHorizontal: moderateScale(10),
@@ -175,7 +175,7 @@ export default styles = StyleSheet.create({
         borderStyle: 'solid',
         borderWidth: 1,
         borderColor: 'rgba(0,0,0,0)',
-       paddingBottom: moderateVerticalScale(30),
+        paddingBottom: moderateVerticalScale(30),
     },
     history_card_body_text: {
         flex: 1,
@@ -198,5 +198,43 @@ export default styles = StyleSheet.create({
         fontSize: scale(12),
         color: '#FFFFFF',
         marginHorizontal: moderateScale(10)
-    }
+    },
+    dropdown_container: {
+        paddingHorizontal: moderateScale(5),
+        paddingVertical: moderateVerticalScale(12),
+        marginBottom: moderateVerticalScale(10),
+        marginHorizontal: moderateScale(10),
+        backgroundColor: '#FFFFFF',
+        borderRadius: moderateScale(7)
+    },
+    dropdown: {
+        height: 50,
+        borderColor: 'gray',
+        borderWidth: 0.5,
+        borderRadius: 8,
+        paddingHorizontal: 8,
+    },
+    label: {
+        position: 'absolute',
+        backgroundColor: 'white',
+        left: 22,
+        top: 8,
+        zIndex: 999,
+        paddingHorizontal: 8,
+        fontSize: 14,
+        color: 'rgba(0,0,0,0.8)'
+    },
+    placeholderStyle: {
+        fontSize: 16,
+        color: 'rgba(0,0,0,0.8)'
+    },
+    selectedTextStyle: {
+        fontSize: 16,
+        color: 'rgba(0,0,0,0.8)'
+    },
+    inputSearchStyle: {
+        height: 40,
+        fontSize: 16,
+        color: 'rgba(0,0,0,0.8)'
+    },
 });
