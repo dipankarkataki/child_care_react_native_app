@@ -33,13 +33,14 @@ const Attendance = ({ navigation }) => {
   const [selectedCurrentMonth, setSelectedCurrentMonth] = useState();
   const [disableRightArrow, setDisableRightArrow] = useState(false);
   const [disableLeftArrow, setDisableLeftArrow] = useState(false);
+  const [attendanceHistory, setAttendanceHistory] = useState([]);
 
   const toggleTab = (tab) => {
     setActiveTab(tab);
   };
 
   const updateMarkedDates = () => {
-    if(selectedCurrentMonth == null){
+    if (selectedCurrentMonth == null) {
       setSelectedCurrentMonth(currentMonth)
     }
     const daysInMonth = new Date(currentYear, selectedCurrentMonth, 0).getDate(); // Last day of the month
@@ -107,6 +108,14 @@ const Attendance = ({ navigation }) => {
         if (result.status === 200 && result.data.data) {
           const attendanceDates = result.data.data.map((student) => student.attend_date)
           setAttendanceData(attendanceDates);
+
+          const historyData = result.data.data.map((student) => ({
+            date: student.attend_date,
+            inTime: student.checkin_datetime,
+            outTime: student.checkout_datetime,
+            totalHours: "6 Hrs"
+          }));
+          setAttendanceHistory(historyData);
         }
 
       } catch (err) {
@@ -129,38 +138,38 @@ const Attendance = ({ navigation }) => {
     checkArrowState(year, month);
   };
 
-  const attendanceHistory = [
-    { "date": "01-12-2024", "inTime": "11:51 AM", "outTime": "06:09 PM", "totalHours": "6 Hrs" },
-    { "date": "02-12-2024", "inTime": "10:42 AM", "outTime": "04:00 PM", "totalHours": "5 Hrs" },
-    { "date": "03-12-2024", "inTime": "09:29 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs" },
-    { "date": "04-12-2024", "inTime": "11:14 AM", "outTime": "05:13 PM", "totalHours": "5 Hrs" },
-    { "date": "05-12-2024", "inTime": "10:33 AM", "outTime": "06:44 PM", "totalHours": "8 Hrs" },
-    { "date": "06-12-2024", "inTime": "09:00 AM", "outTime": "05:00 PM", "totalHours": "8 Hrs" },
-    { "date": "07-12-2024", "inTime": "08:45 AM", "outTime": "04:45 PM", "totalHours": "8 Hrs" },
-    { "date": "08-12-2024", "inTime": "10:00 AM", "outTime": "05:30 PM", "totalHours": "7 Hrs 30 Min" },
-    { "date": "09-12-2024", "inTime": "09:15 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs 45 Min" },
-    { "date": "10-12-2024", "inTime": "10:00 AM", "outTime": "05:00 PM", "totalHours": "7 Hrs" },
-    { "date": "11-12-2024", "inTime": "08:30 AM", "outTime": "04:30 PM", "totalHours": "8 Hrs" },
-    { "date": "12-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
-    { "date": "13-12-2024", "inTime": "10:15 AM", "outTime": "06:00 PM", "totalHours": "7 Hrs 45 Min" },
-    { "date": "14-12-2024", "inTime": "09:10 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 20 Min" },
-    { "date": "15-12-2024", "inTime": "09:30 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs 30 Min" },
-    { "date": "16-12-2024", "inTime": "10:00 AM", "outTime": "05:45 PM", "totalHours": "7 Hrs 45 Min" },
-    { "date": "17-12-2024", "inTime": "08:40 AM", "outTime": "04:50 PM", "totalHours": "8 Hrs 10 Min" },
-    { "date": "18-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
-    { "date": "19-12-2024", "inTime": "10:15 AM", "outTime": "06:30 PM", "totalHours": "8 Hrs 15 Min" },
-    { "date": "20-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
-    { "date": "21-12-2024", "inTime": "08:50 AM", "outTime": "05:00 PM", "totalHours": "8 Hrs 10 Min" },
-    { "date": "22-12-2024", "inTime": "10:00 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs" },
-    { "date": "23-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
-    { "date": "24-12-2024", "inTime": "09:10 AM", "outTime": "05:40 PM", "totalHours": "8 Hrs 30 Min" },
-    { "date": "25-12-2024", "inTime": "10:00 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs" },
-    { "date": "26-12-2024", "inTime": "09:30 AM", "outTime": "05:00 PM", "totalHours": "7 Hrs 30 Min" },
-    { "date": "27-12-2024", "inTime": "08:30 AM", "outTime": "05:00 PM", "totalHours": "8 Hrs 30 Min" },
-    { "date": "28-12-2024", "inTime": "09:15 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 15 Min" },
-    { "date": "29-12-2024", "inTime": "10:00 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs" },
-    { "date": "30-12-2024", "inTime": "08:45 AM", "outTime": "04:45 PM", "totalHours": "8 Hrs" }
-  ];
+  // const attendanceHistory = [
+  //   { "date": "01-12-2024", "inTime": "11:51 AM", "outTime": "06:09 PM", "totalHours": "6 Hrs" },
+  //   { "date": "02-12-2024", "inTime": "10:42 AM", "outTime": "04:00 PM", "totalHours": "5 Hrs" },
+  //   { "date": "03-12-2024", "inTime": "09:29 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs" },
+  //   { "date": "04-12-2024", "inTime": "11:14 AM", "outTime": "05:13 PM", "totalHours": "5 Hrs" },
+  //   { "date": "05-12-2024", "inTime": "10:33 AM", "outTime": "06:44 PM", "totalHours": "8 Hrs" },
+  //   { "date": "06-12-2024", "inTime": "09:00 AM", "outTime": "05:00 PM", "totalHours": "8 Hrs" },
+  //   { "date": "07-12-2024", "inTime": "08:45 AM", "outTime": "04:45 PM", "totalHours": "8 Hrs" },
+  //   { "date": "08-12-2024", "inTime": "10:00 AM", "outTime": "05:30 PM", "totalHours": "7 Hrs 30 Min" },
+  //   { "date": "09-12-2024", "inTime": "09:15 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs 45 Min" },
+  //   { "date": "10-12-2024", "inTime": "10:00 AM", "outTime": "05:00 PM", "totalHours": "7 Hrs" },
+  //   { "date": "11-12-2024", "inTime": "08:30 AM", "outTime": "04:30 PM", "totalHours": "8 Hrs" },
+  //   { "date": "12-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
+  //   { "date": "13-12-2024", "inTime": "10:15 AM", "outTime": "06:00 PM", "totalHours": "7 Hrs 45 Min" },
+  //   { "date": "14-12-2024", "inTime": "09:10 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 20 Min" },
+  //   { "date": "15-12-2024", "inTime": "09:30 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs 30 Min" },
+  //   { "date": "16-12-2024", "inTime": "10:00 AM", "outTime": "05:45 PM", "totalHours": "7 Hrs 45 Min" },
+  //   { "date": "17-12-2024", "inTime": "08:40 AM", "outTime": "04:50 PM", "totalHours": "8 Hrs 10 Min" },
+  //   { "date": "18-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
+  //   { "date": "19-12-2024", "inTime": "10:15 AM", "outTime": "06:30 PM", "totalHours": "8 Hrs 15 Min" },
+  //   { "date": "20-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
+  //   { "date": "21-12-2024", "inTime": "08:50 AM", "outTime": "05:00 PM", "totalHours": "8 Hrs 10 Min" },
+  //   { "date": "22-12-2024", "inTime": "10:00 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs" },
+  //   { "date": "23-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
+  //   { "date": "24-12-2024", "inTime": "09:10 AM", "outTime": "05:40 PM", "totalHours": "8 Hrs 30 Min" },
+  //   { "date": "25-12-2024", "inTime": "10:00 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs" },
+  //   { "date": "26-12-2024", "inTime": "09:30 AM", "outTime": "05:00 PM", "totalHours": "7 Hrs 30 Min" },
+  //   { "date": "27-12-2024", "inTime": "08:30 AM", "outTime": "05:00 PM", "totalHours": "8 Hrs 30 Min" },
+  //   { "date": "28-12-2024", "inTime": "09:15 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 15 Min" },
+  //   { "date": "29-12-2024", "inTime": "10:00 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs" },
+  //   { "date": "30-12-2024", "inTime": "08:45 AM", "outTime": "04:45 PM", "totalHours": "8 Hrs" }
+  // ];
 
   const renderLabel = () => {
     if (dropdownValue || isFocus) {
@@ -175,7 +184,7 @@ const Attendance = ({ navigation }) => {
 
   const handleDropdownValue = (item) => {
     setDropdownValue(item.value);
-    setIsFocus(false)
+    setIsFocus(false);
   }
 
   return (
@@ -239,65 +248,84 @@ const Attendance = ({ navigation }) => {
             />
           </View>
           {
-            attendanceData.length > 0 && activeTab === 'calendar' ?
-              <View style={styles.calendar_with_dates_container}>
-                <Calendar
-                  disableMonthChange={true} //Works only when hideExtraDays={false}
-                  style={styles.calendar_list}
-                  current={`${currentYear}-${(currentMonth).toString().padStart(2, '0')}-01`} // Set to the first day of the current month
-                  onMonthChange={(data) => handleMonthChange(data)}
-                  disableArrowLeft={disableLeftArrow}
-                  disableArrowRight={disableRightArrow}
-                  markingType="period"
-                  markedDates={markedDates}
-                  horizontal={true} // Enable horizontal scrolling
-                  showScrollIndicator={true}
-                  calendarWidth={380}
-                  theme={{
-                    monthTextColor: 'rgba(0,0,0,0.8)',
-                    textDayFontFamily: 'Poppins Medium',
-                    textMonthFontFamily: 'Poppins Medium',
-                    textDayHeaderFontFamily: 'Poppins Medium',
-                    textDayFontWeight: '500',
-                    textMonthFontWeight: 'bold',
-                    textDayHeaderFontWeight: '500',
-                    textDayFontSize: 12,
-                    textMonthFontSize: 16,
-                    textDayHeaderFontSize: 12
-                  }}
-                />
-              </View>
-              : <Text style={[styles.history_note_text, {color: 'crimson', textAlign: 'center', marginTop: moderateVerticalScale(20), fontSize: scale(16)}]}>Oops! No attendance data available.</Text>
+            activeTab === 'calendar' && (
+              attendanceData.length > 0 ? (
+                <View style={styles.calendar_with_dates_container}>
+                  <Calendar
+                    disableMonthChange={true} // Works only when hideExtraDays={false}
+                    style={styles.calendar_list}
+                    current={`${currentYear}-${(currentMonth).toString().padStart(2, '0')}-01`} // Set to the first day of the current month
+                    onMonthChange={(data) => handleMonthChange(data)}
+                    disableArrowLeft={disableLeftArrow}
+                    disableArrowRight={disableRightArrow}
+                    markingType="period"
+                    markedDates={markedDates}
+                    horizontal={true} // Enable horizontal scrolling
+                    showScrollIndicator={true}
+                    calendarWidth={380}
+                    theme={{
+                      monthTextColor: 'rgba(0,0,0,0.8)',
+                      textDayFontFamily: 'Poppins Medium',
+                      textMonthFontFamily: 'Poppins Medium',
+                      textDayHeaderFontFamily: 'Poppins Medium',
+                      textDayFontWeight: '500',
+                      textMonthFontWeight: 'bold',
+                      textDayHeaderFontWeight: '500',
+                      textDayFontSize: 12,
+                      textMonthFontSize: 16,
+                      textDayHeaderFontSize: 12,
+                    }}
+                  />
+                </View>
+              ) : (
+                <Text
+                  style={[
+                    styles.history_note_text,
+                    {
+                      color: 'crimson',
+                      textAlign: 'center',
+                      marginTop: moderateVerticalScale(20),
+                      fontSize: scale(16),
+                    },
+                  ]}
+                >
+                  Oops! No attendance data available.
+                </Text>
+              )
+            )
           }
+
 
           {
             activeTab === 'history' && (
-              <>
-                <Text style={styles.history_note_text}>Note: Last 30 days attendance history.</Text>
-                <View style={styles.history_tab_container}>
-                  <View style={styles.history_card}>
-                    <View style={styles.history_card_header}>
-                      <Text style={styles.history_header_text}>Date</Text>
-                      <Text style={styles.history_header_text}>In Time</Text>
-                      <Text style={styles.history_header_text}>Out Time</Text>
-                      <Text style={styles.history_header_text}>Total Hrs</Text>
-                    </View>
-                    <View style={styles.history_card_body} >
-                      <FlatList data={attendanceHistory} keyExtractor={(item) => item.date} renderItem={({ item }) => (
-                        <View style={{ flexDirection: 'row' }}>
-                          <Text style={styles.history_card_body_text}>{item.date}</Text>
-                          <Text style={styles.history_card_body_text}>{item.inTime}</Text>
-                          <Text style={styles.history_card_body_text}>{item.outTime}</Text>
-                          <Text style={styles.history_card_body_text}>{item.totalHours}</Text>
-                        </View>
-                      )} />
+
+              attendanceHistory.length > 0 ? (
+                <View>
+                  <Text style={styles.history_note_text}>Note: Last 30 days attendance history.</Text>
+                  <View style={styles.history_tab_container}>
+                    <View style={styles.history_card}>
+                      <View style={styles.history_card_header}>
+                        <Text style={styles.history_header_text}>Date</Text>
+                        <Text style={styles.history_header_text}>In Time</Text>
+                        <Text style={styles.history_header_text}>Out Time</Text>
+                        <Text style={styles.history_header_text}>Total Hrs</Text>
+                      </View>
+                      <View style={styles.history_card_body} >
+                        <FlatList data={attendanceHistory} keyExtractor={(item) => item.time} renderItem={({ item }) => (
+                          <View style={{ flexDirection: 'row' }}>
+                            <Text style={styles.history_card_body_text}>{item.date}</Text>
+                            <Text style={styles.history_card_body_text}>{item.inTime}</Text>
+                            <Text style={styles.history_card_body_text}>{item.outTime}</Text>
+                            <Text style={styles.history_card_body_text}>{item.totalHours}</Text>
+                          </View>
+                        )} />
+                      </View>
                     </View>
                   </View>
                 </View>
-              </>
-
-            )
-          }
+              ) :
+                (<Text style={[styles.history_note_text, { color: 'crimson', textAlign: 'center', marginTop: moderateVerticalScale(20), fontSize: scale(16) }]}>Oops! No history available.</Text>)
+            )}
         </View>
       </ImageBackground>
     </SafeAreaView>
