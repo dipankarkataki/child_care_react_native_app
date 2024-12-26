@@ -7,6 +7,7 @@ import TokenManager from '../../../api/TokenManager';
 import { useDispatch } from 'react-redux';
 import { setGlobalProfileImage } from '../../../redux/action/profileImageAction';
 import { setUserAuthToken } from '../../../redux/action/userAuthLoginAction';
+import { setUserProfileData } from '../../../redux/action/UserProfileDataAction';
 import styles from './styles';
 import Constants from '../../../Navigation/Constants';
 
@@ -72,6 +73,7 @@ const Login = ({ navigation }) => {
                     }
 
                     dispatch(setUserAuthToken(result.data.token));
+                    dispatch(setUserProfileData(result.data.data));
 
                     navigation.replace(Constants.DASHBOARD);
                 }else{

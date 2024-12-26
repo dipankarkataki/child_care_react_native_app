@@ -191,6 +191,7 @@ const ProfileSettings = ({ navigation }) => {
         const getProfileDetails = async () => {
             try{
                 const result = await ProfileDetailsApi();
+                console.log('Profile Detials ---', result.data.data)
                 if(result.data && result.data.status){
                     setFirstName(result.data.data.firstname);
                     setLastName(result.data.data.lastname);

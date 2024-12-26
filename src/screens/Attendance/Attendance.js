@@ -6,64 +6,66 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import { Calendar } from 'react-native-calendars';
 import { Dropdown } from 'react-native-element-dropdown';
+import { useSelector } from 'react-redux';
+import StudentApi from '../../api/FamilyApi/StudentApi';
+import GetAttendanceApi from '../../api/AttendanceApi/GetAttendanceApi';
+import moment from 'moment';
+import { moderateVerticalScale, scale } from 'react-native-size-matters';
+
 
 const background = require('../../assets/images/background.png');
 
 const Attendance = ({ navigation }) => {
+
+  const userProfileData = useSelector((state) => state.userProfileData);
 
   const [activeTab, setActiveTab] = useState('calendar'); // 'calendar' or 'history'
   const [attendanceStatus, setAttendanceStatus] = useState('present'); // 'present' or 'absent'
   const [markedDates, setMarkedDates] = useState({});
   const [dropdownValue, setDropdownValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
-
-  const absentDates = [
-    '2024-09-05', '2024-09-06', '2024-09-07', '2024-09-08', '2024-09-09', '2024-09-10',
-    '2024-10-05', '2024-10-06', '2024-10-07', '2024-10-08', '2024-10-09', '2024-10-10'
-  ];
-
-  const presentDates = [
-    '2024-11-05', '2024-11-06', '2024-11-07', '2024-11-08', '2024-11-09', '2024-11-10',
-    '2024-12-05', '2024-12-06', '2024-12-07', '2024-12-08', '2024-12-09', '2024-12-10'
-  ];
+  const [students, setStudents] = useState([]);
+  const [attendanceData, setAttendanceData] = useState([]);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+  const [selectedCurrentYear, setSelectedCurrentYear] = useState();
+  const [selectedCurrentMonth, setSelectedCurrentMonth] = useState();
+  const [disableRightArrow, setDisableRightArrow] = useState(false);
+  const [disableLeftArrow, setDisableLeftArrow] = useState(false);
 
   const toggleTab = (tab) => {
     setActiveTab(tab);
   };
 
-  const toggleAttendance = (status) => {
-    setAttendanceStatus(status);
-    if (status === 'present') {
-      // Update calendar with 'present' dates
-      setMarkedDates((prevMarkedDates) => {
-        const newMarkedDates = {};
-        presentDates.forEach((date) => {
-          newMarkedDates[date] = { color: 'rgba(68,196,94,100)', textColor: 'white' };
-        });
-        return newMarkedDates;
-      });
-    } else if (status === 'absent') {
-      // Update calendar with 'absent' dates
-      setMarkedDates((prevMarkedDates) => {
-        const newMarkedDates = {};
-        absentDates.forEach((date) => {
-          newMarkedDates[date] = { color: 'rgba(255,40,40,100)', textColor: 'white' };
-        });
-        return newMarkedDates;
-      });
+  const updateMarkedDates = () => {
+    if(selectedCurrentMonth == null){
+      setSelectedCurrentMonth(currentMonth)
     }
+    const daysInMonth = new Date(currentYear, selectedCurrentMonth, 0).getDate(); // Last day of the month
+    const allDates = [];
+
+    for (let i = 1; i <= daysInMonth; i++) {
+      const date = `${currentYear}-${String(selectedCurrentMonth).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+      allDates.push(date);
+    }
+
+    const newMarkedDates = {};
+
+    allDates.forEach((date) => {
+      if (attendanceData.includes(date)) {
+        newMarkedDates[date] = { color: 'rgba(68,196,94,100)', textColor: 'white' }; // Present
+      } else {
+        newMarkedDates[date] = { color: 'rgba(255,40,40,100)', textColor: 'white' }; // Absent
+      }
+    });
+
+    setMarkedDates(newMarkedDates);
   };
-
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth() + 1; // Get 1-based month
-
-  const [disableRightArrow, setDisableRightArrow] = useState(false);
-  const [disableLeftArrow, setDisableLeftArrow] = useState(false);
 
   // Function to check and update arrow states
   const checkArrowState = (year, month) => {
-    const minYear = currentYear - 3; // Allow up to 3 years back
+    const minYear = currentYear; // Allow up to 3 years back
 
     if (year > currentYear || (year === currentYear && month > currentMonth)) {
       setDisableRightArrow(true);
@@ -79,12 +81,51 @@ const Attendance = ({ navigation }) => {
   };
 
   useEffect(() => {
-    checkArrowState(currentYear, currentMonth);
-    toggleAttendance('present');
+    const fetchStudentData = async () => {
+      try {
+        const result = await StudentApi(userProfileData.family_id);
+
+        if (result.status === 200 && result.data.data) {
+          const studentDropdownData = result.data.data.map((student) => ({
+            label: `${student.firstname} ${student.lastname}`,
+            value: student.id,
+          }));
+          setStudents(studentDropdownData);
+        }
+      } catch (err) {
+        console.error('Error', err);
+      }
+    };
+
+    fetchStudentData();
   }, []);
+
+  useEffect(() => {
+    const fetchAttendance = async () => {
+      try {
+        const result = await GetAttendanceApi(dropdownValue);
+        if (result.status === 200 && result.data.data) {
+          const attendanceDates = result.data.data.map((student) => student.attend_date)
+          setAttendanceData(attendanceDates);
+        }
+
+      } catch (err) {
+        console.error('Failed to fetch Attendance', err);
+      }
+    }
+    fetchAttendance();
+    checkArrowState(currentYear, currentMonth);
+    updateMarkedDates();
+  }, [dropdownValue]);
+
+  useEffect(() => {
+    updateMarkedDates();
+  }, [attendanceData, selectedCurrentMonth, currentMonth]);
 
   const handleMonthChange = (data) => {
     const { year, month } = data;
+    setSelectedCurrentYear(year);
+    setSelectedCurrentMonth(month);
     checkArrowState(year, month);
   };
 
@@ -121,13 +162,6 @@ const Attendance = ({ navigation }) => {
     { "date": "30-12-2024", "inTime": "08:45 AM", "outTime": "04:45 PM", "totalHours": "8 Hrs" }
   ];
 
-
-  const dropdownData = [
-    { label: 'Student 1', value: '1' },
-    { label: 'Student 2', value: '2' },
-    { label: 'Student 3', value: '3' }
-  ];
-
   const renderLabel = () => {
     if (dropdownValue || isFocus) {
       return (
@@ -140,7 +174,6 @@ const Attendance = ({ navigation }) => {
   };
 
   const handleDropdownValue = (item) => {
-    console.log('Dropdown item', item);
     setDropdownValue(item.value);
     setIsFocus(false)
   }
@@ -172,10 +205,10 @@ const Attendance = ({ navigation }) => {
             {
               activeTab === 'calendar' && (
                 <View style={styles.attendance_btn_container}>
-                  <TouchableOpacity style={[styles.attendance_btn, attendanceStatus === 'present' ? styles.attendance_btn_active : styles.attendance_btn_inactive]} onPress={() => toggleAttendance('present')} activeOpacity={0.8}>
+                  <TouchableOpacity style={[styles.attendance_btn, attendanceStatus === 'present' ? styles.attendance_btn_active : styles.attendance_btn_inactive]}>
                     <Text style={styles.attendance_btn_text}>Present</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.attendance_btn, attendanceStatus === 'absent' ? styles.attendance_btn_active : styles.attendance_btn_inactive]} onPress={() => toggleAttendance('absent')} activeOpacity={0.8}>
+                  <TouchableOpacity style={[styles.attendance_btn, attendanceStatus === 'absent' ? styles.attendance_btn_active : styles.attendance_btn_inactive]}>
                     <Text style={styles.attendance_btn_text}>Absent</Text>
                   </TouchableOpacity>
                 </View>
@@ -192,8 +225,8 @@ const Attendance = ({ navigation }) => {
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
               iconStyle={styles.iconStyle}
-              data={dropdownData}
-              itemTextStyle={{color: 'rgba(0,0,0,0.8)'}}
+              data={students}
+              itemTextStyle={{ color: 'rgba(0,0,0,0.8)' }}
               maxHeight={300}
               labelField="label"
               valueField="value"
@@ -206,7 +239,7 @@ const Attendance = ({ navigation }) => {
             />
           </View>
           {
-            activeTab === 'calendar' && (
+            attendanceData.length > 0 && activeTab === 'calendar' ?
               <View style={styles.calendar_with_dates_container}>
                 <Calendar
                   disableMonthChange={true} //Works only when hideExtraDays={false}
@@ -234,7 +267,7 @@ const Attendance = ({ navigation }) => {
                   }}
                 />
               </View>
-            )
+              : <Text style={[styles.history_note_text, {color: 'crimson', textAlign: 'center', marginTop: moderateVerticalScale(20), fontSize: scale(16)}]}>Oops! No attendance data available.</Text>
           }
 
           {

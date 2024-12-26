@@ -18,7 +18,7 @@ const initializePusher = async () => {
     }
   
     // Initialize Pusher with the retrieved token
-    const pusher = new Pusher('b6a8eb474c42d84fa408', {
+    const pusher = new Pusher('e436d1f22a18a3715fbd', {
       cluster: 'us2',
       // authEndpoint: UrlProvider.local_url+'/broadcasting/auth',
       authEndpoint: UrlProvider.staging_url+'/broadcasting/auth', // Adjust as per your backend
