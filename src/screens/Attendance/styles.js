@@ -100,15 +100,27 @@ export default styles = StyleSheet.create({
         marginVertical: moderateVerticalScale(10)
     },
     attendance_btn: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
         borderWidth: 1,
-        borderRadius: moderateScale(7),
+        borderRadius: moderateScale(10),
         borderStyle: 'solid',
         borderColor: '#FFFFFF',
         marginRight: moderateScale(10),
         paddingHorizontal: moderateScale(10),
-        paddingVertical: moderateVerticalScale(5)
+        paddingVertical: moderateVerticalScale(2),
+        backgroundColor: '#FFFFFF',
+    },
+    indicator: {
+        height: moderateScale(10),
+        width: moderateScale(10),
+        borderRadius: moderateScale(10),
+        marginRight: moderateScale(5),
+        backgroundColor: 'rgba(0,0,0,0.8)'
     },
     attendance_btn_text: {
+        paddingTop: moderateScale(2),
         fontFamily: 'Poppins Medium',
         fontSize: scale(12),
         color: 'rgba(0,0,0,0.8)'

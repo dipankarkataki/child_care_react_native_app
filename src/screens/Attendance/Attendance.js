@@ -109,12 +109,29 @@ const Attendance = ({ navigation }) => {
           const attendanceDates = result.data.data.map((student) => student.attend_date)
           setAttendanceData(attendanceDates);
 
-          const historyData = result.data.data.map((student) => ({
-            date: student.attend_date,
-            inTime: student.checkin_datetime,
-            outTime: student.checkout_datetime,
-            totalHours: "6 Hrs"
-          }));
+          const historyData = result.data.data.map((student) => {
+            // Parse the check-in and check-out times using moment
+            const checkin = moment(student.checkin_datetime, "HH:mm:ss");
+            const checkout = moment(student.checkout_datetime, "HH:mm:ss");
+
+            // Calculate the total hours and format it
+            const totalHours = moment
+              .duration(checkout.diff(checkin))
+              .asHours()
+              .toFixed(2); // Keep 2 decimal places
+            
+            const formattedDate = moment(student.attend_date, "YYYY-MM-DD").format("MM-DD-YYYY");
+            const formattedCheckin = checkin.format("hh:mm A"); // Example: 03:41 PM
+            const formattedCheckout = checkout.format("hh:mm A"); // Example: 06:41 PM
+          
+            return {
+              id: student.id,
+              date: formattedDate,
+              inTime: formattedCheckin,
+              outTime: formattedCheckout,
+              totalHours: `${totalHours} Hrs`, // Dynamically calculated
+            };
+          });
           setAttendanceHistory(historyData);
         }
 
@@ -214,10 +231,12 @@ const Attendance = ({ navigation }) => {
             {
               activeTab === 'calendar' && (
                 <View style={styles.attendance_btn_container}>
-                  <TouchableOpacity style={[styles.attendance_btn, attendanceStatus === 'present' ? styles.attendance_btn_active : styles.attendance_btn_inactive]}>
+                  <TouchableOpacity style={styles.attendance_btn} activeOpacity={1}>
+                    <View style={[styles.indicator, {backgroundColor:'rgba(68,196,94,100)'}]}></View>
                     <Text style={styles.attendance_btn_text}>Present</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.attendance_btn, attendanceStatus === 'absent' ? styles.attendance_btn_active : styles.attendance_btn_inactive]}>
+                  <TouchableOpacity style={styles.attendance_btn} activeOpacity={1}>
+                    <View style={[styles.indicator, {backgroundColor: 'rgba(255,40,40,100)'}]}></View>
                     <Text style={styles.attendance_btn_text}>Absent</Text>
                   </TouchableOpacity>
                 </View>
@@ -311,7 +330,7 @@ const Attendance = ({ navigation }) => {
                         <Text style={styles.history_header_text}>Total Hrs</Text>
                       </View>
                       <View style={styles.history_card_body} >
-                        <FlatList data={attendanceHistory} keyExtractor={(item) => item.time} renderItem={({ item }) => (
+                        <FlatList data={attendanceHistory} keyExtractor={(item) => item.id} renderItem={({ item }) => (
                           <View style={{ flexDirection: 'row' }}>
                             <Text style={styles.history_card_body_text}>{item.date}</Text>
                             <Text style={styles.history_card_body_text}>{item.inTime}</Text>
