@@ -107,6 +107,7 @@ const Attendance = ({ navigation }) => {
         const result = await GetAttendanceApi(dropdownValue);
         if (result.status === 200 && result.data.data) {
           const attendanceDates = result.data.data.map((student) => student.attend_date)
+          console.log('Attendance Dates', attendanceDates)
           setAttendanceData(attendanceDates);
 
           const historyData = result.data.data.map((student) => {

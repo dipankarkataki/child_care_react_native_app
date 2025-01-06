@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import ModalComponent from '../../../components/ModalComponent';
 import styles from './styles';
 import Constants from '../../../Navigation/Constants';
+import SendResetCodeApi from '../../../api/ForgotPasswordApi/SendResetCode/SendResetCodeApi';
 
 const background = require('../../../assets/images/background.png')
 const logo_large = require('../../../assets/images/child-care-logo-large.png');
@@ -12,7 +13,9 @@ const ForgotPassword = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [loader, setLoader] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalIcon, setModalIcon] = useState(null); 
     const [shouldNavigate, setShouldNavigate] = useState(true);
+    const [modalMessage, setModalMessage] = useState('');
 
     const [errors, setErrors] = useState({
         email: '',
@@ -33,20 +36,42 @@ const ForgotPassword = ({navigation}) => {
         return isValid;
     };
 
-    const submitForm = () => {
+    const submitForm = async () => {
         if (validateForm()) {
             setLoader(true);
-            setTimeout( () => {
+            try{
+                const result = await SendResetCodeApi({
+                    'email' : email
+                });
+                if(result.data && result.data.status === true){
+                    setLoader(false);
+                    setModalVisible(true);
+                    setModalIcon('success');
+                    setModalMessage('Reset code has been sent successfully.');
+                    setShouldNavigate(true)
+                }else{
+                    setLoader(false);
+                    setModalVisible(true);
+                    setModalIcon('error');
+                    setModalMessage(result.data.message);
+                    setShouldNavigate(false)
+                }
+            }catch(err){
                 setLoader(false);
                 setModalVisible(true);
-                console.log('email :', email);
-            },2000);
+                setModalIcon('error');
+                setModalMessage('Oops! Something went wrong. Please try after sometime.');
+                setShouldNavigate(false)
+                console.log('Send Reset Pwd Error --', err)
+            }
         }
     }
 
     const handleOnClose = () => {
         if(shouldNavigate){
             navigation.navigate(Constants.VERIFY_OTP)
+        }else{
+            setModalVisible(false)
         }
     }
 
@@ -89,9 +114,9 @@ const ForgotPassword = ({navigation}) => {
             <ModalComponent 
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
-                message="Reset password code has been sent to your registered email"
+                message={modalMessage}
                 onClose={handleOnClose}
-                icon="success"
+                icon={modalIcon}
             />
             </ImageBackground>
         </SafeAreaView>
