@@ -69,7 +69,7 @@ const ForgotPassword = ({navigation}) => {
 
     const handleOnClose = () => {
         if(shouldNavigate){
-            navigation.navigate(Constants.VERIFY_OTP)
+            navigation.navigate(Constants.VERIFY_OTP, { email: email })
         }else{
             setModalVisible(false)
         }

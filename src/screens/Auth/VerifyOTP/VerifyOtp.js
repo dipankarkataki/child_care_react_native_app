@@ -4,18 +4,24 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import ModalComponent from '../../../components/ModalComponent';
 import styles from './styles';
 import Constants from '../../../Navigation/Constants';
+import VerifyOTPApi from '../../../api/ForgotPasswordApi/VerifyOTP/VerifyOTPApi';
 
 const backgroundImage = require('../../../assets/images/background.png')
 const logo_large = require('../../../assets/images/child-care-logo-large.png');
 
-const VerifyOtp = ({navigation}) => {
+const VerifyOtp = ({navigation, route}) => {
 
+    const { email } = route.params;
     const [otp, setOtp] = useState('');
     const [loader, setLoader] = useState(false);
+
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalIcon, setModalIcon] = useState(null); 
     const [shouldNavigate, setShouldNavigate] = useState(true);
+    const [modalMessage, setModalMessage] = useState('');
+    
     const [errors, setErrors] = useState({
-        email: '',
+        otp: '',
     });
 
     const validateForm = () => {
@@ -33,21 +39,44 @@ const VerifyOtp = ({navigation}) => {
         return isValid;
     };
 
-    const submitForm = () =>{
+    const submitForm = async () =>{
         if (validateForm()) {
             setLoader(true);
-            setTimeout( () => {
+            try{
+                const result = await VerifyOTPApi({
+                    'email' : email,
+                    'otp' : otp
+                });
+                if(result.data && result.data.status === true){
+                    setLoader(false);
+                    setModalVisible(true);
+                    setModalIcon('success');
+                    setModalMessage('OTP verified successfully.');
+                    setShouldNavigate(true)
+                }else{
+                    setLoader(false);
+                    setModalVisible(true);
+                    setModalIcon('error');
+                    setModalMessage(result.data.message);
+                    setShouldNavigate(false)
+                }
+            }catch(err){
                 setLoader(false);
-                console.log('otp :', otp);
                 setModalVisible(true);
-            },2000);
+                setModalIcon('error');
+                setModalMessage('Oops! Something went wrong. Please try after sometime.');
+                setShouldNavigate(false)
+                console.log('Send Reset Pwd Error --', err)
+            }
             
         }
     }
 
     const handleOnClose = () => {
         if(shouldNavigate){
-            navigation.navigate(Constants.CHANGE_PASSWORD)
+            navigation.navigate(Constants.CHANGE_PASSWORD, {email: email})
+        }else{
+            setModalVisible(false);
         }
     }
 
@@ -92,9 +121,9 @@ const VerifyOtp = ({navigation}) => {
                 <ModalComponent 
                     modalVisible={modalVisible}
                     setModalVisible={setModalVisible}
-                    message="OTP verified successfully"
+                    message={modalMessage}
                     onClose={handleOnClose}
-                    icon="success"
+                    icon={modalIcon}
                 />
             </ImageBackground>
         </SafeAreaView>
