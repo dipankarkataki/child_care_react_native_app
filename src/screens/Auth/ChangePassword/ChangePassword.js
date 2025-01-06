@@ -4,17 +4,20 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import ModalComponent from '../../../components/ModalComponent';
 import styles from './styles';
 import Constants from '../../../Navigation/Constants';
+import CreateNewPasswordApi from '../../../api/ForgotPasswordApi/CreateNewPassword/CreateNewPasswordApi';
 
 const background = require('../../../assets/images/background.png')
 const logo_large = require('../../../assets/images/child-care-logo-large.png');
 
-const ChangePassword = ({ navigation }) => {
-
+const ChangePassword = ({ navigation, route }) => {
+    const { email } = route.params;
     const [passwordVisibilty, setPasswordVisibility] = useState(true);
     const [confirmPasswordVisibilty, setConfirmPasswordVisibility] = useState(true);
     const [loader, setLoader] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalIcon, setModalIcon] = useState(null); 
     const [shouldNavigate, setShouldNavigate] = useState(true);
+    const [modalMessage, setModalMessage] = useState('');
 
     let [password, setPassword] = useState('');
     let [confirmPassword, setConfirmPassword] = useState('');
@@ -48,22 +51,43 @@ const ChangePassword = ({ navigation }) => {
         return isValid;
     }
 
-    const submitForm = () => {
+    const submitForm = async () => {
         if (validateForm()) {
             setLoader(true);
-            setTimeout( () => {
+            try{
+                const result = await CreateNewPasswordApi({
+                    'email' : email,
+                    'password' : password
+                });
+                if(result.data && result.data.status === true){
+                    setLoader(false);
+                    setModalVisible(true);
+                    setModalIcon('success');
+                    setModalMessage('Password changed successfully.');
+                    setShouldNavigate(true)
+                }else{
+                    setLoader(false);
+                    setModalVisible(true);
+                    setModalIcon('error');
+                    setModalMessage(result.data.message);
+                    setShouldNavigate(false)
+                }
+            }catch(err){
                 setLoader(false);
-                console.log('password :', password);
-                console.log('confirmPassword :', confirmPassword);
                 setModalVisible(true);
-            },2000);
-            
+                setModalIcon('error');
+                setModalMessage('Oops! Something went wrong. Please try after sometime.');
+                setShouldNavigate(false)
+                console.log('Change Pwd Error --', err)
+            }
         }
     }
 
     const handleOnClose = () => {
         if(shouldNavigate){
             navigation.replace(Constants.LOGIN)
+        }else{
+            setModalVisible(false);
         }
     }
 
@@ -147,9 +171,9 @@ const ChangePassword = ({ navigation }) => {
                 <ModalComponent 
                     modalVisible={modalVisible}
                     setModalVisible={setModalVisible}
-                    message="Password changed successfully"
+                    message={modalMessage}
                     onClose={handleOnClose}
-                    icon="success"
+                    icon={modalIcon}
                 
                 />
             </ImageBackground>
