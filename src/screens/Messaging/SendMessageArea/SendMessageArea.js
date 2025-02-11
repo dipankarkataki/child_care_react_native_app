@@ -206,20 +206,20 @@ const SendMessageArea = ({navigation, route }) => {
     const deviceTimeZone = RNLocalize.getTimeZone();
     const formatCreatedAt = (timestamp) => {
         // Create a moment object from the timestamp in the server's timezone
-        const momentDate = moment.tz(timestamp, "YYYY-MM-DD HH:mm:ss", "Asia/Ho_Chi_Minh");
-    
+        const momentDate = moment.utc(timestamp, "YYYY-MM-DD HH:mm:ss").local().format('hh:mm A');
+        
+
         // Convert it to the device's timezone
-        const localTime = momentDate.tz(deviceTimeZone);
-    
+        // const localTime = momentDate.tz(deviceTimeZone);
         // Format the time in AM/PM
-        return localTime.format('hh:mm A');
+        return momentDate;
     };
 
 
     const fetchMessages = async () => {
         try {
             const result = await GetMessagesApi();
-            // console.log('Fetch Message Data ==> ', result.data.data);
+            console.log('Fetch Message Data ==> ', result.data.data);
             let data = result.data.data;
 
             const newMessages = data.map(item => ({
@@ -259,7 +259,7 @@ const SendMessageArea = ({navigation, route }) => {
             console.log('New message received:', data);
             const newMessage = {
                 text: data.content,
-                time: formatCreatedAt(data.created_at),
+                time: formatCreatedAt(data.time),
                 attachment: data.attachment,
                 attachment_type:data.attachment_type,
                 type: userId == data.receiver_id ? 'received' : 'sent',
