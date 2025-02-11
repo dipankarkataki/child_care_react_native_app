@@ -101,8 +101,8 @@ const Login = ({ navigation }) => {
     }
 
     const comingSoonFeature = (destination) => {
-        "Feature Coming Soon! 🚀.", "We're working hard to bring this feature to you. Stay tuned for updates!"
-        Alert.alert('Feature Coming Soon! 🚀.', "We're working hard to bring this feature to you, but if you want to get the look and feel then click navigate otherwise click close.",[{
+        
+        Alert.alert('Feature Coming Soon! 🚀.', "Currently all signups are done from childcare web app. Please visit https://childcaresoftware.com, but if you want to get the look and feel then click navigate otherwise click close.",[{
             text :'Close',
         },{
             text : 'Navigate',

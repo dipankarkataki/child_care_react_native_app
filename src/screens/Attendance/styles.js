@@ -110,7 +110,7 @@ export default styles = StyleSheet.create({
         marginRight: moderateScale(10),
         paddingHorizontal: moderateScale(10),
         paddingVertical: moderateVerticalScale(2),
-        backgroundColor: '#FFFFFF',
+        // backgroundColor: '#FFFFFF',
     },
     indicator: {
         height: moderateScale(10),
