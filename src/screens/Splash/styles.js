@@ -8,6 +8,9 @@ export default styles = StyleSheet.create({
         alignItems: 'center'
     },
     logo_white: {
-        // height: moderateScale(80),
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#fff',
+        borderRadius: 5,
     },
 });

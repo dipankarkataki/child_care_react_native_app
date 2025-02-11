@@ -8,7 +8,7 @@ const logo_large = require('../../assets/images/child-care-logo-large.png');
 const background = require('../../assets/images/background.png');
 
 const LoginOption = ({ navigation }) => {
-  const [selectedOption, setSelectedOption] = useState('Owner');
+  const [selectedOption, setSelectedOption] = useState('Parent');
 
   const handleOptionPress = (option) => {
     setSelectedOption(option);
