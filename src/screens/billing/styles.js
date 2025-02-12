@@ -105,13 +105,15 @@ export default styles = StyleSheet.create({
     },
     text_input: {
         flex: 1,
-        backgroundColor: '#F1F6F6',
+        backgroundColor: '#FFFFFF',
         borderRadius: 6,
         paddingLeft: moderateScale(10),
-        height: 50,
+        height: 55,
+        borderWidth: 0.5,
+        borderColor: 'rgba(158, 158, 158, 0.6)'
     },
     text_input_style: {
-        fontSize: 17,
+        fontSize: 16,
         color: '#797979',
         fontFamily: 'Poppins Regular',
     },
@@ -216,8 +218,8 @@ export default styles = StyleSheet.create({
         borderRadius: moderateScale(7)
     },
     dropdown: {
-        height: 50,
-        borderColor: 'gray',
+        height: 55,
+        borderColor: 'rgba(158, 158, 158, 0.6)',
         borderWidth: 0.5,
         borderRadius: 8,
         paddingHorizontal: 8,
@@ -230,19 +232,19 @@ export default styles = StyleSheet.create({
         zIndex: 999,
         paddingHorizontal: 8,
         fontSize: 14,
-        color: 'rgba(0,0,0,0.8)'
+        color: '#797979'
     },
     placeholderStyle: {
         fontSize: 16,
-        color: 'rgba(0,0,0,0.8)'
+        color: '#797979'
     },
     selectedTextStyle: {
         fontSize: 16,
-        color: 'rgba(0,0,0,0.8)'
+        color: '#797979'
     },
     inputSearchStyle: {
         height: 40,
         fontSize: 16,
-        color: 'rgba(0,0,0,0.8)',
+        color: '#797979',
     },
 });

@@ -59,6 +59,9 @@ const Billing = ({ navigation }) => {
                     useNativeDriver: true,
                 }),
             ]).start(() => setShowBottomSheet(false));
+            setDropdownValue(null);
+            setInvoiceAmount(0);
+            setInvoiceDescription('');
         } else {
             setShowBottomSheet(true);
             // Open the bottom sheet
@@ -80,7 +83,7 @@ const Billing = ({ navigation }) => {
     const renderLabel = () => {
         if (dropdownValue || isFocus) {
             return (
-                <Text style={[styles.label, isFocus && { color: 'blue' }]}>
+                <Text style={[styles.label, isFocus && { color: '#797979' }]}>
                     Select Invoice
                 </Text>
             );
@@ -252,13 +255,13 @@ const Billing = ({ navigation }) => {
                                     <View style={styles.dropdown_container}>
                                         {renderLabel()}
                                         <Dropdown
-                                            style={[styles.dropdown, isFocus && { borderColor: 'blue'}]}
+                                            style={[styles.dropdown, isFocus && { borderWidth:0.5, borderColor: 'rgba(158, 158, 158, 0.6)'}]}
                                             placeholderStyle={styles.placeholderStyle}
                                             selectedTextStyle={styles.selectedTextStyle}
                                             inputSearchStyle={styles.inputSearchStyle}
                                             iconStyle={styles.iconStyle}
                                             data={invoiceData}
-                                            itemTextStyle={{ color: 'rgba(0,0,0,0.8)' }}
+                                            itemTextStyle={{ color: '#797979' }}
                                             maxHeight={300}
                                             labelField="name"
                                             valueField="id"
@@ -273,19 +276,19 @@ const Billing = ({ navigation }) => {
 
                                     <View style={styles.text_input_container}>
                                         <Text style={styles.title_text}>Amount</Text>
-                                        <View style={[styles.text_input, { borderColor: '#E1F3FB' }]}>
+                                        <View style={[styles.text_input, {backgroundColor: 'rgba(225, 243, 251, 0.7)', borderColor: 'rgba(158, 158, 158, 0.6)'}]}>
                                             <TextInput
                                                 placeholder="$0.00"
                                                 placeholderTextColor="#b9b9b9"
                                                 value={"$"+invoiceAmount}
-                                                readOnly
+                                                readOnly={true}
                                                 style={styles.text_input_style}
                                             />
                                         </View>
                                     </View>
                                     <View style={styles.text_input_container}>
                                         <Text style={styles.title_text}>Enter Description</Text>
-                                        <View style={[styles.text_input, { borderColor: '#E1F3FB'}]}>
+                                        <View style={[styles.text_input]}>
                                             <TextInput
                                                 placeholder="Type here...."
                                                 placeholderTextColor="#b9b9b9"
