@@ -17,9 +17,16 @@ export default styles = StyleSheet.create({
         padding: moderateScale(20),
     },
     profile_image_container: {
+        height: moderateScale(145),
+        width: moderateScale(145),
+        borderWidth: 1,
+        borderStyle: 'solid',
+        borderColor: 'white',
+        borderRadius: moderateScale(100),
         position: 'relative',
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.5)',
     },
     profile_header_image: {
         height: moderateScale(145),

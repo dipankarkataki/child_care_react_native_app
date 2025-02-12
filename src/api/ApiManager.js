@@ -3,8 +3,8 @@ import TokenManager from "./TokenManager";
 import UrlProvider from "./UrlProvider";
 
 const ApiManager = axios.create({
-    // 'baseURL': UrlProvider.local_url,
-    'baseURL': UrlProvider.staging_url,
+    'baseURL': UrlProvider.local_url,
+    // 'baseURL': UrlProvider.staging_url,
     // 'baseURL': UrlProvider.production_url,
     responseType:'json',
     withCredentials:true

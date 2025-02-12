@@ -5,10 +5,25 @@ import TokenManager from '../../api/TokenManager';
 import { useSelector } from 'react-redux';
 import styles from './styles';
 import Constants from '../../Navigation/Constants';
+import GetInvoiceByFamily from '../../api/BillingApi/Invoice/GetInvoiceByFamily';
 
 const backgroundImage = require('../../assets/images/background.png');
 
 const Billing = ({ navigation }) => {
+
+    const [invoiceTotal, setInvoiceTotal] = useState(0);
+    const [invoiceData, setInvoiceData] = useState([]);
+
+    useEffect(() => {
+        const getInvoiceByFamily = async () => {
+            const response = await GetInvoiceByFamily(userProfileData.family_id);
+            // console.log('GetInvoiceByFamily Response ---', response.data.data)
+            const invoiceTotalAmount = response.data.data.reduce((acc, item) => acc + parseFloat(item.amount), 0).toFixed(2);
+            setInvoiceTotal(invoiceTotalAmount);
+            setInvoiceData(response.data.data);
+        }
+        getInvoiceByFamily();
+    }, []);
 
     const [customerProfileId, setCustomerProfileId] = useState(null);
     const getCustomerProfileId = async () => {
@@ -22,10 +37,7 @@ const Billing = ({ navigation }) => {
     const opacity = useRef(new Animated.Value(0)).current;
 
     const userProfileImage = useSelector((state) => state.profileImage)
-
-    // const togglePayNowBottomSheet = () => {
-    //     setShowBottomSheet( (previousState) => !previousState)
-    // }
+    const userProfileData = useSelector((state) => state.userProfileData);
 
     const togglePayNowBottomSheet = () => {
         if (showBottomSheet) {
@@ -81,7 +93,7 @@ const Billing = ({ navigation }) => {
                 <View style={styles.billing_header}>
                     <View style={styles.billing_revenue_container}>
                         <Icon name='plus' style={styles.icon} />
-                        <Text style={styles.balance}>$2,2200.00</Text>
+                        <Text style={styles.balance}>${invoiceTotal}</Text>
                     </View>
                     <Text style={styles.small_text}>Due Amount</Text>
                 </View>
