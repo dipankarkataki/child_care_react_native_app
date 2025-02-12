@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { moderateScale, moderateVerticalScale } from "react-native-size-matters";
 export default styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -103,12 +104,16 @@ export default styles = StyleSheet.create({
         marginBottom: 20,
     },
     text_input: {
+        flex: 1,
         backgroundColor: '#F1F6F6',
-        fontSize: 17,
-        fontFamily: 'Poppins Regular',
         borderRadius: 6,
-        paddingLeft: 12,
+        paddingLeft: moderateScale(10),
+        height: 50,
+    },
+    text_input_style: {
+        fontSize: 17,
         color: '#797979',
+        fontFamily: 'Poppins Regular',
     },
     input_title: {
         color: 'black',
@@ -203,5 +208,41 @@ export default styles = StyleSheet.create({
         borderTopRightRadius: 40,
         paddingHorizontal: 20,
         paddingVertical: 20,
-    }
+    },
+    dropdown_container: {
+        paddingVertical: moderateVerticalScale(12),
+        marginBottom: moderateVerticalScale(10),
+        backgroundColor: '#FFFFFF',
+        borderRadius: moderateScale(7)
+    },
+    dropdown: {
+        height: 50,
+        borderColor: 'gray',
+        borderWidth: 0.5,
+        borderRadius: 8,
+        paddingHorizontal: 8,
+    },
+    label: {
+        position: 'absolute',
+        backgroundColor: 'white',
+        left: 22,
+        top: 8,
+        zIndex: 999,
+        paddingHorizontal: 8,
+        fontSize: 14,
+        color: 'rgba(0,0,0,0.8)'
+    },
+    placeholderStyle: {
+        fontSize: 16,
+        color: 'rgba(0,0,0,0.8)'
+    },
+    selectedTextStyle: {
+        fontSize: 16,
+        color: 'rgba(0,0,0,0.8)'
+    },
+    inputSearchStyle: {
+        height: 40,
+        fontSize: 16,
+        color: 'rgba(0,0,0,0.8)',
+    },
 });

@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import styles from './styles';
 import Constants from '../../Navigation/Constants';
 import GetInvoiceByFamily from '../../api/BillingApi/Invoice/GetInvoiceByFamily';
+import { Dropdown } from 'react-native-element-dropdown';
 
 const backgroundImage = require('../../assets/images/background.png');
 
@@ -13,6 +14,10 @@ const Billing = ({ navigation }) => {
 
     const [invoiceTotal, setInvoiceTotal] = useState(0);
     const [invoiceData, setInvoiceData] = useState([]);
+    const [invoiceAmount, setInvoiceAmount] = useState(0);
+    const [invoiceDescription, setInvoiceDescription] = useState('');
+    const [dropdownValue, setDropdownValue] = useState(null);
+    const [isFocus, setIsFocus] = useState(false);
 
     useEffect(() => {
         const getInvoiceByFamily = async () => {
@@ -70,6 +75,24 @@ const Billing = ({ navigation }) => {
                 }),
             ]).start();
         }
+    };
+
+    const renderLabel = () => {
+        if (dropdownValue || isFocus) {
+            return (
+                <Text style={[styles.label, isFocus && { color: 'blue' }]}>
+                    Select Invoice
+                </Text>
+            );
+        }
+        return null;
+    };
+
+    const handleDropdownValue = (item) => {
+        console.log('Selected Item ---', item.amount);
+        setInvoiceAmount(item.amount);
+        setDropdownValue(item.id);
+        setIsFocus(false);
     };
 
     const comingSoon = () => {
@@ -226,38 +249,51 @@ const Billing = ({ navigation }) => {
                             <Animated.View style={[styles.bottom_sheet_card, { transform: [{ translateY }] }]}>
                                 <Text style={styles.pay_now_header_text}> Select invoice and make payment</Text>
                                 <View style={styles.select_invoice_container}>
-                                    <View style={styles.text_input_container}>
-                                        <Text style={styles.title_text}>Select Invoice</Text>
-                                        <View style={[styles.text_input, { borderColor: '#E1F3FB', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
-                                            <TextInput
-                                                placeholder="Invoice No - 12F8"
-                                                placeholderTextColor="#b9b9b9"
-                                                readOnly
-                                            />
-                                            <Icon name="caret-down" size={20} color="#888" style={[styles.icon, { color: '#000' }]} />
-                                        </View>
+                                    <View style={styles.dropdown_container}>
+                                        {renderLabel()}
+                                        <Dropdown
+                                            style={[styles.dropdown, isFocus && { borderColor: 'blue'}]}
+                                            placeholderStyle={styles.placeholderStyle}
+                                            selectedTextStyle={styles.selectedTextStyle}
+                                            inputSearchStyle={styles.inputSearchStyle}
+                                            iconStyle={styles.iconStyle}
+                                            data={invoiceData}
+                                            itemTextStyle={{ color: 'rgba(0,0,0,0.8)' }}
+                                            maxHeight={300}
+                                            labelField="name"
+                                            valueField="id"
+                                            placeholder={!isFocus ? 'Select Invoice' : '...'}
+                                            searchPlaceholder="Search..."
+                                            value={dropdownValue}
+                                            onFocus={() => setIsFocus(true)}
+                                            onBlur={() => setIsFocus(false)}
+                                            onChange={item => handleDropdownValue(item)}
+                                        />
                                     </View>
 
                                     <View style={styles.text_input_container}>
-                                        <Text style={styles.title_text}>Enter Amount</Text>
+                                        <Text style={styles.title_text}>Amount</Text>
                                         <View style={[styles.text_input, { borderColor: '#E1F3FB' }]}>
                                             <TextInput
-                                                placeholder="$300"
+                                                placeholder="$0.00"
                                                 placeholderTextColor="#b9b9b9"
+                                                value={"$"+invoiceAmount}
                                                 readOnly
+                                                style={styles.text_input_style}
                                             />
                                         </View>
                                     </View>
-
                                     <View style={styles.text_input_container}>
-                                        <Text style={styles.title_text}>Select Payment Type</Text>
-                                        <View style={[styles.text_input, { borderColor: '#E1F3FB', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
+                                        <Text style={styles.title_text}>Enter Description</Text>
+                                        <View style={[styles.text_input, { borderColor: '#E1F3FB'}]}>
                                             <TextInput
-                                                placeholder="Credit Card"
+                                                placeholder="Type here...."
                                                 placeholderTextColor="#b9b9b9"
-                                                readOnly
+                                                style={styles.text_input_style}
+                                                multiline={true}
+                                                value={invoiceDescription}
+                                                onChangeText={(text) => setInvoiceDescription(text)}
                                             />
-                                            <Icon name="caret-down" size={20} color="#888" style={[styles.icon, { color: '#000' }]} />
                                         </View>
                                     </View>
 
