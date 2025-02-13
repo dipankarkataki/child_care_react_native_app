@@ -51,7 +51,7 @@ const Billing = ({ navigation }) => {
             try {
                 const response = await GetInvoiceByFamily(userProfileData.family_id);
                 const data = response?.data?.data; // Safely access the nested data
-
+                console.log('Invoice Data ---', data)
                 // Check if data exists and is an array
                 if (data && Array.isArray(data) && data.length > 0) {
                     const invoiceTotalAmount = data
@@ -62,6 +62,7 @@ const Billing = ({ navigation }) => {
                     setShimmerLoader(false);
                 } else {
                     // If data is null, undefined, or an empty array
+                    setShimmerLoader(false);
                     setInvoiceTotal('0.00');
                     setInvoiceData([]);
                 }
@@ -129,7 +130,6 @@ const Billing = ({ navigation }) => {
             const customerProfile = await GetCustomerProfileApi({ 'customer_profile_id': userProfileData.aNet_customer_profile_id })
             if (customerProfile.data && customerProfile.data.data && customerProfile.data.data.profile) {
                 const profileData = customerProfile.data.data.profile;
-                console.log('Customer Payment Profile ---', profileData)
                 return profileData;
             } else {
                 console.log("No Customer Profile");
@@ -163,6 +163,7 @@ const Billing = ({ navigation }) => {
             setInvoiceAmount(0);
             setInvoiceDescription('');
             setSelectPaymentType(null);
+            setErrors('');
         } else {
             setShowBottomSheet(true);
             // Open the bottom sheet
@@ -204,7 +205,6 @@ const Billing = ({ navigation }) => {
     };
 
     const handleDropdownValue = (item) => {
-        console.log('Selected Item ---', item.amount);
         setInvoiceAmount(item.amount);
         setDropdownValue(item.id);
         setIsFocus(false);
@@ -238,9 +238,9 @@ const Billing = ({ navigation }) => {
                         'description': invoiceDescription
                     }
                 )
-                if (result.data.status) {
+                if (result?.data?.status) {
                     setLoader(false),
-                    setIsPaymentComplete(true);
+                    setIsPaymentComplete(prev => !prev);
                     setMessageModalVisible(true);
                     setModalMessage('Payment Successfull');
                     setModalIcon('success')
@@ -252,17 +252,12 @@ const Billing = ({ navigation }) => {
                     setModalMessage('Oops! Payment Failed');
                     setModalIcon('error');
                 }
-                console.log('Charge an invoice ---', result.data)
             } catch (error) {
                 console.error("Error charging customer profile:", error);
                 return null;
             }
         }
 
-    }
-
-    const comingSoon = () => {
-        Alert.alert("Feature Coming Soon! 🚀.", "We're working hard to bring this feature to you. Stay tuned for updates!")
     }
 
     return (
@@ -293,7 +288,8 @@ const Billing = ({ navigation }) => {
                             </View>
                             <View style={styles.billing_header}>
                                 <View style={styles.billing_revenue_container}>
-                                    <Icon name='plus' style={styles.icon} />
+                                    {invoiceTotal > 0 && (<Icon name='plus' style={styles.icon} />)}
+                                    
                                     <Text style={styles.balance}>${invoiceTotal}</Text>
                                 </View>
                                 <Text style={styles.small_text}>Due Amount</Text>
@@ -310,8 +306,8 @@ const Billing = ({ navigation }) => {
                                             <Text style={styles.pay_now_header_text}>OFF</Text>
                                         </View>
                                     </View>
-                                    <TouchableOpacity style={styles.pay_now_btn} onPress={togglePayNowBottomSheet}>
-                                        <Text style={styles.pay_now_btn_text}>Pay Now</Text>
+                                    <TouchableOpacity style={styles.pay_now_btn} onPress={togglePayNowBottomSheet} disabled={invoiceTotal > 0 ? false : true} >
+                                        <Text style={styles.pay_now_btn_text}>{invoiceTotal > 0 ? 'Pay Now' : 'No pending Dues'}</Text>
                                     </TouchableOpacity>
                                     <View style={styles.payment_method_container}>
                                         <Icon name='credit-card' style={styles.icon_large} />
@@ -471,14 +467,6 @@ const Billing = ({ navigation }) => {
                                     <View style={styles.text_input_container}>
                                         <Text style={styles.title_text}>Enter Description</Text>
                                         <View style={[styles.text_input]}>
-                                            {/* <TextInput
-                                                placeholder="Type here...."
-                                                placeholderTextColor="#b9b9b9"
-                                                style={styles.text_input_style}
-                                                value={invoiceDescription}
-                                                onChangeText={(text) => setInvoiceDescription(text)}
-                                            /> */}
-
                                             <KeyboardAvoidingView
                                                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                                                 style={{ flex: 1 }}
