@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, SafeAreaView, Animated, Dimensions, Alert } from 'react-native'
+import { ImageBackground, Text, TouchableOpacity, Image, View, TextInput, ScrollView, SafeAreaView, Animated, ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useEffect, useState, useRef } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useSelector } from 'react-redux';
@@ -9,6 +9,8 @@ import { Dropdown } from 'react-native-element-dropdown';
 import LinearGradient from 'react-native-linear-gradient';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 import GetCustomerProfileApi from '../../api/BillingApi/GetCustomerProfileApi';
+import ChargeInvoiceApi from '../../api/BillingApi/Invoice/ChargeInvoiceApi';
+import ModalComponent from '../../components/ModalComponent';
 
 const backgroundImage = require('../../assets/images/background.png');
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
@@ -22,11 +24,15 @@ const Billing = ({ navigation }) => {
     const [dropdownValue, setDropdownValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
     const [paymentProfile, setPaymentProfile] = useState([]);
-    const [paymentProfileDropdown, setPaymentProfileDropdown] = useState(null);
     const [isPaymentDropdownFocus, setIsPaymentDropdownFocus] = useState(false);
     const [selectPaymentType, setSelectPaymentType] = useState(null);
     const [shimmerLoader, setShimmerLoader] = useState(false);
     const [showBottomSheet, setShowBottomSheet] = useState(false);
+    const [loader, setLoader] = useState(false);
+    const [messageModalVisible, setMessageModalVisible] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalIcon, setModalIcon] = useState(null);
+    const [isPaymentComplete, setIsPaymentComplete] = useState(false);
 
     const billingDetailsRef = React.createRef();
 
@@ -78,15 +84,49 @@ const Billing = ({ navigation }) => {
 
             }
         };
-
         getProfileData();
 
-        
-    }, [billingDetailsRef.current]);
+
+    }, [billingDetailsRef.current, isPaymentComplete]);
+
+    const [errors, setErrors] = useState({
+        dropdownValue: '',
+        invoiceAmount: '',
+        selectPaymentType: '',
+    });
+
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = { ...errors };
+
+        if (!dropdownValue || dropdownValue.length == 0) {
+            newErrors.dropdownValue = 'Please select an invoice';
+            isValid = false;
+        } else {
+            newErrors.dropdownValue = '';
+        }
+
+        if (!invoiceAmount) {
+            newErrors.invoiceAmount = 'Invoice amount is 0.00';
+            isValid = false;
+        } else {
+            newErrors.invoiceAmount = '';
+        }
+
+        if (!selectPaymentType || selectPaymentType.length == 0) {
+            newErrors.selectPaymentType = 'Select payment profile';
+            isValid = false;
+        } else {
+            newErrors.selectPaymentType = '';
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
 
     const fetchCustomerProfile = async () => {
         try {
-            const customerProfile = await GetCustomerProfileApi({ 'customer_profile_id': userProfileData.aNet_customer_profile_id})
+            const customerProfile = await GetCustomerProfileApi({ 'customer_profile_id': userProfileData.aNet_customer_profile_id })
             if (customerProfile.data && customerProfile.data.data && customerProfile.data.data.profile) {
                 const profileData = customerProfile.data.data.profile;
                 console.log('Customer Payment Profile ---', profileData)
@@ -103,8 +143,6 @@ const Billing = ({ navigation }) => {
 
     const translateY = useRef(new Animated.Value(Dimensions.get('window').height)).current;
     const opacity = useRef(new Animated.Value(0)).current;
-
-    
 
     const togglePayNowBottomSheet = () => {
         if (showBottomSheet) {
@@ -124,6 +162,7 @@ const Billing = ({ navigation }) => {
             setDropdownValue(null);
             setInvoiceAmount(0);
             setInvoiceDescription('');
+            setSelectPaymentType(null);
         } else {
             setShowBottomSheet(true);
             // Open the bottom sheet
@@ -146,7 +185,7 @@ const Billing = ({ navigation }) => {
         if (dropdownValue || isFocus) {
             return (
                 <Text style={[styles.label, isFocus && { color: '#797979' }]}>
-                    Select Invoice
+                    Invoice
                 </Text>
             );
         }
@@ -154,10 +193,10 @@ const Billing = ({ navigation }) => {
     };
 
     const renderPaymentProfileLabel = () => {
-        if (paymentProfileDropdown || isPaymentDropdownFocus) {
+        if (selectPaymentType || isPaymentDropdownFocus) {
             return (
                 <Text style={[styles.label, isPaymentDropdownFocus && { color: '#797979' }]}>
-                    Select Payment Profile
+                    Payment Profile
                 </Text>
             );
         }
@@ -177,11 +216,54 @@ const Billing = ({ navigation }) => {
         setIsPaymentDropdownFocus(false);
     };
 
+    const handleMessageModalOnClose = () => {
+        setMessageModalVisible(false);
+        setDropdownValue(null);
+        setInvoiceAmount(0);
+        setInvoiceDescription('');
+        setSelectPaymentType(null);
+        setShowBottomSheet(false);
+    }
+
+    const chargeInvoice = async () => {
+        if (validateForm()) {
+            setLoader(true);
+            try {
+                const result = await ChargeInvoiceApi(
+                    {
+                        'customer_profile_id': userProfileData.aNet_customer_profile_id,
+                        'payment_profile_id': selectPaymentType,
+                        'amount': invoiceAmount,
+                        'invoice_id': dropdownValue,
+                        'description': invoiceDescription
+                    }
+                )
+                if (result.data.status) {
+                    setLoader(false),
+                    setIsPaymentComplete(true);
+                    setMessageModalVisible(true);
+                    setModalMessage('Payment Successfull');
+                    setModalIcon('success')
+
+                } else {
+                    setLoader(false),
+                    setIsPaymentComplete(false);
+                    setMessageModalVisible(true);
+                    setModalMessage('Oops! Payment Failed');
+                    setModalIcon('error');
+                }
+                console.log('Charge an invoice ---', result.data)
+            } catch (error) {
+                console.error("Error charging customer profile:", error);
+                return null;
+            }
+        }
+
+    }
+
     const comingSoon = () => {
         Alert.alert("Feature Coming Soon! 🚀.", "We're working hard to bring this feature to you. Stay tuned for updates!")
     }
-
-    console.log('Customer Profile Id ---', userProfileData.aNet_customer_profile_id)
 
     return (
         <SafeAreaView style={styles.container}>
@@ -348,7 +430,7 @@ const Billing = ({ navigation }) => {
                         <Animated.View style={[styles.pay_now_bottom_sheet_container, { opacity }]}>
                             <Animated.View style={[styles.bottom_sheet_card, { transform: [{ translateY }] }]}>
                                 <Text style={styles.pay_now_header_text}> Select invoice and make payment</Text>
-                                <Text style={[styles.title_text, {marginBottom: 0, paddingBottom: 0}]}>Select Invoice</Text>
+                                <Text style={[styles.title_text, { marginBottom: 0, paddingBottom: 0 }]}>Select Invoice</Text>
                                 <View style={styles.select_invoice_container}>
                                     <View style={styles.dropdown_container}>
                                         {renderLabel()}
@@ -370,6 +452,7 @@ const Billing = ({ navigation }) => {
                                             onBlur={() => setIsFocus(false)}
                                             onChange={item => handleDropdownValue(item)}
                                         />
+                                        {errors.dropdownValue ? <Text style={styles.error_text}>{errors.dropdownValue}</Text> : null}
                                     </View>
 
                                     <View style={styles.text_input_container}>
@@ -383,21 +466,41 @@ const Billing = ({ navigation }) => {
                                                 style={styles.text_input_style}
                                             />
                                         </View>
+                                        {errors.invoiceAmount ? <Text style={styles.error_text}>{errors.invoiceAmount}</Text> : null}
                                     </View>
                                     <View style={styles.text_input_container}>
                                         <Text style={styles.title_text}>Enter Description</Text>
                                         <View style={[styles.text_input]}>
-                                            <TextInput
+                                            {/* <TextInput
                                                 placeholder="Type here...."
                                                 placeholderTextColor="#b9b9b9"
                                                 style={styles.text_input_style}
-                                                multiline={true}
                                                 value={invoiceDescription}
                                                 onChangeText={(text) => setInvoiceDescription(text)}
-                                            />
+                                            /> */}
+
+                                            <KeyboardAvoidingView
+                                                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                                                style={{ flex: 1 }}
+                                            >
+                                                <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+                                                    <View style={styles.container}>
+                                                        <TextInput
+                                                            placeholder="Type here...."
+                                                            placeholderTextColor="#b9b9b9"
+                                                            style={styles.text_input_style}
+                                                            value={invoiceDescription}
+                                                            onChangeText={(text) => setInvoiceDescription(text)}
+                                                            multiline={true}
+                                                            blurOnSubmit={true}
+                                                            returnKeyType="done"
+                                                        />
+                                                    </View>
+                                                </ScrollView>
+                                            </KeyboardAvoidingView>
                                         </View>
                                     </View>
-                                    <Text style={[styles.title_text, {marginBottom: 0, paddingBottom: 0}]}>Select Payment Profile</Text>
+                                    <Text style={[styles.title_text, { marginBottom: 0, paddingBottom: 0 }]}>Select Payment Profile</Text>
                                     <View style={styles.dropdown_container}>
                                         {renderPaymentProfileLabel()}
                                         <Dropdown
@@ -413,15 +516,21 @@ const Billing = ({ navigation }) => {
                                             valueField="paymentProfileId"
                                             placeholder={!isPaymentDropdownFocus ? 'Select Payment Profile' : '...'}
                                             searchPlaceholder="Search..."
-                                            value={paymentProfileDropdown}
+                                            value={selectPaymentType}
                                             onFocus={() => setIsPaymentDropdownFocus(true)}
                                             onBlur={() => setIsPaymentDropdownFocus(false)}
                                             onChange={item => handlePaymentProfileValue(item)}
                                         />
+                                        {errors.selectPaymentType ? <Text style={styles.error_text}>{errors.selectPaymentType}</Text> : null}
                                     </View>
 
-                                    <TouchableOpacity style={[styles.pay_now_btn, { marginVertical: 10 }]} onPress={comingSoon}>
-                                        <Text style={styles.pay_now_btn_text}>Complete Transaction</Text>
+                                    <TouchableOpacity style={[styles.pay_now_btn, { marginVertical: 10 }]} onPress={chargeInvoice}>
+                                        <Text style={styles.pay_now_btn_text}>{loader ? 'Making Payment...' : 'Complete Transaction'}</Text>
+                                        {
+                                            loader && (
+                                                <ActivityIndicator size="large" color='#2E78FF' animating={loader} />
+                                            )
+                                        }
                                     </TouchableOpacity>
 
                                     <TouchableOpacity style={{ marginVertical: 5 }} onPress={togglePayNowBottomSheet}>
@@ -432,6 +541,14 @@ const Billing = ({ navigation }) => {
                         </Animated.View>
                     )
                 }
+
+                <ModalComponent
+                    modalVisible={messageModalVisible}
+                    setModalVisible={setMessageModalVisible}
+                    message={modalMessage}
+                    onClose={handleMessageModalOnClose}
+                    icon={modalIcon}
+                />
 
             </ImageBackground>
         </SafeAreaView>

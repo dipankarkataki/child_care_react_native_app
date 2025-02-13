@@ -279,4 +279,9 @@ export default styles = StyleSheet.create({
         marginHorizontal: moderateScale(10),
         width: moderateScale(365),
     },
+    error_text: {
+        color: 'red',
+        fontSize: moderateScale(14),
+        marginTop: 5
+    },
 });

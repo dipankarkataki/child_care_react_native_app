@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { moderateScale } from "react-native-size-matters";
 export default styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -331,7 +332,7 @@ export default styles = StyleSheet.create({
     },
     error_text: {
         color: 'red',
-        fontSize: 14,
+        fontSize: moderateScale(14),
         marginTop: 5
     },
     shimmerContainer: {
