@@ -1,7 +1,6 @@
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, Image, View, TextInput, ScrollView, SafeAreaView, Animated, Dimensions, Alert } from 'react-native'
 import React, { useEffect, useState, useRef } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import TokenManager from '../../api/TokenManager';
 import { useSelector } from 'react-redux';
 import styles from './styles';
 import Constants from '../../Navigation/Constants';
@@ -9,6 +8,7 @@ import GetInvoiceByFamily from '../../api/BillingApi/Invoice/GetInvoiceByFamily'
 import { Dropdown } from 'react-native-element-dropdown';
 import LinearGradient from 'react-native-linear-gradient';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
+import GetCustomerProfileApi from '../../api/BillingApi/GetCustomerProfileApi';
 
 const backgroundImage = require('../../assets/images/background.png');
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
@@ -21,9 +21,17 @@ const Billing = ({ navigation }) => {
     const [invoiceDescription, setInvoiceDescription] = useState('');
     const [dropdownValue, setDropdownValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
+    const [paymentProfile, setPaymentProfile] = useState([]);
+    const [paymentProfileDropdown, setPaymentProfileDropdown] = useState(null);
+    const [isPaymentDropdownFocus, setIsPaymentDropdownFocus] = useState(false);
+    const [selectPaymentType, setSelectPaymentType] = useState(null);
     const [shimmerLoader, setShimmerLoader] = useState(false);
+    const [showBottomSheet, setShowBottomSheet] = useState(false);
 
     const billingDetailsRef = React.createRef();
+
+    const userProfileImage = useSelector((state) => state.profileImage)
+    const userProfileData = useSelector((state) => state.userProfileData);
 
     useEffect(() => {
 
@@ -58,21 +66,45 @@ const Billing = ({ navigation }) => {
             }
         }
         getInvoiceByFamily();
+
+        const getProfileData = async () => {
+            const profileData = await fetchCustomerProfile();
+            if (profileData) {
+                if (profileData.paymentProfiles.length > 0) {
+                    setPaymentProfile(profileData.paymentProfiles);
+                } else {
+                    setPaymentProfile(null);
+                }
+
+            }
+        };
+
+        getProfileData();
+
+        
     }, [billingDetailsRef.current]);
 
-    const [customerProfileId, setCustomerProfileId] = useState(null);
-    const getCustomerProfileId = async () => {
-        const profileId = await TokenManager.getCustomerProfileId();
-        setCustomerProfileId(profileId);
+    const fetchCustomerProfile = async () => {
+        try {
+            const customerProfile = await GetCustomerProfileApi({ 'customer_profile_id': userProfileData.aNet_customer_profile_id})
+            if (customerProfile.data && customerProfile.data.data && customerProfile.data.data.profile) {
+                const profileData = customerProfile.data.data.profile;
+                console.log('Customer Payment Profile ---', profileData)
+                return profileData;
+            } else {
+                console.log("No Customer Profile");
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching customer profile:", error);
+            return null;
+        }
     }
-    getCustomerProfileId();
 
-    const [showBottomSheet, setShowBottomSheet] = useState(false)
     const translateY = useRef(new Animated.Value(Dimensions.get('window').height)).current;
     const opacity = useRef(new Animated.Value(0)).current;
 
-    const userProfileImage = useSelector((state) => state.profileImage)
-    const userProfileData = useSelector((state) => state.userProfileData);
+    
 
     const togglePayNowBottomSheet = () => {
         if (showBottomSheet) {
@@ -121,6 +153,17 @@ const Billing = ({ navigation }) => {
         return null;
     };
 
+    const renderPaymentProfileLabel = () => {
+        if (paymentProfileDropdown || isPaymentDropdownFocus) {
+            return (
+                <Text style={[styles.label, isPaymentDropdownFocus && { color: '#797979' }]}>
+                    Select Payment Profile
+                </Text>
+            );
+        }
+        return null;
+    };
+
     const handleDropdownValue = (item) => {
         console.log('Selected Item ---', item.amount);
         setInvoiceAmount(item.amount);
@@ -128,11 +171,17 @@ const Billing = ({ navigation }) => {
         setIsFocus(false);
     };
 
+    const handlePaymentProfileValue = (item) => {
+        console.log('Selected Card ---', item);
+        setSelectPaymentType(item.paymentProfileId);
+        setIsPaymentDropdownFocus(false);
+    };
+
     const comingSoon = () => {
         Alert.alert("Feature Coming Soon! 🚀.", "We're working hard to bring this feature to you. Stay tuned for updates!")
     }
 
-    console.log('Customer Profile Id ---', customerProfileId)
+    console.log('Customer Profile Id ---', userProfileData.aNet_customer_profile_id)
 
     return (
         <SafeAreaView style={styles.container}>
@@ -186,7 +235,7 @@ const Billing = ({ navigation }) => {
                                         <Icon name='credit-card' style={styles.icon_large} />
                                         <TouchableOpacity onPress={() => navigation.navigate(Constants.AUTO_PAY)}>
                                             {
-                                                customerProfileId ? (
+                                                userProfileData.aNet_customer_profile_id ? (
                                                     <View>
                                                         <Text style={[styles.payment_method_title, { color: 'teal' }]}>Payment Method Available</Text>
                                                         <Text style={styles.payment_method_sub_title}>Tap here to check</Text>
@@ -299,6 +348,7 @@ const Billing = ({ navigation }) => {
                         <Animated.View style={[styles.pay_now_bottom_sheet_container, { opacity }]}>
                             <Animated.View style={[styles.bottom_sheet_card, { transform: [{ translateY }] }]}>
                                 <Text style={styles.pay_now_header_text}> Select invoice and make payment</Text>
+                                <Text style={[styles.title_text, {marginBottom: 0, paddingBottom: 0}]}>Select Invoice</Text>
                                 <View style={styles.select_invoice_container}>
                                     <View style={styles.dropdown_container}>
                                         {renderLabel()}
@@ -346,6 +396,28 @@ const Billing = ({ navigation }) => {
                                                 onChangeText={(text) => setInvoiceDescription(text)}
                                             />
                                         </View>
+                                    </View>
+                                    <Text style={[styles.title_text, {marginBottom: 0, paddingBottom: 0}]}>Select Payment Profile</Text>
+                                    <View style={styles.dropdown_container}>
+                                        {renderPaymentProfileLabel()}
+                                        <Dropdown
+                                            style={[styles.dropdown, isPaymentDropdownFocus && { borderWidth: 0.5, borderColor: 'rgba(158, 158, 158, 0.6)' }]}
+                                            placeholderStyle={styles.placeholderStyle}
+                                            selectedTextStyle={styles.selectedTextStyle}
+                                            inputSearchStyle={styles.inputSearchStyle}
+                                            iconStyle={styles.iconStyle}
+                                            data={paymentProfile}
+                                            itemTextStyle={{ color: '#797979' }}
+                                            maxHeight={300}
+                                            labelField="cardNumber"
+                                            valueField="paymentProfileId"
+                                            placeholder={!isPaymentDropdownFocus ? 'Select Payment Profile' : '...'}
+                                            searchPlaceholder="Search..."
+                                            value={paymentProfileDropdown}
+                                            onFocus={() => setIsPaymentDropdownFocus(true)}
+                                            onBlur={() => setIsPaymentDropdownFocus(false)}
+                                            onChange={item => handlePaymentProfileValue(item)}
+                                        />
                                     </View>
 
                                     <TouchableOpacity style={[styles.pay_now_btn, { marginVertical: 10 }]} onPress={comingSoon}>

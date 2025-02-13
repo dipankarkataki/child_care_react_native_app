@@ -204,7 +204,7 @@ export default styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        maxHeight: 600,
+        maxHeight: 800,
         backgroundColor: '#fff',
         borderTopLeftRadius: 40,
         borderTopRightRadius: 40,
