@@ -7,8 +7,11 @@ import styles from './styles';
 import Constants from '../../Navigation/Constants';
 import GetInvoiceByFamily from '../../api/BillingApi/Invoice/GetInvoiceByFamily';
 import { Dropdown } from 'react-native-element-dropdown';
+import LinearGradient from 'react-native-linear-gradient';
+import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 
 const backgroundImage = require('../../assets/images/background.png');
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
 const Billing = ({ navigation }) => {
 
@@ -18,17 +21,44 @@ const Billing = ({ navigation }) => {
     const [invoiceDescription, setInvoiceDescription] = useState('');
     const [dropdownValue, setDropdownValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
+    const [shimmerLoader, setShimmerLoader] = useState(false);
+
+    const billingDetailsRef = React.createRef();
 
     useEffect(() => {
+
+        if (billingDetailsRef.current) {
+            const billingDetailsAnimated = Animated.stagger(400, [billingDetailsRef.current.getAnimated()]);
+            Animated.loop(billingDetailsAnimated).start();
+        }
+        setShimmerLoader(true);
+
         const getInvoiceByFamily = async () => {
-            const response = await GetInvoiceByFamily(userProfileData.family_id);
-            // console.log('GetInvoiceByFamily Response ---', response.data.data)
-            const invoiceTotalAmount = response.data.data.reduce((acc, item) => acc + parseFloat(item.amount), 0).toFixed(2);
-            setInvoiceTotal(invoiceTotalAmount);
-            setInvoiceData(response.data.data);
+            try {
+                const response = await GetInvoiceByFamily(userProfileData.family_id);
+                const data = response?.data?.data; // Safely access the nested data
+
+                // Check if data exists and is an array
+                if (data && Array.isArray(data) && data.length > 0) {
+                    const invoiceTotalAmount = data
+                        .reduce((acc, item) => acc + parseFloat(item.amount || 0), 0)
+                        .toFixed(2);
+                    setInvoiceTotal(invoiceTotalAmount);
+                    setInvoiceData(data);
+                    setShimmerLoader(false);
+                } else {
+                    // If data is null, undefined, or an empty array
+                    setInvoiceTotal('0.00');
+                    setInvoiceData([]);
+                }
+            } catch (error) {
+                console.log("Error fetching invoice data:", error);
+                setInvoiceTotal('0.00');
+                setInvoiceData([]);
+            }
         }
         getInvoiceByFamily();
-    }, []);
+    }, [billingDetailsRef.current]);
 
     const [customerProfileId, setCustomerProfileId] = useState(null);
     const getCustomerProfileId = async () => {
@@ -107,145 +137,163 @@ const Billing = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground source={backgroundImage} style={styles.image_background}>
-                <View style={styles.header_container}>
-                    <TouchableOpacity onPress={() => navigation.navigate(Constants.DASHBOARD)}>
-                        <Icon name="long-arrow-alt-left" style={styles.header_icon} />
-                    </TouchableOpacity>
-                    <Text style={styles.header_text}>Billing</Text>
-                    <TouchableOpacity onPress={() => navigation.navigate(Constants.PROFILE_SETTINGS)}>
-                        <Image source={userProfileImage} style={styles.user_avatar} />
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.billing_header}>
-                    <View style={styles.billing_revenue_container}>
-                        <Icon name='plus' style={styles.icon} />
-                        <Text style={styles.balance}>${invoiceTotal}</Text>
-                    </View>
-                    <Text style={styles.small_text}>Due Amount</Text>
-                </View>
-                <View style={styles.billing_content_container}>
-                    <View style={styles.card}>
-                        <View style={styles.pay_now_header}>
-                            <View>
-                                <Text style={styles.title_text}>Due Date</Text>
-                                <Text style={styles.pay_now_header_text}>MM/DD/YYYY</Text>
+                {
+                    shimmerLoader ? (
+                        <View style={styles.shimmerContainer}>
+                            <View style={styles.shimmerHeaderContainer}>
+                                <ShimmerPlaceholder style={styles.shimmerHeaderPlaceholder} />
                             </View>
-                            <View>
-                                <Text style={styles.title_text}>Auto Pay</Text>
-                                <Text style={styles.pay_now_header_text}>OFF</Text>
-                            </View>
+                            <ShimmerPlaceholder style={styles.shimmerBoxPlaceholder} />
+                            <ShimmerPlaceholder style={styles.shimmerViewPlaceholder} />
+                            <ShimmerPlaceholder style={styles.shimmerViewPlaceholder} />
+                            <ShimmerPlaceholder style={styles.shimmerBoxPlaceholder} />
+                            <ShimmerPlaceholder style={styles.shimmerViewPlaceholder} />
                         </View>
-                        <TouchableOpacity style={styles.pay_now_btn} onPress={togglePayNowBottomSheet}>
-                            <Text style={styles.pay_now_btn_text}>Pay Now</Text>
-                        </TouchableOpacity>
-                        <View style={styles.payment_method_container}>
-                            <Icon name='credit-card' style={styles.icon_large} />
-                            <TouchableOpacity onPress={() => navigation.navigate(Constants.AUTO_PAY)}>
-                                {
-                                    customerProfileId ? (
+                    ) : (
+                        <>
+                            <View style={styles.header_container}>
+                                <TouchableOpacity onPress={() => navigation.navigate(Constants.DASHBOARD)}>
+                                    <Icon name="long-arrow-alt-left" style={styles.header_icon} />
+                                </TouchableOpacity>
+                                <Text style={styles.header_text}>Billing</Text>
+                                <TouchableOpacity onPress={() => navigation.navigate(Constants.PROFILE_SETTINGS)}>
+                                    <Image source={userProfileImage} style={styles.user_avatar} />
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.billing_header}>
+                                <View style={styles.billing_revenue_container}>
+                                    <Icon name='plus' style={styles.icon} />
+                                    <Text style={styles.balance}>${invoiceTotal}</Text>
+                                </View>
+                                <Text style={styles.small_text}>Due Amount</Text>
+                            </View>
+                            <View style={styles.billing_content_container}>
+                                <View style={styles.card}>
+                                    <View style={styles.pay_now_header}>
                                         <View>
-                                            <Text style={[styles.payment_method_title, { color: 'teal' }]}>Payment Method Available</Text>
-                                            <Text style={styles.payment_method_sub_title}>Tap here to check</Text>
+                                            <Text style={styles.title_text}>Due Date</Text>
+                                            <Text style={styles.pay_now_header_text}>MM/DD/YYYY</Text>
                                         </View>
-                                    ) : (
                                         <View>
-                                            <Text style={[styles.payment_method_title, { color: 'crimson' }]}>No Payment method found!</Text>
-                                            <Text style={styles.payment_method_sub_title}>Tap here and add one</Text>
+                                            <Text style={styles.title_text}>Auto Pay</Text>
+                                            <Text style={styles.pay_now_header_text}>OFF</Text>
                                         </View>
-                                    )
-                                }
+                                    </View>
+                                    <TouchableOpacity style={styles.pay_now_btn} onPress={togglePayNowBottomSheet}>
+                                        <Text style={styles.pay_now_btn_text}>Pay Now</Text>
+                                    </TouchableOpacity>
+                                    <View style={styles.payment_method_container}>
+                                        <Icon name='credit-card' style={styles.icon_large} />
+                                        <TouchableOpacity onPress={() => navigation.navigate(Constants.AUTO_PAY)}>
+                                            {
+                                                customerProfileId ? (
+                                                    <View>
+                                                        <Text style={[styles.payment_method_title, { color: 'teal' }]}>Payment Method Available</Text>
+                                                        <Text style={styles.payment_method_sub_title}>Tap here to check</Text>
+                                                    </View>
+                                                ) : (
+                                                    <View>
+                                                        <Text style={[styles.payment_method_title, { color: 'crimson' }]}>No Payment method found!</Text>
+                                                        <Text style={styles.payment_method_sub_title}>Tap here and add one</Text>
+                                                    </View>
+                                                )
+                                            }
 
-                            </TouchableOpacity>
-                            <Icon name='angle-right' style={styles.icon_small} />
-                        </View>
-                    </View>
-                </View>
-                <ScrollView style={styles.statements_container} alwaysBounceVertical>
-                    <View style={styles.card}>
-                        <Text style={styles.title_text}>Account Summary</Text>
-                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
-                            <View>
-                                <Text style={styles.input_title}>Statement Balance (Aug 12)</Text>
-                                <TouchableOpacity>
-                                    <Text style={styles.payment_method_sub_title}>Details</Text>
-                                </TouchableOpacity>
+                                        </TouchableOpacity>
+                                        <Icon name='angle-right' style={styles.icon_small} />
+                                    </View>
+                                </View>
                             </View>
-                            <Text style={styles.input_title}>-$1500</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
-                            <View>
-                                <Text style={styles.input_title}>Payments And Credits</Text>
-                                <TouchableOpacity>
-                                    <Text style={styles.payment_method_sub_title}>Details</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <Text style={styles.input_title}>$800</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
-                            <View>
-                                <Text style={styles.input_title}>Recent Charges</Text>
-                                <TouchableOpacity>
-                                    <Text style={styles.payment_method_sub_title}>Details</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <Text style={styles.input_title}>$0</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.card}>
-                        <Text style={styles.title_text}>Recent Activity</Text>
-                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
-                            <Text style={styles.input_title}>No recent activity found.</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.card}>
-                        <Text style={styles.title_text}>Statements</Text>
-                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
-                            <View>
-                                <Text style={styles.input_title}>-$1500</Text>
-                                <TouchableOpacity>
-                                    <Text style={styles.payment_method_sub_title}>August 12, 2024</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <Icon name="angle-right" style={styles.input_title} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
-                            <View>
-                                <Text style={styles.input_title}>-$2000</Text>
-                                <TouchableOpacity>
-                                    <Text style={styles.payment_method_sub_title}>August 13, 2024</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <Icon name="angle-right" style={styles.input_title} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
-                            <View>
-                                <Text style={styles.input_title}>-$100</Text>
-                                <TouchableOpacity>
-                                    <Text style={styles.payment_method_sub_title}>August 14, 2024</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <Icon name="angle-right" style={styles.input_title} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
-                            <View>
-                                <Text style={styles.input_title}>-$25000</Text>
-                                <TouchableOpacity>
-                                    <Text style={styles.payment_method_sub_title}>August 15, 2024</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <Icon name="angle-right" style={styles.input_title} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
-                            <View>
-                                <Text style={styles.input_title}>-$10000</Text>
-                                <TouchableOpacity>
-                                    <Text style={styles.payment_method_sub_title}>August 16, 2024</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <Icon name="angle-right" style={styles.input_title} />
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
+                            <ScrollView style={styles.statements_container} alwaysBounceVertical>
+                                <View style={styles.card}>
+                                    <Text style={styles.title_text}>Account Summary</Text>
+                                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
+                                        <View>
+                                            <Text style={styles.input_title}>Statement Balance (Aug 12)</Text>
+                                            <TouchableOpacity>
+                                                <Text style={styles.payment_method_sub_title}>Details</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <Text style={styles.input_title}>-$1500</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
+                                        <View>
+                                            <Text style={styles.input_title}>Payments And Credits</Text>
+                                            <TouchableOpacity>
+                                                <Text style={styles.payment_method_sub_title}>Details</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <Text style={styles.input_title}>$800</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
+                                        <View>
+                                            <Text style={styles.input_title}>Recent Charges</Text>
+                                            <TouchableOpacity>
+                                                <Text style={styles.payment_method_sub_title}>Details</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <Text style={styles.input_title}>$0</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={styles.card}>
+                                    <Text style={styles.title_text}>Recent Activity</Text>
+                                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
+                                        <Text style={styles.input_title}>No recent activity found.</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={styles.card}>
+                                    <Text style={styles.title_text}>Statements</Text>
+                                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
+                                        <View>
+                                            <Text style={styles.input_title}>-$1500</Text>
+                                            <TouchableOpacity>
+                                                <Text style={styles.payment_method_sub_title}>August 12, 2024</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <Icon name="angle-right" style={styles.input_title} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
+                                        <View>
+                                            <Text style={styles.input_title}>-$2000</Text>
+                                            <TouchableOpacity>
+                                                <Text style={styles.payment_method_sub_title}>August 13, 2024</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <Icon name="angle-right" style={styles.input_title} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
+                                        <View>
+                                            <Text style={styles.input_title}>-$100</Text>
+                                            <TouchableOpacity>
+                                                <Text style={styles.payment_method_sub_title}>August 14, 2024</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <Icon name="angle-right" style={styles.input_title} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
+                                        <View>
+                                            <Text style={styles.input_title}>-$25000</Text>
+                                            <TouchableOpacity>
+                                                <Text style={styles.payment_method_sub_title}>August 15, 2024</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <Icon name="angle-right" style={styles.input_title} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.billing_details_card} onPress={() => navigation.navigate(Constants.BILLING)}>
+                                        <View>
+                                            <Text style={styles.input_title}>-$10000</Text>
+                                            <TouchableOpacity>
+                                                <Text style={styles.payment_method_sub_title}>August 16, 2024</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <Icon name="angle-right" style={styles.input_title} />
+                                    </TouchableOpacity>
+                                </View>
+                            </ScrollView>
+                        </>
+                    )
+                }
+
                 {
                     showBottomSheet && (
                         <Animated.View style={[styles.pay_now_bottom_sheet_container, { opacity }]}>
@@ -255,7 +303,7 @@ const Billing = ({ navigation }) => {
                                     <View style={styles.dropdown_container}>
                                         {renderLabel()}
                                         <Dropdown
-                                            style={[styles.dropdown, isFocus && { borderWidth:0.5, borderColor: 'rgba(158, 158, 158, 0.6)'}]}
+                                            style={[styles.dropdown, isFocus && { borderWidth: 0.5, borderColor: 'rgba(158, 158, 158, 0.6)' }]}
                                             placeholderStyle={styles.placeholderStyle}
                                             selectedTextStyle={styles.selectedTextStyle}
                                             inputSearchStyle={styles.inputSearchStyle}
@@ -276,11 +324,11 @@ const Billing = ({ navigation }) => {
 
                                     <View style={styles.text_input_container}>
                                         <Text style={styles.title_text}>Amount</Text>
-                                        <View style={[styles.text_input, {backgroundColor: 'rgba(225, 243, 251, 0.7)', borderColor: 'rgba(158, 158, 158, 0.6)'}]}>
+                                        <View style={[styles.text_input, { backgroundColor: 'rgba(225, 243, 251, 0.7)', borderColor: 'rgba(158, 158, 158, 0.6)' }]}>
                                             <TextInput
                                                 placeholder="$0.00"
                                                 placeholderTextColor="#b9b9b9"
-                                                value={"$"+invoiceAmount}
+                                                value={"$" + invoiceAmount}
                                                 readOnly={true}
                                                 style={styles.text_input_style}
                                             />
