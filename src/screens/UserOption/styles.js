@@ -4,8 +4,11 @@ import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'reac
 export default styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    image_background:{
+        flex:1,
         justifyContent: 'space-evenly',
-        alignItems: 'center',
+        alignItems: 'center'
     },
     logo_area: {
     },
@@ -16,7 +19,7 @@ export default styles = StyleSheet.create({
     heading_text: {
         color: 'rgba(0,0,0,0.8)',
         fontSize: scale(18),
-        marginVertical: moderateVerticalScale(8),
+        marginVertical: moderateVerticalScale(20),
         fontFamily: 'Poppins Medium'
     },
     options: {

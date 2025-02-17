@@ -1,4 +1,4 @@
-import { Image, ImageBackground} from 'react-native';
+import { Image, ImageBackground, SafeAreaView } from 'react-native';
 import React, { useEffect } from 'react'
 import TokenManager from '../../api/TokenManager';
 import styles from './styles';
@@ -8,24 +8,27 @@ import { useSelector } from 'react-redux';
 const splashBackground = require('../../assets/images/splash-background.png');
 const logoWhite = require('../../assets/images/child-care-logo-white.png');
 
-const Splash = ({navigation}) => {
+const Splash = ({ navigation }) => {
 
   const userAuthToken = useSelector((state) => state.userAuth);
 
-  useEffect(() =>{
+  useEffect(() => {
     setTimeout(() => {
-      if(!!userAuthToken){
+      if (!!userAuthToken) {
         navigation.navigate(Constants.DASHBOARD)
-      }else{
+      } else {
         navigation.navigate(Constants.USER_OPTION)
       }
     }, 2000);
-  },[]);
-  
+  }, []);
+
   return (
-    <ImageBackground source={splashBackground} style={styles.container}>
-      <Image source={logoWhite} style={styles.logo_white}/>
-    </ImageBackground>
+    <SafeAreaView style={styles.container}>
+      <ImageBackground source={splashBackground} style={styles.image_background}>
+        <Image source={logoWhite} style={styles.logo_white} />
+      </ImageBackground>
+    </SafeAreaView>
+
   )
 }
 
