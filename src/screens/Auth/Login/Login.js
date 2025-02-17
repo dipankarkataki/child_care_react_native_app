@@ -165,9 +165,9 @@ const Login = ({ navigation }) => {
                             <Text style={styles.login_btn_text}>{loader ? 'Loging in...' : 'Login'}</Text>
                             <ActivityIndicator size="large" color='#2E78FF' style={styles.activity_indicator} animating={loader}/>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.signup_btn} onPress={() => comingSoonFeature(Constants.SIGN_UP)}>
+                        {/* <TouchableOpacity style={styles.signup_btn} onPress={() => comingSoonFeature(Constants.SIGN_UP)}>
                             <Text style={styles.signup_btn_text}>Don't have an account? <Text style={styles.signup_text}>Sign Up</Text></Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <TouchableOpacity style={styles.signup_btn} onPress={() => navigation.navigate(Constants.FORGOT_PASSWORD)}>
                             <Text style={styles.forgot_password}>Forgot Password?</Text>
                         </TouchableOpacity>
