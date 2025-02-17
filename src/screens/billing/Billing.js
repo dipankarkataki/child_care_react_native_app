@@ -51,7 +51,7 @@ const Billing = ({ navigation }) => {
             try {
                 const response = await GetInvoiceByFamily(userProfileData.family_id);
                 const data = response?.data?.data; // Safely access the nested data
-                console.log('Invoice Data ---', data)
+                // console.log('Invoice Data ---', data)
                 // Check if data exists and is an array
                 if (data && Array.isArray(data) && data.length > 0) {
                     const invoiceTotalAmount = data
@@ -67,7 +67,7 @@ const Billing = ({ navigation }) => {
                     setInvoiceData([]);
                 }
             } catch (error) {
-                console.log("Error fetching invoice data:", error);
+                // console.log("Error fetching invoice data:", error);
                 setInvoiceTotal('0.00');
                 setInvoiceData([]);
             }
@@ -133,12 +133,12 @@ const Billing = ({ navigation }) => {
                 const profileData = customerProfile.data.data.profile;
                 return profileData;
             } else {
-                console.log("No Customer Profile");
+                // console.log("No Customer Profile");
                 return null;
             }
             
         } catch (error) {
-            console.error("Error fetching customer profile:", error);
+            // console.error("Error fetching customer profile:", error);
             return null;
         }
     }

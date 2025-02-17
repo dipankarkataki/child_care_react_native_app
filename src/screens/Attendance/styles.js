@@ -34,10 +34,10 @@ export default styles = StyleSheet.create({
         color: '#fff',
     },
     background_style: {
-        backgroundColor: '#2CABE2',
-        height: moderateScale(300),
-        borderBottomLeftRadius: moderateScale(60),
-        borderBottomRightRadius: moderateScale(60)
+        backgroundColor: 'rgba(0,33,71,0.45)',
+        height: moderateScale(400),
+        borderBottomLeftRadius: moderateScale(50),
+        borderBottomRightRadius: moderateScale(50)
     },
     attendance_content_container: {
         position: 'absolute',
@@ -55,7 +55,7 @@ export default styles = StyleSheet.create({
         flexDirection: 'row',
         borderWidth: 1,
         borderStyle: 'solid',
-        borderRadius: moderateScale(7),
+        borderRadius: moderateScale(5),
         borderColor: 'rgb(218, 218, 218)',
         marginHorizontal: moderateScale(10),
         paddingHorizontal: moderateScale(20),
@@ -104,7 +104,7 @@ export default styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1,
-        borderRadius: moderateScale(10),
+        borderRadius: moderateScale(5),
         borderStyle: 'solid',
         borderColor: '#FFFFFF',
         marginRight: moderateScale(10),
@@ -123,7 +123,7 @@ export default styles = StyleSheet.create({
         paddingTop: moderateScale(2),
         fontFamily: 'Poppins Medium',
         fontSize: scale(12),
-        color: 'rgba(0,0,0,0.8)'
+        color: 'rgba(255, 255, 255, 0.8)'
     },
     attendance_btn_active: {
         backgroundColor: '#FFFFFF',
@@ -212,12 +212,12 @@ export default styles = StyleSheet.create({
         marginHorizontal: moderateScale(10)
     },
     dropdown_container: {
-        paddingHorizontal: moderateScale(5),
-        paddingVertical: moderateVerticalScale(12),
+        paddingHorizontal: moderateScale(10),
+        paddingVertical: moderateVerticalScale(10),
         marginBottom: moderateVerticalScale(10),
         marginHorizontal: moderateScale(10),
         backgroundColor: '#FFFFFF',
-        borderRadius: moderateScale(7)
+        borderRadius: moderateScale(10)
     },
     dropdown: {
         height: 50,

@@ -156,39 +156,6 @@ const Attendance = ({ navigation }) => {
     checkArrowState(year, month);
   };
 
-  // const attendanceHistory = [
-  //   { "date": "01-12-2024", "inTime": "11:51 AM", "outTime": "06:09 PM", "totalHours": "6 Hrs" },
-  //   { "date": "02-12-2024", "inTime": "10:42 AM", "outTime": "04:00 PM", "totalHours": "5 Hrs" },
-  //   { "date": "03-12-2024", "inTime": "09:29 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs" },
-  //   { "date": "04-12-2024", "inTime": "11:14 AM", "outTime": "05:13 PM", "totalHours": "5 Hrs" },
-  //   { "date": "05-12-2024", "inTime": "10:33 AM", "outTime": "06:44 PM", "totalHours": "8 Hrs" },
-  //   { "date": "06-12-2024", "inTime": "09:00 AM", "outTime": "05:00 PM", "totalHours": "8 Hrs" },
-  //   { "date": "07-12-2024", "inTime": "08:45 AM", "outTime": "04:45 PM", "totalHours": "8 Hrs" },
-  //   { "date": "08-12-2024", "inTime": "10:00 AM", "outTime": "05:30 PM", "totalHours": "7 Hrs 30 Min" },
-  //   { "date": "09-12-2024", "inTime": "09:15 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs 45 Min" },
-  //   { "date": "10-12-2024", "inTime": "10:00 AM", "outTime": "05:00 PM", "totalHours": "7 Hrs" },
-  //   { "date": "11-12-2024", "inTime": "08:30 AM", "outTime": "04:30 PM", "totalHours": "8 Hrs" },
-  //   { "date": "12-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
-  //   { "date": "13-12-2024", "inTime": "10:15 AM", "outTime": "06:00 PM", "totalHours": "7 Hrs 45 Min" },
-  //   { "date": "14-12-2024", "inTime": "09:10 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 20 Min" },
-  //   { "date": "15-12-2024", "inTime": "09:30 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs 30 Min" },
-  //   { "date": "16-12-2024", "inTime": "10:00 AM", "outTime": "05:45 PM", "totalHours": "7 Hrs 45 Min" },
-  //   { "date": "17-12-2024", "inTime": "08:40 AM", "outTime": "04:50 PM", "totalHours": "8 Hrs 10 Min" },
-  //   { "date": "18-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
-  //   { "date": "19-12-2024", "inTime": "10:15 AM", "outTime": "06:30 PM", "totalHours": "8 Hrs 15 Min" },
-  //   { "date": "20-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
-  //   { "date": "21-12-2024", "inTime": "08:50 AM", "outTime": "05:00 PM", "totalHours": "8 Hrs 10 Min" },
-  //   { "date": "22-12-2024", "inTime": "10:00 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs" },
-  //   { "date": "23-12-2024", "inTime": "09:00 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 30 Min" },
-  //   { "date": "24-12-2024", "inTime": "09:10 AM", "outTime": "05:40 PM", "totalHours": "8 Hrs 30 Min" },
-  //   { "date": "25-12-2024", "inTime": "10:00 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs" },
-  //   { "date": "26-12-2024", "inTime": "09:30 AM", "outTime": "05:00 PM", "totalHours": "7 Hrs 30 Min" },
-  //   { "date": "27-12-2024", "inTime": "08:30 AM", "outTime": "05:00 PM", "totalHours": "8 Hrs 30 Min" },
-  //   { "date": "28-12-2024", "inTime": "09:15 AM", "outTime": "05:30 PM", "totalHours": "8 Hrs 15 Min" },
-  //   { "date": "29-12-2024", "inTime": "10:00 AM", "outTime": "06:00 PM", "totalHours": "8 Hrs" },
-  //   { "date": "30-12-2024", "inTime": "08:45 AM", "outTime": "04:45 PM", "totalHours": "8 Hrs" }
-  // ];
-
   const renderLabel = () => {
     if (dropdownValue || isFocus) {
       return (
@@ -302,7 +269,7 @@ const Attendance = ({ navigation }) => {
                   style={[
                     styles.history_note_text,
                     {
-                      color: 'crimson',
+                      color: '#ffffff',
                       textAlign: 'center',
                       marginTop: moderateVerticalScale(20),
                       fontSize: scale(16),
@@ -344,7 +311,7 @@ const Attendance = ({ navigation }) => {
                   </View>
                 </View>
               ) :
-                (<Text style={[styles.history_note_text, { color: 'crimson', textAlign: 'center', marginTop: moderateVerticalScale(20), fontSize: scale(16) }]}>Oops! No history available.</Text>)
+                (<Text style={[styles.history_note_text, { color: '#ffffff', textAlign: 'center', marginTop: moderateVerticalScale(20), fontSize: scale(16) }]}>Oops! No history available.</Text>)
             )}
         </View>
       </ImageBackground>

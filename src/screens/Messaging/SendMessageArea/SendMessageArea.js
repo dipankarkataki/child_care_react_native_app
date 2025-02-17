@@ -206,7 +206,7 @@ const SendMessageArea = ({navigation, route }) => {
     const deviceTimeZone = RNLocalize.getTimeZone();
     const formatCreatedAt = (timestamp) => {
         // Create a moment object from the timestamp in the server's timezone
-        const momentDate = moment.utc(timestamp, "YYYY-MM-DD HH:mm:ss").format('hh:mm A');
+        const momentDate = moment.utc(timestamp, "YYYY-MM-DD HH:mm:ss").tz(moment.tz.guess()).format('hh:mm A');
         
 
         // Convert it to the device's timezone
@@ -259,7 +259,7 @@ const SendMessageArea = ({navigation, route }) => {
             console.log('New message received:', data);
             const newMessage = {
                 text: data.content,
-                time: formatCreatedAt(data.time),
+                time: formatCreatedAt(data.created_at),
                 attachment: data.attachment,
                 attachment_type:data.attachment_type,
                 type: userId == data.receiver_id ? 'received' : 'sent',
