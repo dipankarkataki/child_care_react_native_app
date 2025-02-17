@@ -8,7 +8,7 @@ import { StatusBar } from "react-native";
 const Routes = () => {
 
     const userAuthToken = useSelector((state) => state.userAuth);
-    console.log('User Auth Token from Routes.js --->', userAuthToken);
+    // console.log('User Auth Token from Routes.js --->', userAuthToken);
 
     return (
         <NavigationContainer>

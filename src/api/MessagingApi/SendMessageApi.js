@@ -2,7 +2,7 @@ import ApiManager from "../ApiManager";
 
 export default SendMessageApi = async (data) => {
     try {
-        console.log('Sending Chat Data --> ', data)
+        // console.log('Sending Chat Data --> ', data)
         const result = await ApiManager('/chat/store-chat',{
             method: "POST",
             headers: {
@@ -13,14 +13,14 @@ export default SendMessageApi = async (data) => {
         // console.log('Send Message API Response: ', result); // Log the response
         return result;
     } catch (error) {
-        console.log('Error: ', error); // Log the full error
+        // console.log('Error: ', error); // Log the full error
         if (error.response) {
             // If there's an API response, log the status and message
-            console.log('Error Response Data: ', error.response.data);
-            console.log('Error Status: ', error.response.status);
+            // console.log('Error Response Data: ', error.response.data);
+            // console.log('Error Status: ', error.response.status);
             return error.response.data;
         } else {
-            console.log('Network/Server Error: ', error.message);
+            // console.log('Network/Server Error: ', error.message);
             return { error: error.message };
         }
     }

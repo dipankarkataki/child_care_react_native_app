@@ -74,20 +74,20 @@ const Billing = ({ navigation }) => {
         }
         getInvoiceByFamily();
 
-        const getProfileData = async () => {
-            const profileData = await fetchCustomerProfile();
-            if (profileData) {
-                if (profileData.paymentProfiles.length > 0) {
-                    setPaymentProfile(profileData.paymentProfiles);
-                } else {
-                    setPaymentProfile(null);
+        if(userProfileData.aNet_customer_profile_id){
+            const getProfileData = async () => {
+                const profileData = await fetchCustomerProfile();
+                if (profileData) {
+                    if (profileData.paymentProfiles.length > 0) {
+                        setPaymentProfile(profileData.paymentProfiles);
+                    } else {
+                        setPaymentProfile(null);
+                    }
                 }
-
-            }
-        };
-        getProfileData();
-
-
+            };
+            getProfileData();
+        }
+        
     }, [billingDetailsRef.current, isPaymentComplete]);
 
     const [errors, setErrors] = useState({
@@ -127,6 +127,7 @@ const Billing = ({ navigation }) => {
 
     const fetchCustomerProfile = async () => {
         try {
+
             const customerProfile = await GetCustomerProfileApi({ 'customer_profile_id': userProfileData.aNet_customer_profile_id })
             if (customerProfile.data && customerProfile.data.data && customerProfile.data.data.profile) {
                 const profileData = customerProfile.data.data.profile;
@@ -135,6 +136,7 @@ const Billing = ({ navigation }) => {
                 console.log("No Customer Profile");
                 return null;
             }
+            
         } catch (error) {
             console.error("Error fetching customer profile:", error);
             return null;
@@ -211,7 +213,7 @@ const Billing = ({ navigation }) => {
     };
 
     const handlePaymentProfileValue = (item) => {
-        console.log('Selected Card ---', item);
+        // console.log('Selected Card ---', item);
         setSelectPaymentType(item.paymentProfileId);
         setIsPaymentDropdownFocus(false);
     };

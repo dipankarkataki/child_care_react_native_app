@@ -60,11 +60,11 @@ const AutoPay = ({ navigation }) => {
                     const profileData = customerProfile.data.data.profile;
                     return profileData;
                 } else {
-                    console.log("No Customer Profile");
+                    // console.log("No Customer Profile");
                     return null;
                 }
             } catch (error) {
-                console.error("Error fetching customer profile:", error);
+                // console.error("Error fetching customer profile:", error);
                 return null;
             }
 
@@ -164,7 +164,7 @@ const AutoPay = ({ navigation }) => {
                     });
 
                     if (addCardResult.status) {
-                        console.log('addCardResult ---> ', addCardResult.data)
+                        // console.log('addCardResult ---> ', addCardResult.data)
                         setANetPaymentProfileId(addCardResult.data.data);
                         setMessageModalVisible(true);
                         setModalIcon('success');
@@ -221,7 +221,7 @@ const AutoPay = ({ navigation }) => {
 
                 }
             } catch (error) {
-                console.log('Response Error --> ', error);
+                // console.log('Response Error --> ', error);
                 setMessageModalVisible(true);
                 setModalIcon('error');
                 setModalMessage('Oops! An error occurred while creating the payment method.');

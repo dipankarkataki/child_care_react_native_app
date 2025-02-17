@@ -39,7 +39,7 @@ const NewChat = ({navigation}) => {
             }catch(err){
                 setShimmerLoader(false);
                 Alert.alert('Oops!', 'An error occurred while fetching contact list. Please try again.');
-                console.log('Contact List Error ----- ', err);
+                // console.log('Contact List Error ----- ', err);
             }
             
         }

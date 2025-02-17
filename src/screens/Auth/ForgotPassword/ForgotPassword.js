@@ -62,7 +62,7 @@ const ForgotPassword = ({navigation}) => {
                 setModalIcon('error');
                 setModalMessage('Oops! Something went wrong. Please try after sometime.');
                 setShouldNavigate(false)
-                console.log('Send Reset Pwd Error --', err)
+                // console.log('Send Reset Pwd Error --', err)
             }
         }
     }

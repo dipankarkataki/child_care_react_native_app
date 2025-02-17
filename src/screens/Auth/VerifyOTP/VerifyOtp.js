@@ -66,7 +66,7 @@ const VerifyOtp = ({navigation, route}) => {
                 setModalIcon('error');
                 setModalMessage('Oops! Something went wrong. Please try after sometime.');
                 setShouldNavigate(false)
-                console.log('Verify OTP Error --', err)
+                // console.log('Verify OTP Error --', err)
             }
             
         }

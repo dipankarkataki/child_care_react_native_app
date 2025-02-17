@@ -17,8 +17,8 @@ const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
 const StudentDetails = ({familyId, siteId, navigation}) => {
 
-    console.log('Family Id in Student Details ----', familyId)
-    console.log('Site Id in Student Details ----', siteId)
+    // console.log('Family Id in Student Details ----', familyId)
+    // console.log('Site Id in Student Details ----', siteId)
     const studentDetailsRef = React.createRef();
     
     const [loader, setLoader] = useState(false);
@@ -122,12 +122,12 @@ const StudentDetails = ({familyId, siteId, navigation}) => {
             if (result.status === 200 && result.data.data) {
                 setShimmerLoader(false)
                 setStudent(result.data.data);
-                console.log('Student Details ----', result.data.data )
+                // console.log('Student Details ----', result.data.data )
             }
         })
         .catch((err) => {
             setShimmerLoader(false)
-            console.log('Error', err);
+            // console.log('Error', err);
         });
 
 
@@ -139,7 +139,7 @@ const StudentDetails = ({familyId, siteId, navigation}) => {
             // console.log('Tuition Plan Details --', result.data.data);
         })
         .catch((err) => {
-            console.log('Error', err);
+            // console.log('Error', err);
         });
 
 
@@ -150,7 +150,7 @@ const StudentDetails = ({familyId, siteId, navigation}) => {
             }
         })
         .catch((err) => {
-            console.log('Error', err);
+            // console.log('Error', err);
         });
 
 
@@ -225,7 +225,7 @@ const StudentDetails = ({familyId, siteId, navigation}) => {
                 'zipcode' : zipCode,
                 'homeroom_id' : selectedClassRoom
             }
-            console.log('Saving details: ---', studentData);
+            // console.log('Saving details: ---', studentData);
 
             AddNewStudentApi(studentData)
             .then((result) => {
@@ -242,10 +242,10 @@ const StudentDetails = ({familyId, siteId, navigation}) => {
                         text: 'OK',
                     }]);
                 }
-                console.log('Add New Student Api Result ===', result.data)
+                // console.log('Add New Student Api Result ===', result.data)
             })
             .catch((err) => {
-                console.log('Error', err);
+                // console.log('Error', err);
             });
         }
        

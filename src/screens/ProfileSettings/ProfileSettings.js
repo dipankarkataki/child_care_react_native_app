@@ -101,7 +101,7 @@ const ProfileSettings = ({ navigation }) => {
             await uploadProfileImage(result[0]);
         }catch(err){
             if (DocumentPicker.isCancel(err)) {
-                console.log('User Cancelled Profile Image Picker');
+                // console.log('User Cancelled Profile Image Picker');
             }else {
                 throw err;
             }
@@ -159,7 +159,7 @@ const ProfileSettings = ({ navigation }) => {
                         setModalMessage('Image uploaded successfully');
                         setModalIcon('success');
                     }else if (retries > 0) {
-                        console.log('Retrying upload...');
+                        // console.log('Retrying upload...');
                         setTimeout(() => upload(retryCount - 1), 2000); // Retry after 2 seconds
                     } else {
                         setSendingFile(false);
@@ -168,7 +168,7 @@ const ProfileSettings = ({ navigation }) => {
                         setModalIcon('error');
                     }
                 } catch (err) {
-                    console.log('Error --> ', err);
+                    // console.log('Error --> ', err);
                     setSendingFile(false);
                     setMessageModalVisible(true);
                     setModalMessage('Oops! Something went wrong. Please try again later');
@@ -254,7 +254,7 @@ const ProfileSettings = ({ navigation }) => {
 
                 update();
             }catch(err){
-                console.log('Update failed! Something went wrong : ', err)
+                // console.log('Update failed! Something went wrong : ', err)
             }
        }
     };
@@ -288,7 +288,7 @@ const ProfileSettings = ({ navigation }) => {
                     Alert.alert('Error', result.data.message);
                 }
             }catch(err){
-                console.log('Logout Error : ', err)
+                // console.log('Logout Error : ', err)
                 Alert.alert('Error', 'Something went wrong while loging out');
             }finally {
                 // Ensure loading indicator is disabled regardless of success or error

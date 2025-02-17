@@ -78,7 +78,7 @@ const ChangePassword = ({ navigation, route }) => {
                 setModalIcon('error');
                 setModalMessage('Oops! Something went wrong. Please try after sometime.');
                 setShouldNavigate(false)
-                console.log('Change Pwd Error --', err)
+                // console.log('Change Pwd Error --', err)
             }
         }
     }

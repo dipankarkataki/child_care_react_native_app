@@ -38,13 +38,13 @@ const SenderProfile = ({navigation, route}) => {
         })
         .catch((err) => {
             setShimmerLoader(false)
-            console.log('Error', err);
+            // console.log('Error', err);
         });
 
     }, [senderProfileRef.current]);
 
     
-    console.log('Sender Profile Data ==> ', profileMedia)
+    // console.log('Sender Profile Data ==> ', profileMedia)
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground source={background} style={styles.image_background}>
@@ -95,7 +95,7 @@ const SenderProfile = ({navigation, route}) => {
                                                 // Render Image if it's an image file
                                                 <Image
                                                     key={index}
-                                                    source={{ uri: `${UrlProvider.asset_url_staging}/${item.attachment}` }}
+                                                    source={{ uri: `${UrlProvider.asset_url_production}/${item.attachment}` }}
                                                     style={styles.chat_media_items}
                                                 />
                                             ) : (

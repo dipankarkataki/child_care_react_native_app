@@ -47,7 +47,7 @@ const MessagingDashboard = ({ navigation }) => {
             } catch (err) {
                 setShimmerLoader(false);
                 Alert.alert('Oops !', 'Something went wrong while fetching chat users. Please try again.');
-                console.log('Message Dashboard Error ', err)
+                // console.log('Message Dashboard Error ', err)
             }
 
 
@@ -67,13 +67,10 @@ const MessagingDashboard = ({ navigation }) => {
     const deviceTimeZone = RNLocalize.getTimeZone();
     const formatCreatedAt = (timestamp) => {
         // Create a moment object from the timestamp in the server's timezone
-        const momentDate = moment.tz(timestamp, "YYYY-MM-DD HH:mm:ss", "Asia/Ho_Chi_Minh");
-
-        // Convert it to the device's timezone
-        const localTime = momentDate.tz(deviceTimeZone);
+        const momentDate = moment.utc(timestamp, "YYYY-MM-DD HH:mm:ss").tz(moment.tz.guess()).format('hh:mm A');
 
         // Format the time in AM/PM
-        return localTime.format('hh:mm A');
+        return momentDate;
     };
 
     const getAccountType = (type) => {
@@ -91,7 +88,7 @@ const MessagingDashboard = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <ImageBackground source={background} style={styles.image_background}>
                 <View style={styles.header_container}>
-                    <TouchableOpacity onPress={() => navigation.navigate(Constants.CHAT_DASHBOARD)}>
+                    <TouchableOpacity onPress={() => navigation.navigate(Constants.DASHBOARD)}>
                         <Icon name="long-arrow-alt-left" style={styles.header_icon} />
                     </TouchableOpacity>
                     <Text style={styles.header_text}>Chat Dashboard</Text>

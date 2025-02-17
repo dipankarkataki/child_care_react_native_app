@@ -57,11 +57,11 @@ const SendMessageArea = ({navigation, route }) => {
             }
 
             setSelectedFile(result[0]);
-            console.log('Selected File:', result[0]);
+            // console.log('Selected File:', result[0]);
             setBottomSheet(false);
         }catch(err){
             if (DocumentPicker.isCancel(err)) {
-                console.log('User Cancelled Doc Picker');
+                // console.log('User Cancelled Doc Picker');
             }else {
                 throw err;
             }
@@ -84,11 +84,11 @@ const SendMessageArea = ({navigation, route }) => {
             }
 
             setSelectedFile(result[0]);
-            console.log('Selected File:', result[0]);
+            // console.log('Selected File:', result[0]);
             setBottomSheet(false);
         }catch(err){
             if (DocumentPicker.isCancel(err)) {
-                console.log('User Cancelled Doc Picker');
+                // console.log('User Cancelled Doc Picker');
             }else {
                 throw err;
             }
@@ -113,7 +113,7 @@ const SendMessageArea = ({navigation, route }) => {
     }
 
     const sendMessage = () => {
-        console.log('My message ---', inputMessage.trim())
+        // console.log('My message ---', inputMessage.trim())
         if((inputMessage.trim().length == 0 && selectedFile == null)){
             Alert.alert('Oops! ', 'Please type a message or select an attachment.');
             return;
@@ -164,14 +164,14 @@ const SendMessageArea = ({navigation, route }) => {
                                 {
                                     text: 'Retry',
                                     onPress: () => {
-                                        console.log('Retrying to send message ...');
+                                        // console.log('Retrying to send message ...');
                                         send(retries - 1);  // Trigger retry if retries are remaining
                                     },
                                 },
                                 {
                                     text: 'Close',
                                     onPress: () => {
-                                        console.log('Alert closed without retry');
+                                        // console.log('Alert closed without retry');
                                         setSelectedFile('');
                                         setSendingFile(false);
                                         setInputMessage('');
@@ -182,11 +182,11 @@ const SendMessageArea = ({navigation, route }) => {
                         }
                         
                     } catch (err) {
-                        console.log('Error sending message:', err);
+                        // console.log('Error sending message:', err);
     
                         if (retries > 0) {
                             // Retry after 2 seconds if retries are remaining
-                            console.log('Retrying to send message ...');
+                            // console.log('Retrying to send message ...');
                             setTimeout(() => send(retries - 1), 2000);
                         } else {
                             // Final failure message after all retries
@@ -206,7 +206,7 @@ const SendMessageArea = ({navigation, route }) => {
     const deviceTimeZone = RNLocalize.getTimeZone();
     const formatCreatedAt = (timestamp) => {
         // Create a moment object from the timestamp in the server's timezone
-        const momentDate = moment.utc(timestamp, "YYYY-MM-DD HH:mm:ss").local().format('hh:mm A');
+        const momentDate = moment.utc(timestamp, "YYYY-MM-DD HH:mm:ss").format('hh:mm A');
         
 
         // Convert it to the device's timezone
@@ -219,7 +219,7 @@ const SendMessageArea = ({navigation, route }) => {
     const fetchMessages = async () => {
         try {
             const result = await GetMessagesApi();
-            console.log('Fetch Message Data ==> ', result.data.data);
+            // console.log('Fetch Message Data ==> ', result.data.data);
             let data = result.data.data;
 
             const newMessages = data.map(item => ({
@@ -237,18 +237,18 @@ const SendMessageArea = ({navigation, route }) => {
                 scrollViewRef.current?.scrollToEnd({ animated: true });
             }, 100);
         } catch (err) {
-            console.log('Error', err);
+            // console.log('Error', err);
         }
     };
 
     const subscribeToChannel = (userId, pusherInstance) => {
         const channelName = `chat-channel-${userId}`;
-        console.log(`Subscribing to channel ---- : ${channelName}`);
+        // console.log(`Subscribing to channel ---- : ${channelName}`);
 
         channel = pusherInstance.subscribe(channelName);
 
         channel.bind('pusher:subscription_succeeded', () => {
-            console.log(`Successfully subscribed to channel: ${channelName}`);
+            // console.log(`Successfully subscribed to channel: ${channelName}`);
         });
 
         channel.bind('pusher:subscription_error', (status) => {
@@ -275,11 +275,11 @@ const SendMessageArea = ({navigation, route }) => {
         });
 
         pusherInstance.connection.bind('state_change', (states) => {
-            console.log('Pusher state changed from', states.previous, 'to', states.current);
+            // console.log('Pusher state changed from', states.previous, 'to', states.current);
         });
 
         pusherInstance.connection.bind('error', (error) => {
-            console.error('Pusher connection error:', error);
+            // console.error('Pusher connection error:', error);
         });
     };
 
@@ -292,7 +292,7 @@ const SendMessageArea = ({navigation, route }) => {
             }
 
             const userId = await TokenManager.getUserId();
-            console.log('User ID --- :', userId);
+            // console.log('User ID --- :', userId);
             setCurrentUserId(userId);
 
             const pusherInstance = await initializePusher();
@@ -322,14 +322,14 @@ const SendMessageArea = ({navigation, route }) => {
             if (channel) {
                 channel.unbind_all(); // Unbind all events
                 channel.unsubscribe();
-                console.log(`Unsubscribed from channel chat-channel-${currentUserId}`);
+                // console.log(`Unsubscribed from channel chat-channel-${currentUserId}`);
             }
         };
     }, []);
 
 
     if (!pusher || !currentUserId) {
-        console.log('Current User id -->', currentUserId);
+        // console.log('Current User id -->', currentUserId);
         return (
           <View style={{ flex:1, justifyContent:'center', alignItems:'center' }}>
             <Text style={styles.chat_user_title_text} >Unable to initialize Pusher.</Text>
@@ -338,7 +338,7 @@ const SendMessageArea = ({navigation, route }) => {
     }
 
     const downloadFiles = (item) => {
-        console.log(item)
+        // console.log(item)
         const {config, fs} = RNFetchBlob;
         const fileDir = fs.dirs.DownloadDir;
         config({
@@ -350,12 +350,12 @@ const SendMessageArea = ({navigation, route }) => {
                 description:'File download'
             }
         })
-        .fetch("GET", UrlProvider.asset_url_staging+'/'+item.attachment, {
+        .fetch("GET", UrlProvider.asset_url_production+'/'+item.attachment, {
             //some headers ..
         })
         .then((res) => {
             // the temp file path
-            console.log("The file saved to ", res.path());
+            // console.log("The file saved to ", res.path());
             Alert.alert('File has been downloaded successfully');
         });
     }
@@ -410,7 +410,7 @@ const SendMessageArea = ({navigation, route }) => {
                                             {item.attachment && (
                                                 isImage.includes(item.attachment_type) ? (
                                                     <Image
-                                                        source={{ uri: item.attachment.startsWith('content') ? item.attachment : `${UrlProvider.asset_url_staging}/${item.attachment}` }}
+                                                        source={{ uri: item.attachment.startsWith('content') ? item.attachment : `${UrlProvider.asset_url_production}/${item.attachment}` }}
                                                         style={{ width: 200, height: 200, borderRadius: 8 }}
                                                         resizeMode="cover"
                                                     />
@@ -449,7 +449,7 @@ const SendMessageArea = ({navigation, route }) => {
                                                 isImage.includes(item.attachment_type) ? (
                                                     <TouchableOpacity onPress={ () => downloadFiles(item)}>
                                                         <Image
-                                                            source={{ uri: item.attachment.startsWith('content') ? item.attachment : `${UrlProvider.asset_url_staging}/${item.attachment}` }}
+                                                            source={{ uri: item.attachment.startsWith('content') ? item.attachment : `${UrlProvider.asset_url_production}/${item.attachment}` }}
                                                             style={{ width: 200, height: 200, borderRadius: 8 }}
                                                             resizeMode="cover"
                                                         />

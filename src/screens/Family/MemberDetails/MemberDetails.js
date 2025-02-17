@@ -14,7 +14,7 @@ const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
 const MemberDetails = ({familyId, siteId, navigation, onFamilyNameFetched}) => {
 
-    console.log('Family Id in Member Details ----', familyId)
+    // console.log('Family Id in Member Details ----', familyId)
 
     const memberDetailsRef = React.createRef();
 
@@ -94,10 +94,10 @@ const MemberDetails = ({familyId, siteId, navigation, onFamilyNameFetched}) => {
                 setMember(result.data.data.reverse());
                 setShimmerLoader(false)
             }
-            console.log('Member Details --', result.data.data);
+            // console.log('Member Details --', result.data.data);
         })
         .catch((err) => {
-            console.log('Error', err);
+            // console.log('Error', err);
             setShimmerLoader(false)
         });
     }, [memberDetailsRef.current, familyId, newMember]);
@@ -207,7 +207,7 @@ const MemberDetails = ({familyId, siteId, navigation, onFamilyNameFetched}) => {
                     setLoader(false);
                 }
             }).catch((err) => {
-                console.log('Error --> ',err);
+                // console.log('Error --> ',err);
             });
         }
     }

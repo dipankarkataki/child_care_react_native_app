@@ -11,7 +11,7 @@ const GetTuitionPlanApi = async (siteId) => {
             // console.log('Error Status: ', error.response.status);
             return error.response.data;
         } else {
-            console.log('Network/Server Error: ', error.message);
+            // console.log('Network/Server Error: ', error.message);
             return { error: error.message };
         }
     }

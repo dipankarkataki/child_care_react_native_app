@@ -88,13 +88,13 @@ const SignUp = ({ navigation }) => {
                 setLoader(false);
                 console.warn('Signup Successfull!')
             },2000);
-            console.log('Form Submitted');
-            console.log('firstName :', firstName);
-            console.log('lastName :', lastName);
-            console.log('email :', email);
-            console.log('phone :', phone);
-            console.log('password :', password);
-            console.log('confirmPassword :', confirmPassword);
+            // console.log('Form Submitted');
+            // console.log('firstName :', firstName);
+            // console.log('lastName :', lastName);
+            // console.log('email :', email);
+            // console.log('phone :', phone);
+            // console.log('password :', password);
+            // console.log('confirmPassword :', confirmPassword);
         }
     }
 

@@ -91,7 +91,7 @@ const Login = ({ navigation }) => {
                     setModalMessage('Oops! Something went wrong. Please try after sometime.');
                     setShouldNavigate(false)
                 }
-                console.log('Error --> ',err);
+                // console.log('Error --> ',err);
             });
         }
     };
